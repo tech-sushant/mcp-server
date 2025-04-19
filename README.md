@@ -48,3 +48,7 @@ Sample Prompts:
 ## Recommended MCP Clients
 * BrowserStack MCP Server has been tested thoroughly on Claude Desktop and Cursor.
     * For use cases involving code modifications we recommend using Cursor.
+
+## Caveats
+* BrowserStack MCP Server is under active development and only supports a subset of the MCP protocol, so please reach out to us in case you run into any issues.
+* Due to non-deterministic nature of LLMs, the MCP Client may or may not always invoke the correct tools required to complete the task. We are working on improving this, if you have any suggestions please reach out to us.

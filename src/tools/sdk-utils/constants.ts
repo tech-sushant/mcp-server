@@ -37,7 +37,7 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     playwright: {
       jest: { instructions: nodejsInstructions },
       codeceptjs: { instructions: nodejsInstructions },
-      "playwright-test-runner": { instructions: nodejsInstructions },
+      playwright: { instructions: nodejsInstructions },
     },
     selenium: {
       jest: { instructions: nodejsInstructions },

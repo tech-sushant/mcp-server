@@ -3,7 +3,7 @@ export type SDKSupportedBrowserAutomationFramework = "playwright" | "selenium";
 export type SDKSupportedTestingFramework =
   | "jest"
   | "codeceptjs"
-  | "playwright-test-runner"
+  | "playwright"
   | "pytest"
   | "robot"
   | "behave"

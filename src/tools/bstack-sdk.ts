@@ -47,8 +47,8 @@ async function bootstrapProjectWithSDK({
 
 export default function addSDKTools(server: McpServer) {
   server.tool(
-    "bootStrapProjectWithSDK",
-    "Get configuration instructions for setting up a project with BrowserStack SDK. Use this to run tests on BrowserStack in case there is no browserstack.yml file in the project root",
+    "runTestsOnBrowserStack",
+    "Use this tool to get instructions for running tests on BrowserStack.",
     {
       detectedBrowserAutomationFramework: z
         .string()
