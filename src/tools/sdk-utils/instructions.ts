@@ -46,6 +46,7 @@ export function generateBrowserStackYMLInstructions(desiredPlatforms: string[]) 
 # BrowserStack Reporting
 # ======================
 projectName: BrowserStack MCP Runs
+build: mcp-run
 
 # =======================================
 # Platforms (Browsers / Devices to test)

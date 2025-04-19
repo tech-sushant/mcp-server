@@ -12,11 +12,6 @@ class Config {
     public readonly browserstackUsername: string,
     public readonly browserstackAccessKey: string
   ) {}
-
-  print() {
-    console.log(`BrowserStack Username: ${this.browserstackUsername}`);
-    console.log(`BrowserStack Access Key: ${this.browserstackAccessKey}`);
-  }
 }
 
 const config = new Config(

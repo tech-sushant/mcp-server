@@ -1,7 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import config from "../config";
 import {
   SDKSupportedBrowserAutomationFramework,
   SDKSupportedLanguage,
@@ -16,7 +15,7 @@ import {
  * BrowserStack SDK hooks into your test framework to seamlessly run tests on BrowserStack.
  * This tool gives instructions to setup a browserstack.yml file in the project root and installs the necessary dependencies.
  */
-const bootstrapProjectWithSDK = async ({
+async function bootstrapProjectWithSDK({
   detectedBrowserAutomationFramework,
   detectedTestingFramework,
   detectedLanguage,
@@ -26,8 +25,7 @@ const bootstrapProjectWithSDK = async ({
   detectedTestingFramework: SDKSupportedTestingFramework;
   detectedLanguage: SDKSupportedLanguage;
   desiredPlatforms: string[];
-}): Promise<CallToolResult> => {
-
+}): Promise<CallToolResult> {
   const instructions = generateBrowserStackYMLInstructions(desiredPlatforms);
   const instructionsForProjectConfiguration =
     getInstructionsForProjectConfiguration(
@@ -54,13 +52,19 @@ export default function addSDKTools(server: McpServer) {
     {
       detectedBrowserAutomationFramework: z
         .string()
-        .describe("The automation framework configured in the project. Example: 'playwright', 'selenium'"),
+        .describe(
+          "The automation framework configured in the project. Example: 'playwright', 'selenium'"
+        ),
       detectedTestingFramework: z
         .string()
-        .describe("The testing framework used in the project. Example: 'jest', 'pytest'"),
+        .describe(
+          "The testing framework used in the project. Example: 'jest', 'pytest'"
+        ),
       detectedLanguage: z
         .string()
-        .describe("The programming language used in the project. Example: 'nodejs', 'python'"),
+        .describe(
+          "The programming language used in the project. Example: 'nodejs', 'python'"
+        ),
       desiredPlatforms: z
         .array(z.enum(["windows", "macos", "android", "ios"]))
         .describe(
@@ -68,17 +72,32 @@ export default function addSDKTools(server: McpServer) {
         ),
     },
     async (args) => {
-      const detectedBrowserAutomationFramework = args.detectedBrowserAutomationFramework as SDKSupportedBrowserAutomationFramework;
-      const detectedTestingFramework = args.detectedTestingFramework as SDKSupportedTestingFramework;
+      const detectedBrowserAutomationFramework =
+        args.detectedBrowserAutomationFramework as SDKSupportedBrowserAutomationFramework;
+      const detectedTestingFramework =
+        args.detectedTestingFramework as SDKSupportedTestingFramework;
       const detectedLanguage = args.detectedLanguage as SDKSupportedLanguage;
       const desiredPlatforms = args.desiredPlatforms;
 
-      return bootstrapProjectWithSDK({
-        detectedBrowserAutomationFramework,
-        detectedTestingFramework,
-        detectedLanguage,
-        desiredPlatforms,
-      });
+      try {
+        return bootstrapProjectWithSDK({
+          detectedBrowserAutomationFramework,
+          detectedTestingFramework,
+          detectedLanguage,
+          desiredPlatforms,
+        });
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Failed to bootstrap project with BrowserStack SDK. Error: ${error}`,
+              isError: true,
+            },
+          ],
+          isError: true,
+        };
+      }
     }
   );
 }
