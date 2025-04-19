@@ -11,7 +11,7 @@ export async function getFailuresInLastRun(
 
   const observabilityUrl = buildsData.observability_url;
   if (!observabilityUrl) {
-    throw new Error("No observability URL found in build data");
+    throw new Error("No observability URL found in build data, this is likely because the build is not yet available on BrowserStack Observability.");
   }
 
   let overview = "No overview available";
