@@ -3,7 +3,7 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { getLatestO11YBuildInfo } from "../lib/api";
 
-async function getFailuresInLastRun(
+export async function getFailuresInLastRun(
   buildName: string,
   projectName: string,
 ): Promise<CallToolResult> {

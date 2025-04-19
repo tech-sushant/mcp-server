@@ -17,6 +17,11 @@ export async function getLatestO11YBuildInfo(
   });
 
   if (!buildsResponse.ok) {
+    if (buildsResponse.statusText === "Unauthorized") {
+      throw new Error(
+        `Failed to fetch builds: ${buildsResponse.statusText}. Please check if the BrowserStack credentials are correctly configured when installing the MCP server.`,
+      );
+    }
     throw new Error(`Failed to fetch builds: ${buildsResponse.statusText}`);
   }
 

@@ -9,7 +9,7 @@ import logger from "../logger";
 /**
  * Launches an App Live Session on BrowserStack.
  */
-async function startAppLiveSession(args: {
+export async function startAppLiveSession(args: {
   desiredPlatform: string;
   desiredPlatformVersion: string;
   appPath: string;
@@ -62,6 +62,7 @@ async function startAppLiveSession(args: {
     ],
   };
 }
+
 export default function addSDKTools(server: McpServer) {
   server.tool(
     "runAppLiveSession",
