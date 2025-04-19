@@ -3,24 +3,25 @@ import { SDKSupportedLanguage } from "./types";
 import { SDKSupportedBrowserAutomationFramework } from "./types";
 import { SDKSupportedTestingFramework } from "./types";
 
-const errorMessageSuffix = "Please open an issue at our Github repo: https://github.com/browserstack/browserstack-mcp-server/issues to request support for your project configuration";
+const errorMessageSuffix =
+  "Please open an issue at our Github repo: https://github.com/browserstack/browserstack-mcp-server/issues to request support for your project configuration";
 
 export const getInstructionsForProjectConfiguration = (
   detectedBrowserAutomationFramework: SDKSupportedBrowserAutomationFramework,
   detectedTestingFramework: SDKSupportedTestingFramework,
-  detectedLanguage: SDKSupportedLanguage
+  detectedLanguage: SDKSupportedLanguage,
 ) => {
   const configuration = SUPPORTED_CONFIGURATIONS[detectedLanguage];
 
   if (!configuration) {
     throw new Error(
-      `BrowserStack MCP Server currently does not support ${detectedLanguage}, ${errorMessageSuffix}`
+      `BrowserStack MCP Server currently does not support ${detectedLanguage}, ${errorMessageSuffix}`,
     );
   }
 
   if (!configuration[detectedBrowserAutomationFramework]) {
     throw new Error(
-      `BrowserStack MCP Server currently does not support ${detectedBrowserAutomationFramework} for ${detectedLanguage}, ${errorMessageSuffix}`
+      `BrowserStack MCP Server currently does not support ${detectedBrowserAutomationFramework} for ${detectedLanguage}, ${errorMessageSuffix}`,
     );
   }
 
@@ -28,7 +29,7 @@ export const getInstructionsForProjectConfiguration = (
     !configuration[detectedBrowserAutomationFramework][detectedTestingFramework]
   ) {
     throw new Error(
-      `BrowserStack MCP Server currently does not support ${detectedTestingFramework} for ${detectedBrowserAutomationFramework} on ${detectedLanguage}, ${errorMessageSuffix}`
+      `BrowserStack MCP Server currently does not support ${detectedTestingFramework} for ${detectedBrowserAutomationFramework} on ${detectedLanguage}, ${errorMessageSuffix}`,
     );
   }
 
@@ -37,8 +38,10 @@ export const getInstructionsForProjectConfiguration = (
   ].instructions;
 };
 
-export function generateBrowserStackYMLInstructions(desiredPlatforms: string[]) {
-  let instructions = `
+export function generateBrowserStackYMLInstructions(
+  desiredPlatforms: string[],
+) {
+  return `
       Create a browserstack.yml file in the project root. The file should be in the following format:
 
       \`\`\`yaml
@@ -80,6 +83,4 @@ debug: true
 testObservability: true
       \`\`\`
       \n`;
-
-  return instructions;
 }

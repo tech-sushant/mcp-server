@@ -1,7 +1,4 @@
-import {
-  McpServer,
-  ResourceTemplate,
-} from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import packageJson from "../package.json";
 import "dotenv/config";
@@ -12,7 +9,7 @@ import addObservabilityTools from "./tools/observability";
 
 logger.info(
   "Launching BrowserStack MCP server, version %s",
-  packageJson.version
+  packageJson.version,
 );
 
 function registerTools(server: McpServer) {

@@ -45,12 +45,12 @@ export default function addObservabilityTools(server: McpServer) {
       buildName: z
         .string()
         .describe(
-          "Name of the build to get failures for. This is the 'build' key in the browserstack.yml file. If not sure, ask the user for the build name."
+          "Name of the build to get failures for. This is the 'build' key in the browserstack.yml file. If not sure, ask the user for the build name.",
         ),
       projectName: z
         .string()
         .describe(
-          "Name of the project to get failures for. This is the 'projectName' key in the browserstack.yml file. If not sure, ask the user for the project name."
+          "Name of the project to get failures for. This is the 'projectName' key in the browserstack.yml file. If not sure, ask the user for the project name.",
         ),
     },
     async (args) => {
@@ -68,6 +68,6 @@ export default function addObservabilityTools(server: McpServer) {
           isError: true,
         };
       }
-    }
+    },
   );
 }

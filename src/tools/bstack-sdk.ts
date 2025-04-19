@@ -31,7 +31,7 @@ async function bootstrapProjectWithSDK({
     getInstructionsForProjectConfiguration(
       detectedBrowserAutomationFramework,
       detectedTestingFramework,
-      detectedLanguage
+      detectedLanguage,
     );
 
   return {
@@ -43,7 +43,7 @@ async function bootstrapProjectWithSDK({
       },
     ],
   };
-};
+}
 
 export default function addSDKTools(server: McpServer) {
   server.tool(
@@ -53,22 +53,22 @@ export default function addSDKTools(server: McpServer) {
       detectedBrowserAutomationFramework: z
         .string()
         .describe(
-          "The automation framework configured in the project. Example: 'playwright', 'selenium'"
+          "The automation framework configured in the project. Example: 'playwright', 'selenium'",
         ),
       detectedTestingFramework: z
         .string()
         .describe(
-          "The testing framework used in the project. Example: 'jest', 'pytest'"
+          "The testing framework used in the project. Example: 'jest', 'pytest'",
         ),
       detectedLanguage: z
         .string()
         .describe(
-          "The programming language used in the project. Example: 'nodejs', 'python'"
+          "The programming language used in the project. Example: 'nodejs', 'python'",
         ),
       desiredPlatforms: z
         .array(z.enum(["windows", "macos", "android", "ios"]))
         .describe(
-          "The platforms the user wants to test on. Always ask this to the user, do not try to infer this."
+          "The platforms the user wants to test on. Always ask this to the user, do not try to infer this.",
         ),
     },
     async (args) => {
@@ -98,6 +98,6 @@ export default function addSDKTools(server: McpServer) {
           isError: true,
         };
       }
-    }
+    },
   );
 }

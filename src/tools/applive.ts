@@ -4,6 +4,7 @@ import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import fs from "fs";
 import { uploadApp } from "./applive-utils/upload-app";
 import { startSession } from "./applive-utils/start-session";
+import logger from "../logger";
 
 /**
  * Launches an App Live Session on BrowserStack.
@@ -40,6 +41,7 @@ async function startAppLiveSession(args: {
     }
     fs.accessSync(args.appPath, fs.constants.R_OK);
   } catch (error) {
+    logger.error("The app path does not exist or is not readable: %s", error);
     throw new Error("The app path does not exist or is not readable.");
   }
 
@@ -68,22 +70,22 @@ export default function addSDKTools(server: McpServer) {
       desiredPhone: z
         .string()
         .describe(
-          "The device to run the app on. Example: 'iPhone 12 Pro' or 'Samsung Galaxy S20'. Always ask the user for the device they want to use, do not assume it. "
+          "The device to run the app on. Example: 'iPhone 12 Pro' or 'Samsung Galaxy S20'. Always ask the user for the device they want to use, do not assume it. ",
         ),
       desiredPlatformVersion: z
         .string()
         .describe(
-          "The platform version to run the app on. Example: '12.0' for Android devices or '16.0' for iOS devices"
+          "The platform version to run the app on. Example: '12.0' for Android devices or '16.0' for iOS devices",
         ),
       desiredPlatform: z
         .enum(["android", "ios"])
         .describe(
-          "Which platform to run on, examples: 'android', 'ios'. Set this based on the app path provided."
+          "Which platform to run on, examples: 'android', 'ios'. Set this based on the app path provided.",
         ),
       appPath: z
         .string()
         .describe(
-          "The path to the .ipa or .apk file to install on the device. Always ask the user for the app path, do not assume it."
+          "The path to the .ipa or .apk file to install on the device. Always ask the user for the app path, do not assume it.",
         ),
     },
     async (args) => {
@@ -101,6 +103,6 @@ export default function addSDKTools(server: McpServer) {
           isError: true,
         };
       }
-    }
+    },
   );
 }

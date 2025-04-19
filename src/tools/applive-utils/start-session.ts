@@ -1,4 +1,5 @@
 import childProcess from "child_process";
+import logger from "../../logger";
 
 export async function startSession(args: {
   appUrl: string;
@@ -19,15 +20,14 @@ export async function startSession(args: {
       process.platform === "darwin"
         ? "open"
         : process.platform === "win32"
-        ? "start"
-        : "xdg-open";
+          ? "start"
+          : "xdg-open";
     childProcess.exec(start + " " + launchUrl);
 
     return launchUrl;
   } catch (error) {
-    console.error(
-      "Failed to open browser automatically. Please open this URL manually:",
-      launchUrl
+    logger.error(
+      `Failed to open browser automatically: ${error}. Please open this URL manually: ${launchUrl}`,
     );
     return launchUrl;
   }
