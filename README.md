@@ -4,19 +4,16 @@
 </div>
 
 
-> Seamlessly integrate BrowserStack's powerful testing infrastructure with your favorite AI-first development environments.
-
 ## 🚀 Overview
-
 BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https://www.browserstack.com/test-platform) directly into your development workflow. It enables you to run tests, debug applications, and perform cross-browser testing through any [MCP-compliant client](https://modelcontextprotocol.io/clients#feature-support-matrix).
 
-## ✨ Features
+## ✨ Features - More Coming Soon!
 
 ### 📱 App Testing
 - **Real Device Testing**: Test your mobile apps on BrowserStack's extensive cloud of real devices
-- **Comprehensive Device Coverage**: Access all major devices and OS versions from our [device grid](https://www.browserstack.com/list-of-browsers-and-platforms/app_live)
 - **Performance Testing**: Unlike emulators, test your app's real-world performance on actual devices
 - **Live Debugging**: Debug crashes and performance issues in real-time
+- **Comprehensive Device Coverage**: Access all major devices and OS versions from our [device grid](https://www.browserstack.com/list-of-browsers-and-platforms/app_live)
 
 ### 🌐 Web Testing
 - **Local Testing**: Seamlessly test websites hosted on localhost
@@ -24,8 +21,8 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
 - **Screenshot Testing**: Capture and compare screenshots across different environments
 
 ### 🧪 Automated Testing
-- **Framework Support**: Run tests written in Jest, Playwright, Selenium, and more
-- **Smart Test Case Tagging**: Leverage AI to identify and fix test failures
+- **Fix Test Failures**: Leverage AI to identify and fix test failures reported by your CI/CD pipeline by utilising our industry leading [Test Observability](https://www.browserstack.com/docs/test-observability) features. Find more info [here](https://www.browserstack.com/docs/test-observability/features/smart-tags).
+- **Run on BrowserStack**: Easily run tests written in Jest, Playwright, Selenium, and more on BrowserStack's [Test Platform](https://www.browserstack.com/test-platform)
 - **Accessibility Testing**: Ensure WCAG and ADA compliance with our [Accessibility Testing](https://www.browserstack.com/accessibility-testing) tool
 
 ## 🛠️ Installation
@@ -35,7 +32,7 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
    - Get your credentials from [Account Settings](https://www.browserstack.com/accounts/profile/details)
 
 2. **Install the MCP Server**
-   - For Cursor users, update your `.cursor/mcp.json`:
+   - Sample MCP Server config for Cursor: `.cursor/mcp.json`:
    ```json
    {
      "mcpServers": {
@@ -50,6 +47,7 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
      }
    }
    ```
+   - For Github Copilot users, ensure you are using the latest version of the VSCode with support for Copilot agent mode.
 
 ## 💡 Usage Examples
 
@@ -83,17 +81,14 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
 "check for accessibility issues on my www.mywebsite.com"
 ```
 
-## 🤝 Supported MCP Clients
+## 🤝 Recommended MCP Clients
 
-- **Cursor** (Recommended for code modifications)
-- **Claude Desktop**
-- Other MCP-compliant clients
+- **Github Copilot or Cursor** (Recommended for automated testing + debugging)
+- **Claude Desktop** (Recommended for manual testing)
 
 ## ⚠️ Important Notes
-
-- The BrowserStack MCP Server is under active development
-- Currently supports a subset of the MCP protocol
-- Due to the non-deterministic nature of LLMs, tool invocation may vary
+- The BrowserStack MCP Server is under active development and currently supports a subset of the MCP protocol, i.e. `tools`. More features will be added soon.
+- As tool invocation relies on the MCP Client which in turn rely on LLMs for tool calling. There can be some non-deterministic behaviour and can lead to unexpected results. If you have any suggestions or feedback, please open an issue to discuss.
 
 ## 📝 Contributing
 
