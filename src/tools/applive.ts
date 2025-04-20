@@ -71,7 +71,7 @@ export default function addSDKTools(server: McpServer) {
       desiredPhone: z
         .string()
         .describe(
-          "The device to run the app on. Example: 'iPhone 12 Pro' or 'Samsung Galaxy S20'. Always ask the user for the device they want to use, do not assume it. ",
+          "The full name of the device to run the app on. Example: 'iPhone 12 Pro' or 'Samsung Galaxy S20' or 'Google Pixel 6'. Always ask the user for the device they want to use, do not assume it. ",
         ),
       desiredPlatformVersion: z
         .string()
