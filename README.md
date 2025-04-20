@@ -18,10 +18,12 @@ Sample Prompts:
 - "open test.com on Samsung Browser and check for readability issues"
 
 ## For QA Engineers, Automation Engineers, and SDETs 🧪
+- Easily run your existing test suite written in frameworks like Jest, Playwright, Selenium, and more on BrowserStack's Test Platform.
 - Utilise the power of AI-first IDEs like Cursor, Windsurf and more to fix test case failures in your code by utilising [Smart Test Case Tagging](https://www.browserstack.com/docs/test-observability/features/smart-tags).
 - Check for WCAG, ADA compliance, and more a11y goodness with our industry leading [Accessibility Testing](https://www.browserstack.com/accessibility-testing) tool.
 
 Sample Prompts:
+- "run my test suite on BrowserStack"
 - "My test suite failed, can you help me fix the new failures?"
 - "check for accessibility issues on my www.mywebsite.com"
 
