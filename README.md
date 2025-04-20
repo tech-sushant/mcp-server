@@ -3,8 +3,10 @@
 <img src="assets/browserstack-logo.png" alt="BrowserStack Logo" height="100"> <img src="assets/mcp-logo.png" alt="MCP Server Logo" width="100">
 </div>
 
+> Seamlessly integrate BrowserStack's powerful testing infrastructure with your favorite AI-first development environments, check the video below to see it in action..
+ 
+[![Watch the video](https://img.youtube.com/vi/vy1sx0J7sTk/0.jpg)](https://www.youtube.com/watch?v=vy1sx0J7sTk)
 
-> Seamlessly integrate BrowserStack's powerful testing infrastructure with your favorite AI-first development environments.
 
 ## 🚀 Overview
 
