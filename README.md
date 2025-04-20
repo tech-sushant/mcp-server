@@ -1,8 +1,12 @@
 # BrowserStack MCP Server
-<div style="display: flex; justify-content: space-between;">
+<div style="display: flex; justify-content: space-between; padding: 20px;">
 <img src="assets/browserstack-logo.png" alt="BrowserStack Logo" height="100"> <img src="assets/mcp-logo.png" alt="MCP Server Logo" width="100">
 </div>
 
+
+*See it in action, check out the video below.*
+
+[![Watch the video](https://img.youtube.com/vi/vy1sx0J7sTk/0.jpg)](https://www.youtube.com/watch?v=vy1sx0J7sTk)
 
 ## 🚀 Overview
 BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https://www.browserstack.com/test-platform) directly into your development workflow. It enables you to run tests, debug applications, and perform cross-browser testing through any [MCP-compliant client](https://modelcontextprotocol.io/clients#feature-support-matrix).
