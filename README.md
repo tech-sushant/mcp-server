@@ -4,7 +4,7 @@
 <img src="assets/browserstack-logo.png" alt="BrowserStack Logo" height="100"> <img src="assets/mcp-logo.png" alt="MCP Server Logo" width="100">
 </div>
 
-<h2 align="center">One Platform For All Your Testing Needs</h2>
+<h3 align="center">One Platform For All Your Testing Needs</h4>
 
 Enable every developer and tester in your team, whether they are testing manually, starting their automation journey, or scaling test automation.
 BrowserStack MCP Server allows you to use our cutting-edge [Test Platform](https://www.browserstack.com/test-platform) directly from your favorite AI tools.
