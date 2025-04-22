@@ -72,10 +72,10 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
    - Get your credentials from [Account Settings](https://www.browserstack.com/accounts/profile/details)
 
 2. **Install the MCP Server**
-   - On Cursor: `.cursor/mcp.json`:
+   - On VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
    ```json
    {
-     "mcpServers": {
+     "servers": {
        "browserstack": {
          "command": "npx",
          "args": ["-y", "@browserstack/mcp-server@latest"],
@@ -87,10 +87,10 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
      }
    }
    ```
-   - On Github Copilot (Agent Mode): `.vscode/mcp.json`:
+   - On Cursor: `.cursor/mcp.json`:
    ```json
    {
-     "servers": {
+     "mcpServers": {
        "browserstack": {
          "command": "npx",
          "args": ["-y", "@browserstack/mcp-server@latest"],
@@ -117,12 +117,6 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
      }
    }
    ```
-
-## ✨ Supported Features - More Coming Soon!
-
-### 🌐 Web Testing
-
-### 🧪 Automated Testing
 
 ## 🤝 Recommended MCP Clients
 
