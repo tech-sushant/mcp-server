@@ -4,6 +4,11 @@
 <img src="assets/browserstack-logo.png" alt="BrowserStack Logo" height="100"> <img src="assets/mcp-logo.png" alt="MCP Server Logo" width="100">
 </div>
 
+<div align="center">
+<img src="https://img.shields.io/npm/v/%40browserstack%2Fmcp-server" alt="NPM Version">
+</div>
+
+
 <h3 align="center">One Platform For All Your Testing Needs</h4>
 
 ## 📖 Overview
