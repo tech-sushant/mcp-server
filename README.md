@@ -130,8 +130,8 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
 
 ## ⚠️ Important Notes
 
-- The BrowserStack MCP Server is under active development and currently supports a subset of the MCP protocol, i.e. `tools`. More features will be added soon.
-- As tool invocation relies on the MCP Client which in turn rely on LLMs for tool calling. There can be some non-deterministic behaviour and can lead to unexpected results. If you have any suggestions or feedback, please open an issue to discuss.
+- The BrowserStack MCP Server is under active development and currently supports a subset of the MCP spec. More features will be added soon.
+- Tool invocations rely on the MCP Client which in turn relies on an LLM, hence there can be some non-deterministic behaviour that can lead to unexpected results. If you have any suggestions or feedback, please open an issue to discuss.
 
 ## 📝 Contributing
 
