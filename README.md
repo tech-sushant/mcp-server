@@ -145,6 +145,11 @@ For support, please:
 - Open an issue in our [GitHub repository](https://github.com/browserstack/mcp-server) if you face any issues related to the MCP Server.
 - Contact our [support team](https://www.browserstack.com/contact) for any other queries.
 
+## 🚀 More Features Coming Soon
+
+Stay tuned for exciting updates! Have any suggestions? Please open an issue to discuss.
+
+
 ## 🔗 Resources
 
 - [BrowserStack Test Platform](https://www.browserstack.com/test-platform)
