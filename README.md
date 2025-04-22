@@ -5,7 +5,10 @@
 </div>
 
 <div align="center">
-<img src="https://img.shields.io/npm/v/%40browserstack%2Fmcp-server" alt="NPM Version">
+<a href="https://www.npmjs.com/package/@browserstack/mcp-server">
+<img alt="NPM Version" src="https://img.shields.io/npm/v/%40browserstack%2Fmcp-server">
+</a>
+
 </div>
 
 
