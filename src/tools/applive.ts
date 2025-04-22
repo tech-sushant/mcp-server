@@ -63,7 +63,7 @@ export async function startAppLiveSession(args: {
   };
 }
 
-export default function addSDKTools(server: McpServer) {
+export default function addAppLiveTools(server: McpServer) {
   server.tool(
     "runAppLiveSession",
     "Use this tool when user wants to manually check their app on a particular mobile device using BrowserStack's cloud infrastructure. Can be used to debug crashes, slow performance, etc.",

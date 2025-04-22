@@ -6,16 +6,15 @@ import logger from "./logger";
 import addSDKTools from "./tools/bstack-sdk";
 import addAppLiveTools from "./tools/applive";
 import addObservabilityTools from "./tools/observability";
-
-logger.info(
-  "Launching BrowserStack MCP server, version %s",
-  packageJson.version,
-);
+import addBrowserLiveTools from "./tools/live";
+import addAccessibilityTools from "./tools/accessibility";
 
 function registerTools(server: McpServer) {
   addSDKTools(server);
   addAppLiveTools(server);
+  addBrowserLiveTools(server);
   addObservabilityTools(server);
+  addAccessibilityTools(server);
 }
 
 // Create an MCP server
@@ -27,6 +26,11 @@ const server: McpServer = new McpServer({
 registerTools(server);
 
 async function main() {
+  logger.info(
+    "Launching BrowserStack MCP server, version %s",
+    packageJson.version,
+  );
+
   // Start receiving messages on stdin and sending messages on stdout
   const transport = new StdioServerTransport();
   await server.connect(transport);
@@ -35,3 +39,8 @@ async function main() {
 }
 
 main().catch(console.error);
+
+// Ensure logs are flushed before exit
+process.on("exit", () => {
+  logger.flush();
+});

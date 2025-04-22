@@ -7,7 +7,7 @@ if (
   );
 }
 
-class Config {
+export class Config {
   constructor(
     public readonly browserstackUsername: string,
     public readonly browserstackAccessKey: string,

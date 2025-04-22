@@ -6,7 +6,7 @@ export async function startSession(args: {
   desiredPlatform: "android" | "ios";
   desiredPhone: string;
   desiredPlatformVersion: string;
-}) {
+}): Promise<string> {
   const { appUrl, desiredPlatform, desiredPhone, desiredPlatformVersion } =
     args;
   const appHashedId = appUrl.split("bs://").pop();

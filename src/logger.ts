@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === "development") {
     transport: {
       targets: [
         {
-          level: "info",
+          level: "debug",
           target: "pino-pretty",
           options: {
             colorize: true,
