@@ -1,3 +1,4 @@
+import { sanitizeUrlParam } from "../../lib/utils";
 import logger from "../../logger";
 import childProcess from "child_process";
 
@@ -13,16 +14,56 @@ interface StartSessionArgs {
 export async function startBrowserSession(
   args: StartSessionArgs,
 ): Promise<string> {
-  const launchUrl = `"https://live.browserstack.com/dashboard#os=${encodeURIComponent(args.os)}&os_version=${encodeURIComponent(args.osVersion)}&browser=${encodeURIComponent(args.browser)}&browser_version=${encodeURIComponent(args.browserVersion)}&scale_to_fit=true&url=${encodeURIComponent(args.url)}&resolution=responsive-mode&speed=1&local=${args.isLocal ? "true" : "false"}&start=true"`;
+  // Sanitize all input parameters
+  const sanitizedArgs = {
+    browser: sanitizeUrlParam(args.browser),
+    os: sanitizeUrlParam(args.os),
+    osVersion: sanitizeUrlParam(args.osVersion),
+    url: sanitizeUrlParam(args.url),
+    browserVersion: sanitizeUrlParam(args.browserVersion),
+    isLocal: args.isLocal,
+  };
+
+  // Construct URL with encoded parameters
+  const params = new URLSearchParams({
+    os: sanitizedArgs.os,
+    os_version: sanitizedArgs.osVersion,
+    browser: sanitizedArgs.browser,
+    browser_version: sanitizedArgs.browserVersion,
+    scale_to_fit: "true",
+    url: sanitizedArgs.url,
+    resolution: "responsive-mode",
+    speed: "1",
+    local: sanitizedArgs.isLocal ? "true" : "false",
+    start: "true",
+  });
+
+  const launchUrl = `https://live.browserstack.com/dashboard#${params.toString()}`;
 
   try {
-    const start =
+    // Use platform-specific commands with proper escaping
+    const command =
       process.platform === "darwin"
-        ? "open"
+        ? ["open", launchUrl]
         : process.platform === "win32"
-          ? "start"
-          : "xdg-open";
-    childProcess.exec(start + " " + launchUrl);
+          ? ["cmd", "/c", "start", launchUrl]
+          : ["xdg-open", launchUrl];
+
+    // Use spawn instead of exec to prevent shell injection
+    const child = childProcess.spawn(command[0], command.slice(1), {
+      stdio: "ignore",
+      detached: true,
+    });
+
+    // Handle process errors
+    child.on("error", (error) => {
+      logger.error(
+        `Failed to open browser automatically: ${error}. Please open this URL manually: ${launchUrl}`,
+      );
+    });
+
+    // Unref the child process to allow the parent to exit
+    child.unref();
 
     return launchUrl;
   } catch (error) {

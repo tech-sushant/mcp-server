@@ -46,6 +46,11 @@ export async function startAppLiveSession(args: {
   }
 
   const { app_url } = await uploadApp(args.appPath);
+
+  if (!app_url.match("bs://")) {
+    throw new Error("The app path is not a valid BrowserStack app URL.");
+  }
+
   const launchUrl = await startSession({
     appUrl: app_url,
     desiredPlatform: args.desiredPlatform as "android" | "ios",

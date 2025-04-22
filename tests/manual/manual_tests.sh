@@ -170,8 +170,8 @@ echo -e "\n\t Starting manual tests...\n\n"
 
 # testO11Y
 # sleep 5
-# testAppLive
+testAppLive
 # sleep 5
-testBrowserLive
+# testBrowserLive
 sleep 5
 # testAccessibility
