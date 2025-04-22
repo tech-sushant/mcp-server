@@ -1,6 +1,6 @@
 # BrowserStack MCP Server
 
-<div style="display: flex; justify-content: space-between; padding: 20px;">
+<div align="center">
 <img src="assets/browserstack-logo.png" alt="BrowserStack Logo" height="100"> <img src="assets/mcp-logo.png" alt="MCP Server Logo" width="100">
 </div>
 
