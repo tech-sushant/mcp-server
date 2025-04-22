@@ -1,6 +1,6 @@
 {
   "name": "browserstack-mcp-server",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "BrowserStack's Official MCP Server",
   "main": "dist/index.js",
   "scripts": {
@@ -11,6 +11,12 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\""
   },
+  "bin": {
+    "browserstack-mcp-server": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
