@@ -1,8 +1,12 @@
 {
-  "name": "browserstack-mcp-server",
+  "name": "@browserstack/mcp-server",
   "version": "1.0.0",
   "description": "BrowserStack's Official MCP Server",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/browserstack/mcp-server.git"
+  },
   "scripts": {
     "build": "npm run lint && npm run format && npm test && tsc",
     "start": "node dist/index.js",
@@ -17,7 +21,15 @@
   "files": [
     "dist"
   ],
-  "keywords": [],
+  "keywords": [
+    "mcp",
+    "browserstack",
+    "testing",
+    "automation"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
