@@ -28,7 +28,7 @@ async function runAccessibilityScan(
       content: [
         {
           type: "text",
-          text: `Successfully queued accessibility scan, the user will get a report via email once the scan is complete.`,
+          text: `Successfully queued accessibility scan, you will get a report via email within 5 minutes.`,
         },
       ],
     };

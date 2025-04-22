@@ -91,7 +91,7 @@ export default function addBrowserLiveTools(server: McpServer) {
       desiredOS: z
         .string()
         .describe(
-          "The operating system to run the browser on. Example: 'Windows', 'macOS', 'iOS', 'Android'",
+          "The operating system to run the browser on. Example: 'Windows', 'OS X'",
         ),
       desiredURL: z
         .string()
