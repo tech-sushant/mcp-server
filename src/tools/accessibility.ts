@@ -37,7 +37,7 @@ async function runAccessibilityScan(
       content: [
         {
           type: "text",
-          text: `Failed to start accessibility scan: ${error instanceof Error ? error.message : "Unknown error"}`,
+          text: `Failed to start accessibility scan: ${error instanceof Error ? error.message : "Unknown error"}. Please open an issue on GitHub if the problem persists`,
           isError: true,
         },
       ],

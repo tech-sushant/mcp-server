@@ -112,7 +112,7 @@ export default function addBrowserLiveTools(server: McpServer) {
           content: [
             {
               type: "text",
-              text: `Failed to start a browser live session. Error: ${error}`,
+              text: `Failed to start a browser live session. Error: ${error}. Please open an issue on GitHub if the problem persists`,
               isError: true,
             },
           ],

@@ -91,7 +91,7 @@ export default function addSDKTools(server: McpServer) {
           content: [
             {
               type: "text",
-              text: `Failed to bootstrap project with BrowserStack SDK. Error: ${error}`,
+              text: `Failed to bootstrap project with BrowserStack SDK. Error: ${error}. Please open an issue on GitHub if the problem persists`,
               isError: true,
             },
           ],

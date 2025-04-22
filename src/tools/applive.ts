@@ -102,7 +102,7 @@ export default function addAppLiveTools(server: McpServer) {
           content: [
             {
               type: "text",
-              text: `Failed to start an app live session. Error: ${error}`,
+              text: `Failed to start an app live session. Error: ${error}. Please open an issue on GitHub if the problem persists`,
               isError: true,
             },
           ],
