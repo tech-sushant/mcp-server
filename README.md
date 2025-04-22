@@ -6,6 +6,7 @@
 
 <h3 align="center">One Platform For All Your Testing Needs</h4>
 
+## 📖 Overview
 Enable every developer and tester in your team, whether they are testing manually, starting their automation journey, or scaling test automation.
 BrowserStack MCP Server allows you to use our cutting-edge [Test Platform](https://www.browserstack.com/test-platform) directly from your favorite AI tools.
 
@@ -67,10 +68,6 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
 - Run tests written in Jest, Playwright, Selenium, and more on BrowserStack's [Test Platform](https://www.browserstack.com/test-platform)
 - **Accessibility Testing**: Ensure WCAG and ADA compliance with our [Accessibility Testing](https://www.browserstack.com/accessibility-testing) tool
 
-## 🚀 Overview
-
-BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https://www.browserstack.com/test-platform) directly into your development workflow. It enables you to run tests, debug applications, and perform cross-browser testing through any [MCP-compliant client](https://modelcontextprotocol.io/clients#feature-support-matrix).
-
 ## 🛠️ Installation
 
 1. **Create a BrowserStack Account**
@@ -79,7 +76,7 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
    - Note down your `username` and `access_key` from [Account Settings](https://www.browserstack.com/accounts/profile/details)
 
 2. **Install the MCP Server**
-   - On VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
+   - VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
    ```json
    {
      "servers": {
@@ -94,7 +91,7 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
      }
    }
    ```
-   - On Cursor: `.cursor/mcp.json`:
+   - Cursor: `.cursor/mcp.json`:
    ```json
    {
      "mcpServers": {
@@ -109,7 +106,7 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
      }
    }
    ```
-   - On Claude Desktop: `~/claude_desktop_config.json`:
+   - Claude Desktop: `~/claude_desktop_config.json`:
    ```json
    {
      "mcpServers": {
