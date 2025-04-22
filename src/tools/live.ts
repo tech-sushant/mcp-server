@@ -79,7 +79,7 @@ export default function addBrowserLiveTools(server: McpServer) {
     "Use this tool when user wants to manually check their website on a particular browser and OS combination using BrowserStack's cloud infrastructure. Can be used to debug layout issues, compatibility problems, etc.",
     {
       desiredBrowser: z
-        .string()
+        .enum(["Chrome", "IE", "Firefox", "Safari", "Edge"])
         .describe(
           "The browser to run the test on. Example: 'Chrome', 'IE', 'Safari', 'Edge'. Always ask the user for the browser they want to use, do not assume it.",
         ),
@@ -89,7 +89,7 @@ export default function addBrowserLiveTools(server: McpServer) {
           "The OS version to run the browser on. Example: '10' for Windows, '12' for macOS, '14' for iOS",
         ),
       desiredOS: z
-        .string()
+        .enum(["Windows", "OS X"])
         .describe(
           "The operating system to run the browser on. Example: 'Windows', 'OS X'",
         ),
