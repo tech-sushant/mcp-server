@@ -4,15 +4,21 @@
 <img src="assets/browserstack-logo.png" alt="BrowserStack Logo" height="100"> <img src="assets/mcp-logo.png" alt="MCP Server Logo" width="100">
 </div>
 
-▶️ [See it in action](https://www.youtube.com/watch?v=vy1sx0J7sTk)
+<h2 align="center">One Platform For All Your Testing Needs</h2>
 
-[![Watch the video](https://img.youtube.com/vi/vy1sx0J7sTk/0.jpg)](https://www.youtube.com/watch?v=vy1sx0J7sTk)
+Enable every developer and tester in your team, whether they are testing manually, starting their automation journey, or scaling test automation.
+BrowserStack MCP Server allows you to use our cutting-edge [Test Platform](https://www.browserstack.com/test-platform) directly from your favorite AI tools.
 
+### Why BrowserStack ?
+
+<p align="center">
+  <img src="assets/overview.png" alt="overview">
+</p>
 
 ## 💡 Usage Examples
-After installing the BrowserStack MCP Server, use the prompts below in your favorite AI clients: Github Copilot, Cursor, Claude Desktop, etc.
 
 ### 📱 Manual App Testing
+
 Use the following prompts to use your **mobile apps** on BrowserStack's extensive cloud of real devices. Stop using emulators!
 
 ```bash
@@ -23,25 +29,25 @@ Use the following prompts to use your **mobile apps** on BrowserStack's extensiv
 "My app crashed on Android 14 device, can you help me debug?"
 ```
 
-- Test your mobile apps on BrowserStack's extensive cloud of real devices
-- Unlike emulators, test your app's real-world performance on actual devices
-- Debug crashes and performance issues in real-time
-- Access all major devices and OS versions from our [device grid](https://www.browserstack.com/list-of-browsers-and-platforms/app_live).
+Video Walkthrough:
+[![Watch the video](https://img.youtube.com/vi/vy1sx0J7sTk/0.jpg)](https://www.youtube.com/watch?v=vy1sx0J7sTk)
 
+- Unlike emulators, test your app's real-world performance on actual devices. With advanced [App-Profiling features](https://www.browserstack.com/docs/app-live/app-performance-testing), you can debug crashes and performance issues in real-time.
+- Access all major devices and OS versions from our [device grid](https://www.browserstack.com/list-of-browsers-and-platforms/app_live), We have strict SLAs to provision our global datacenters with newly released devices on [launch day](https://www.browserstack.com/blog/browserstack-launches-iphone-15-on-day-0-behind-the-scenes/).
 
 ### 🌐 Manual Web Testing
+
 Similar to the app testing, you can use the following prompts to test your **websites** on BrowserStack's extensive cloud of real browsers and devices. Don't have a Windows machine to test on Internet Explorer? We've got you covered!
 
 ```bash
 # Test your local websites
-"open my website hosted on localhost:3001 on a internet explorer"
+"open my website hosted on localhost:3001 on Internet Explorer"
 ```
-- Test websites across different browsers and devices. We support all major browsers and devices.
-- Seamlessly test websites hosted locally, no need to deploy to a remote server!
 
+- Test websites across different browsers and devices. We support [every major browser](https://www.browserstack.com/list-of-browsers-and-platforms/live) across every major OS.
+- Seamlessly test websites hosted locally on your machine, no need to deploy to a remote server!
 
-
-### 🧪 Automated Testing (Playwright, Selenium, etc.)
+### 🧪 Automated Testing (Playwright, Selenium, A11y and more..)
 
 Use the following prompts to run/debug/fix your **automated tests** on BrowserStack's [Test Platform](https://www.browserstack.com/test-platform).
 
@@ -68,8 +74,8 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
 
 1. **Create a BrowserStack Account**
 
-   - Sign up at [BrowserStack](https://www.browserstack.com/signup)
-   - Get your credentials from [Account Settings](https://www.browserstack.com/accounts/profile/details)
+   - Sign up for [BrowserStack](https://www.browserstack.com/signup) if you don't have an account already.
+   - Note down your `username` and `access_key` from [Account Settings](https://www.browserstack.com/accounts/profile/details)
 
 2. **Install the MCP Server**
    - On VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
@@ -118,10 +124,11 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
    }
    ```
 
+
 ## 🤝 Recommended MCP Clients
 
-- **Github Copilot or Cursor** (Recommended for automated testing + debugging)
-- **Claude Desktop** (Recommended for manual testing)
+- We recommend using **Github Copilot or Cursor** for automated testing + debugging use cases.
+- For manual testing use cases (Live Testing), we recommend using **Claude Desktop**.
 
 ## ⚠️ Important Notes
 
@@ -130,19 +137,15 @@ BrowserStack MCP Server brings the power of BrowserStack's [Test Platform](https
 
 ## 📝 Contributing
 
-We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+We welcome contributions! Please open an issue to discuss any changes you'd like to make.
 
 ## 📞 Support
 
 For support, please:
 
 - Check our [documentation](https://www.browserstack.com/docs)
-- Open an issue in our [GitHub repository](https://github.com/browserstack/mcp-server)
-- Contact our [support team](https://www.browserstack.com/contact)
+- Open an issue in our [GitHub repository](https://github.com/browserstack/mcp-server) if you face any issues related to the MCP Server.
+- Contact our [support team](https://www.browserstack.com/contact) for any other queries.
 
 ## 🔗 Resources
 
