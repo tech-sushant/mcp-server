@@ -30,6 +30,7 @@ Use the following prompts to use your **mobile apps** on BrowserStack's extensiv
 ```
 
 Video Walkthrough:
+
 [![Watch the video](https://img.youtube.com/vi/vy1sx0J7sTk/0.jpg)](https://www.youtube.com/watch?v=vy1sx0J7sTk)
 
 - Unlike emulators, test your app's real-world performance on actual devices. With advanced [App-Profiling features](https://www.browserstack.com/docs/app-live/app-performance-testing), you can debug crashes and performance issues in real-time.
