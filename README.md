@@ -11,10 +11,10 @@
 
 </div>
 
-
 <h3 align="center">One Platform For All Your Testing Needs</h4>
 
 ## 📖 Overview
+
 Enable every developer and tester in your team, whether they are testing manually, starting their automation journey, or scaling test automation.
 BrowserStack MCP Server allows you to use our cutting-edge [Test Platform](https://www.browserstack.com/test-platform) directly from your favourite AI tools.
 
@@ -38,9 +38,14 @@ Use the following prompts to use your **mobile apps** on BrowserStack's extensiv
 "My app crashed on Android 14 device, can you help me debug?"
 ```
 
-Video Walkthrough:
-
-[![Watch the video](https://img.youtube.com/vi/vy1sx0J7sTk/0.jpg)](https://www.youtube.com/watch?v=vy1sx0J7sTk)
+<div>
+    <a href="https://www.youtube.com/watch?v=vy1sx0J7sTk">
+      <p>Watch Video For App Testing:</p>
+    </a>
+    <a href="https://www.youtube.com/watch?v=vy1sx0J7sTk">
+      <img src="assets/thumbnail.jpg">
+    </a>
+  </div>
 
 - Unlike emulators, test your app's real-world performance on actual devices. With advanced [App-Profiling features](https://www.browserstack.com/docs/app-live/app-performance-testing), you can debug crashes and performance issues in real-time.
 - Access all major devices and OS versions from our [device grid](https://www.browserstack.com/list-of-browsers-and-platforms/app_live), We have strict SLAs to provision our global datacenters with newly released devices on [launch day](https://www.browserstack.com/blog/browserstack-launches-iphone-15-on-day-0-behind-the-scenes/).
@@ -90,7 +95,9 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
    - Once you have an account (and purchased appropriate plan), note down your `username` and `access_key` from [Account Settings](https://www.browserstack.com/accounts/profile/details).
 
 2. **Install the MCP Server**
+
    - VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
+
    ```json
    {
      "servers": {
@@ -105,10 +112,12 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
      }
    }
    ```
-   * In VSCode, make sure to click on `Start` button in the MCP Server to start the server.
-   ![Start MCP Server](assets/vscode_install.png)
 
-   - For Cursor: `.cursor/mcp.json`:
+   - In VSCode, make sure to click on `Start` button in the MCP Server to start the server.
+     ![Start MCP Server](assets/vscode_install.png)
+
+   * For Cursor: `.cursor/mcp.json`:
+
    ```json
    {
      "mcpServers": {
@@ -123,7 +132,9 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
      }
    }
    ```
+
    - Claude Desktop: `~/claude_desktop_config.json`:
+
    ```json
    {
      "mcpServers": {
@@ -138,7 +149,6 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
      }
    }
    ```
-
 
 ## 🤝 Recommended MCP Clients
 
@@ -165,7 +175,6 @@ For support, please:
 ## 🚀 More Features Coming Soon
 
 Stay tuned for exciting updates! Have any suggestions? Please open an issue to discuss.
-
 
 ## 🔗 Resources
 
