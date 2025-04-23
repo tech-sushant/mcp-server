@@ -13,6 +13,7 @@ const nodejsInstructions = `
   \`\`\`json
   "browserstack-node-sdk": "latest"
   \`\`\`
+- Inform user to export BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY as environment variables.
 `;
 
 const pythonInstructions = `
