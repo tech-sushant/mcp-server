@@ -81,7 +81,13 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
 1. **Create a BrowserStack Account**
 
    - Sign up for [BrowserStack](https://www.browserstack.com/signup) if you don't have an account already.
-   - Note down your `username` and `access_key` from [Account Settings](https://www.browserstack.com/accounts/profile/details)
+
+   - ℹ️ If you have an open-source project, we'll be able to provide you with a [free plan](https://www.browserstack.com/open-source).
+   <div align="center">
+   <img src="assets/open-source-plan.png" alt="Open Source Plan">
+   </div>
+
+   - Once you have an account (and purchased appropriate plan), note down your `username` and `access_key` from [Account Settings](https://www.browserstack.com/accounts/profile/details).
 
 2. **Install the MCP Server**
    - VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
