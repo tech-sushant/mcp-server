@@ -6,7 +6,7 @@ const nodejsInstructions = `
 - Add new scripts to package.json for running tests on BrowserStack (use \`npx\` to trigger the sdk):
   \`\`\`json
   "scripts": {
-    "test:browserstack": "npx browserstack-node-sdk <test-framework>"
+    "test:browserstack": "npx browserstack-node-sdk <framework-specific-test-execution-command>"
   }
   \`\`\`
 - Add to dependencies:
