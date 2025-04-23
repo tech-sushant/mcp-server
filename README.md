@@ -16,7 +16,7 @@
 
 ## 📖 Overview
 Enable every developer and tester in your team, whether they are testing manually, starting their automation journey, or scaling test automation.
-BrowserStack MCP Server allows you to use our cutting-edge [Test Platform](https://www.browserstack.com/test-platform) directly from your favorite AI tools.
+BrowserStack MCP Server allows you to use our cutting-edge [Test Platform](https://www.browserstack.com/test-platform) directly from your favourite AI tools.
 
 ### Why BrowserStack ?
 
@@ -99,7 +99,10 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
      }
    }
    ```
-   - Cursor: `.cursor/mcp.json`:
+   * In VSCode, make sure to click on `Start` button in the MCP Server to start the server.
+   ![Start MCP Server](assets/vscode_install.png)
+
+   - For Cursor: `.cursor/mcp.json`:
    ```json
    {
      "mcpServers": {
