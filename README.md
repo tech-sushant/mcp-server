@@ -12,6 +12,14 @@
 </div>
 
 <h3 align="center">One Platform For All Your Testing Needs</h4>
+<div>
+    <a href="https://www.youtube.com/watch?v=sLA7K9v7qZc">
+      <p>Check Out The Video Below For An Overview:</p>
+    </a>
+    <a href="https://www.youtube.com/watch?v=sLA7K9v7qZc">
+      <img src="assets/thumbnail.webp">
+    </a>
+  </div>
 
 ## 📖 Overview
 
@@ -38,14 +46,6 @@ Use the following prompts to use your **mobile apps** on BrowserStack's extensiv
 "My app crashed on Android 14 device, can you help me debug?"
 ```
 
-<div>
-    <a href="https://www.youtube.com/watch?v=vy1sx0J7sTk">
-      <p>Watch Video For App Testing:</p>
-    </a>
-    <a href="https://www.youtube.com/watch?v=vy1sx0J7sTk">
-      <img src="assets/thumbnail.jpg">
-    </a>
-  </div>
 
 - Unlike emulators, test your app's real-world performance on actual devices. With advanced [App-Profiling features](https://www.browserstack.com/docs/app-live/app-performance-testing), you can debug crashes and performance issues in real-time.
 - Access all major devices and OS versions from our [device grid](https://www.browserstack.com/list-of-browsers-and-platforms/app_live), We have strict SLAs to provision our global datacenters with newly released devices on [launch day](https://www.browserstack.com/blog/browserstack-launches-iphone-15-on-day-0-behind-the-scenes/).
