@@ -52,11 +52,11 @@ Use the following prompts to use your **mobile apps** on BrowserStack's extensiv
 
 ### 🌐 Manual Web Testing
 
-Similar to the app testing, you can use the following prompts to test your **websites** on BrowserStack's extensive cloud of real browsers and devices. Don't have a Windows machine to test on Internet Explorer? We've got you covered!
+Similar to the app testing, you can use the following prompts to test your **websites** on BrowserStack's extensive cloud of real browsers and devices. Don't have Edge browser installed on your machine ? We've got you covered!
 
 ```bash
 # Test your local websites
-"open my website hosted on localhost:3001 on Internet Explorer"
+"open my website hosted on localhost:3001 on Edge"
 ```
 
 - Test websites across different browsers and devices. We support [every major browser](https://www.browserstack.com/list-of-browsers-and-platforms/live) across every major OS.
