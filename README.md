@@ -4,6 +4,10 @@
 <img src="assets/browserstack-logo.png" alt="BrowserStack Logo" height="100"> <img src="assets/mcp-logo.png" alt="MCP Server Logo" width="100">
 </div>
 
+<a href="https://glama.ai/mcp/servers/@browserstack/mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@browserstack/mcp-server/badge" alt="BrowserStack server MCP server" />
+</a>
+
 <div align="center">
 <a href="https://www.npmjs.com/package/@browserstack/mcp-server">
 <img alt="NPM Version" src="https://img.shields.io/npm/v/%40browserstack%2Fmcp-server">
