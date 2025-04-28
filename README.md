@@ -97,7 +97,8 @@ Use the following prompts to run/debug/fix your **automated tests** on BrowserSt
 
    - Once you have an account (and purchased appropriate plan), note down your `username` and `access_key` from [Account Settings](https://www.browserstack.com/accounts/profile/details).
 
-2. **Install the MCP Server**
+2. Ensure you are using Node version >= `18.0`. Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+3. **Install the MCP Server**
 
    - VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
 
