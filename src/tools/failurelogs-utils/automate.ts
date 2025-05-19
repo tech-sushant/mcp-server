@@ -4,7 +4,6 @@ import {
   HarFile,
   filterLinesByKeywords,
   validateLogResponse,
-  LogResponse,
 } from "./utils.js";
 
 const auth = Buffer.from(
@@ -14,7 +13,7 @@ const auth = Buffer.from(
 // NETWORK LOGS
 export async function retrieveNetworkFailures(
   sessionId: string,
-): Promise<LogResponse> {
+): Promise<string> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/networklogs`;
 
   const response = await fetch(url, {
@@ -25,45 +24,40 @@ export async function retrieveNetworkFailures(
     },
   });
 
-  const validationResult = validateLogResponse(response, "network logs");
-  if (validationResult) return validationResult;
+  const validationError = validateLogResponse(response, "network logs");
+  if (validationError) return validationError.message!;
 
   const networklogs: HarFile = await response.json();
-
-  // Filter for failure logs
   const failureEntries: HarEntry[] = networklogs.log.entries.filter(
-    (entry: HarEntry) => {
-      return (
-        entry.response.status === 0 ||
-        entry.response.status >= 400 ||
-        entry.response._error !== undefined
-      );
-    },
+    (entry: HarEntry) =>
+      entry.response.status === 0 ||
+      entry.response.status >= 400 ||
+      entry.response._error !== undefined
   );
-
-  return {
-    logs: failureEntries.map((entry: any) => ({
-      startedDateTime: entry.startedDateTime,
-      request: {
-        method: entry.request?.method,
-        url: entry.request?.url,
-        queryString: entry.request?.queryString,
-      },
-      response: {
-        status: entry.response?.status,
-        statusText: entry.response?.statusText,
-        _error: entry.response?._error,
-      },
-      serverIPAddress: entry.serverIPAddress,
-      time: entry.time,
-    })),
-  };
+  
+  return failureEntries.length > 0
+    ? `Network Failures (${failureEntries.length} found):\n${JSON.stringify(failureEntries.map((entry: any) => ({
+        startedDateTime: entry.startedDateTime,
+        request: {
+          method: entry.request?.method,
+          url: entry.request?.url,
+          queryString: entry.request?.queryString,
+        },
+        response: {
+          status: entry.response?.status,
+          statusText: entry.response?.statusText,
+          _error: entry.response?._error,
+        },
+        serverIPAddress: entry.serverIPAddress,
+        time: entry.time,
+      })), null, 2)}`
+    : "No network failures found";
 }
 
 // SESSION LOGS
 export async function retrieveSessionFailures(
   sessionId: string,
-): Promise<LogResponse> {
+): Promise<string> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/logs`;
 
   const response = await fetch(url, {
@@ -73,17 +67,20 @@ export async function retrieveSessionFailures(
     },
   });
 
-  const validationResult = validateLogResponse(response, "session logs");
-  if (validationResult) return validationResult;
+  const validationError = validateLogResponse(response, "session logs");
+  if (validationError) return validationError.message!;
 
   const logText = await response.text();
-  return { logs: filterSessionFailures(logText) };
+  const logs = filterSessionFailures(logText);
+  return logs.length > 0
+    ? `Session Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
+    : "No session failures found";
 }
 
 // CONSOLE LOGS
 export async function retrieveConsoleFailures(
   sessionId: string,
-): Promise<LogResponse> {
+): Promise<string> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/consolelogs`;
 
   const response = await fetch(url, {
@@ -93,11 +90,14 @@ export async function retrieveConsoleFailures(
     },
   });
 
-  const validationResult = validateLogResponse(response, "console logs");
-  if (validationResult) return validationResult;
+  const validationError = validateLogResponse(response, "console logs");
+  if (validationError) return validationError.message!;
 
   const logText = await response.text();
-  return { logs: filterConsoleFailures(logText) };
+  const logs = filterConsoleFailures(logText);
+  return logs.length > 0
+    ? `Console Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
+    : "No console failures found";
 }
 
 // FILTER: session logs

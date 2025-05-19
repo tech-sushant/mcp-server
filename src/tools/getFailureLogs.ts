@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
+import { trackMCP } from "../lib/instrumentation.js";
 
 import {
   retrieveNetworkFailures,
@@ -14,7 +15,7 @@ import {
   retrieveAppiumLogs,
   retrieveCrashLogs,
 } from "./failurelogs-utils/app-automate.js";
-import { trackMCP } from "../lib/instrumentation.js";
+
 import {
   AppAutomateLogType,
   AutomateLogType,
@@ -97,79 +98,37 @@ export async function getFailureLogs(args: {
       switch (logType) {
         case AutomateLogType.NetworkLogs: {
           response = await retrieveNetworkFailures(args.sessionId);
-          results.push({
-            type: "text",
-            text:
-              response.message ||
-              (response.logs && response.logs.length > 0
-                ? `Network Failures (${response.logs.length} found):\n${JSON.stringify(response.logs, null, 2)}`
-                : "No network failures found"),
-          });
+          results.push({ type: "text", text: response });
           break;
         }
 
         case AutomateLogType.SessionLogs: {
           response = await retrieveSessionFailures(args.sessionId);
-          results.push({
-            type: "text",
-            text:
-              response.message ||
-              (response.logs && response.logs.length > 0
-                ? `Session Failures (${response.logs.length} found):\n${JSON.stringify(response.logs, null, 2)}`
-                : "No session failures found"),
-          });
+          results.push({ type: "text", text: response });
           break;
         }
 
         case AutomateLogType.ConsoleLogs: {
           response = await retrieveConsoleFailures(args.sessionId);
-          results.push({
-            type: "text",
-            text:
-              response.message ||
-              (response.logs && response.logs.length > 0
-                ? `Console Failures (${response.logs.length} found):\n${JSON.stringify(response.logs, null, 2)}`
-                : "No console failures found"),
-          });
+          results.push({ type: "text", text: response });
           break;
         }
 
         case AppAutomateLogType.DeviceLogs: {
           response = await retrieveDeviceLogs(args.sessionId, args.buildId!);
-          results.push({
-            type: "text",
-            text:
-              response.message ||
-              (response.logs && response.logs.length > 0
-                ? `Device Failures (${response.logs.length} found):\n${JSON.stringify(response.logs, null, 2)}`
-                : "No device failures found"),
-          });
+          results.push({ type: "text", text: response });
           break;
         }
 
         case AppAutomateLogType.AppiumLogs: {
           response = await retrieveAppiumLogs(args.sessionId, args.buildId!);
-          results.push({
-            type: "text",
-            text:
-              response.message ||
-              (response.logs && response.logs.length > 0
-                ? `Appium Failures (${response.logs.length} found):\n${JSON.stringify(response.logs, null, 2)}`
-                : "No Appium failures found"),
-          });
+          results.push({ type: "text", text: response });
           break;
         }
 
         case AppAutomateLogType.CrashLogs: {
           response = await retrieveCrashLogs(args.sessionId, args.buildId!);
-          results.push({
-            type: "text",
-            text:
-              response.message ||
-              (response.logs && response.logs.length > 0
-                ? `Crash Failures (${response.logs.length} found):\n${JSON.stringify(response.logs, null, 2)}`
-                : "No crash failures found"),
-          });
+          results.push({ type: "text", text: response });
           break;
         }
       }

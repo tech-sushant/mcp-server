@@ -13,7 +13,7 @@ const auth = Buffer.from(
 export async function retrieveDeviceLogs(
   sessionId: string,
   buildId: string,
-): Promise<LogResponse> {
+): Promise<string> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/deviceLogs`;
 
   const response = await fetch(url, {
@@ -23,18 +23,21 @@ export async function retrieveDeviceLogs(
     },
   });
 
-  const validationResult = validateLogResponse(response, "device logs");
-  if (validationResult) return validationResult;
+  const validationError = validateLogResponse(response, "device logs");
+  if (validationError) return validationError.message!;
 
   const logText = await response.text();
-  return { logs: filterDeviceFailures(logText) };
+  const logs = filterDeviceFailures(logText);
+  return logs.length > 0
+    ? `Device Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
+    : "No device failures found";
 }
 
 // APPIUM LOGS
 export async function retrieveAppiumLogs(
   sessionId: string,
   buildId: string,
-): Promise<LogResponse> {
+): Promise<string> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/appiumlogs`;
 
   const response = await fetch(url, {
@@ -44,18 +47,21 @@ export async function retrieveAppiumLogs(
     },
   });
 
-  const validationResult = validateLogResponse(response, "Appium logs");
-  if (validationResult) return validationResult;
+  const validationError = validateLogResponse(response, "Appium logs");
+  if (validationError) return validationError.message!;
 
   const logText = await response.text();
-  return { logs: filterAppiumFailures(logText) };
+  const logs = filterAppiumFailures(logText);
+  return logs.length > 0
+    ? `Appium Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
+    : "No Appium failures found";
 }
 
 // CRASH LOGS
 export async function retrieveCrashLogs(
   sessionId: string,
   buildId: string,
-): Promise<LogResponse> {
+): Promise<string> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/crashlogs`;
 
   const response = await fetch(url, {
@@ -65,11 +71,14 @@ export async function retrieveCrashLogs(
     },
   });
 
-  const validationResult = validateLogResponse(response, "crash logs");
-  if (validationResult) return validationResult;
+  const validationError = validateLogResponse(response, "crash logs");
+  if (validationError) return validationError.message!;
 
   const logText = await response.text();
-  return { logs: filterCrashFailures(logText) };
+  const logs = filterCrashFailures(logText);
+  return logs.length > 0
+    ? `Crash Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
+    : "No crash failures found";
 }
 
 // FILTER HELPERS
