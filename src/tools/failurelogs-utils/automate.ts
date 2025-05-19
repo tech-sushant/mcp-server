@@ -3,9 +3,9 @@ import {
   HarEntry,
   HarFile,
   filterLinesByKeywords,
-  validateResponse,
+  validateLogResponse,
   LogResponse,
-} from "../../lib/utils.js";
+} from "./utils.js";
 
 const auth = Buffer.from(
   `${config.browserstackUsername}:${config.browserstackAccessKey}`,
@@ -25,7 +25,7 @@ export async function retrieveNetworkFailures(
     },
   });
 
-  const validationResult = validateResponse(response, "network logs");
+  const validationResult = validateLogResponse(response, "network logs");
   if (validationResult) return validationResult;
 
   const networklogs: HarFile = await response.json();
@@ -73,7 +73,7 @@ export async function retrieveSessionFailures(
     },
   });
 
-  const validationResult = validateResponse(response, "session logs");
+  const validationResult = validateLogResponse(response, "session logs");
   if (validationResult) return validationResult;
 
   const logText = await response.text();
@@ -93,7 +93,7 @@ export async function retrieveConsoleFailures(
     },
   });
 
-  const validationResult = validateResponse(response, "console logs");
+  const validationResult = validateLogResponse(response, "console logs");
   if (validationResult) return validationResult;
 
   const logText = await response.text();

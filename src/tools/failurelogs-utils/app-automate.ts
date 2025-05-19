@@ -1,9 +1,9 @@
 import config from "../../config.js";
 import {
   filterLinesByKeywords,
-  validateResponse,
+  validateLogResponse,
   LogResponse,
-} from "../../lib/utils.js";
+} from "./utils.js";
 
 const auth = Buffer.from(
   `${config.browserstackUsername}:${config.browserstackAccessKey}`,
@@ -23,7 +23,7 @@ export async function retrieveDeviceLogs(
     },
   });
 
-  const validationResult = validateResponse(response, "device logs");
+  const validationResult = validateLogResponse(response, "device logs");
   if (validationResult) return validationResult;
 
   const logText = await response.text();
@@ -44,7 +44,7 @@ export async function retrieveAppiumLogs(
     },
   });
 
-  const validationResult = validateResponse(response, "Appium logs");
+  const validationResult = validateLogResponse(response, "Appium logs");
   if (validationResult) return validationResult;
 
   const logText = await response.text();
@@ -65,7 +65,7 @@ export async function retrieveCrashLogs(
     },
   });
 
-  const validationResult = validateResponse(response, "crash logs");
+  const validationResult = validateLogResponse(response, "crash logs");
   if (validationResult) return validationResult;
 
   const logText = await response.text();
