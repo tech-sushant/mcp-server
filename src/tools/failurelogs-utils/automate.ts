@@ -1,13 +1,20 @@
 import config from "../../config.js";
-import { HarEntry, HarFile } from "../../lib/utils.js";
-import { assertOkResponse, filterLinesByKeywords } from "../../lib/utils.js";
+import {
+  HarEntry,
+  HarFile,
+  filterLinesByKeywords,
+  validateResponse,
+  LogResponse,
+} from "../../lib/utils.js";
 
 const auth = Buffer.from(
   `${config.browserstackUsername}:${config.browserstackAccessKey}`,
 ).toString("base64");
 
 // NETWORK LOGS
-export async function retrieveNetworkFailures(sessionId: string): Promise<any> {
+export async function retrieveNetworkFailures(
+  sessionId: string,
+): Promise<LogResponse> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/networklogs`;
 
   const response = await fetch(url, {
@@ -18,7 +25,8 @@ export async function retrieveNetworkFailures(sessionId: string): Promise<any> {
     },
   });
 
-  await assertOkResponse(response, "network logs");
+  const validationResult = validateResponse(response, "network logs");
+  if (validationResult) return validationResult;
 
   const networklogs: HarFile = await response.json();
 
@@ -33,28 +41,29 @@ export async function retrieveNetworkFailures(sessionId: string): Promise<any> {
     },
   );
 
-  // Return only the failure entries with some context
-  return failureEntries.map((entry: any) => ({
-    startedDateTime: entry.startedDateTime,
-    request: {
-      method: entry.request?.method,
-      url: entry.request?.url,
-      queryString: entry.request?.queryString,
-    },
-    response: {
-      status: entry.response?.status,
-      statusText: entry.response?.statusText,
-      _error: entry.response?._error,
-    },
-    serverIPAddress: entry.serverIPAddress,
-    time: entry.time,
-  }));
+  return {
+    logs: failureEntries.map((entry: any) => ({
+      startedDateTime: entry.startedDateTime,
+      request: {
+        method: entry.request?.method,
+        url: entry.request?.url,
+        queryString: entry.request?.queryString,
+      },
+      response: {
+        status: entry.response?.status,
+        statusText: entry.response?.statusText,
+        _error: entry.response?._error,
+      },
+      serverIPAddress: entry.serverIPAddress,
+      time: entry.time,
+    })),
+  };
 }
 
 // SESSION LOGS
 export async function retrieveSessionFailures(
   sessionId: string,
-): Promise<string[]> {
+): Promise<LogResponse> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/logs`;
 
   const response = await fetch(url, {
@@ -64,16 +73,17 @@ export async function retrieveSessionFailures(
     },
   });
 
-  await assertOkResponse(response, "session logs");
+  const validationResult = validateResponse(response, "session logs");
+  if (validationResult) return validationResult;
 
   const logText = await response.text();
-  return filterSessionFailures(logText);
+  return { logs: filterSessionFailures(logText) };
 }
 
 // CONSOLE LOGS
 export async function retrieveConsoleFailures(
   sessionId: string,
-): Promise<string[]> {
+): Promise<LogResponse> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/consolelogs`;
 
   const response = await fetch(url, {
@@ -83,10 +93,11 @@ export async function retrieveConsoleFailures(
     },
   });
 
-  await assertOkResponse(response, "console logs");
+  const validationResult = validateResponse(response, "console logs");
+  if (validationResult) return validationResult;
 
   const logText = await response.text();
-  return filterConsoleFailures(logText);
+  return { logs: filterConsoleFailures(logText) };
 }
 
 // FILTER: session logs

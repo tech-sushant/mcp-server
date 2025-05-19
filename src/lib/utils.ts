@@ -1,8 +1,8 @@
 import sharp from "sharp";
 
-export function sanitizeUrlParam(param: string): string {
-  // Remove any characters that could be used for command injection
-  return param.replace(/[;&|`$(){}[\]<>]/g, "");
+export interface LogResponse {
+  logs?: any[];
+  message?: string;
 }
 
 export interface HarFile {
@@ -25,6 +25,29 @@ export interface HarEntry {
   };
   serverIPAddress?: string;
   time?: number;
+}
+
+export function validateResponse(
+  response: Response,
+  logType: string,
+): LogResponse | null {
+  if (!response.ok) {
+    if (response.status === 404) {
+      return { message: `No ${logType} available for this session` };
+    }
+    if (response.status === 401 || response.status === 403) {
+      return {
+        message: `Unable to access ${logType} - please check your credentials`,
+      };
+    }
+    return { message: `Unable to fetch ${logType} at this time` };
+  }
+  return null;
+}
+
+export function sanitizeUrlParam(param: string): string {
+  // Remove any characters that could be used for command injection
+  return param.replace(/[;&|`$(){}[\]<>]/g, "");
 }
 
 const ONE_MB = 1048576;

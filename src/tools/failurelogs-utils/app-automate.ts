@@ -1,5 +1,9 @@
 import config from "../../config.js";
-import { assertOkResponse, filterLinesByKeywords } from "../../lib/utils.js";
+import {
+  filterLinesByKeywords,
+  validateResponse,
+  LogResponse,
+} from "../../lib/utils.js";
 
 const auth = Buffer.from(
   `${config.browserstackUsername}:${config.browserstackAccessKey}`,
@@ -9,7 +13,7 @@ const auth = Buffer.from(
 export async function retrieveDeviceLogs(
   sessionId: string,
   buildId: string,
-): Promise<string[]> {
+): Promise<LogResponse> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/deviceLogs`;
 
   const response = await fetch(url, {
@@ -19,17 +23,18 @@ export async function retrieveDeviceLogs(
     },
   });
 
-  await assertOkResponse(response, "device logs");
+  const validationResult = validateResponse(response, "device logs");
+  if (validationResult) return validationResult;
 
   const logText = await response.text();
-  return filterDeviceFailures(logText);
+  return { logs: filterDeviceFailures(logText) };
 }
 
 // APPIUM LOGS
 export async function retrieveAppiumLogs(
   sessionId: string,
   buildId: string,
-): Promise<string[]> {
+): Promise<LogResponse> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/appiumlogs`;
 
   const response = await fetch(url, {
@@ -39,17 +44,18 @@ export async function retrieveAppiumLogs(
     },
   });
 
-  await assertOkResponse(response, "Appium logs");
+  const validationResult = validateResponse(response, "Appium logs");
+  if (validationResult) return validationResult;
 
   const logText = await response.text();
-  return filterAppiumFailures(logText);
+  return { logs: filterAppiumFailures(logText) };
 }
 
 // CRASH LOGS
 export async function retrieveCrashLogs(
   sessionId: string,
   buildId: string,
-): Promise<string[]> {
+): Promise<LogResponse> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/crashlogs`;
 
   const response = await fetch(url, {
@@ -59,14 +65,14 @@ export async function retrieveCrashLogs(
     },
   });
 
-  await assertOkResponse(response, "crash logs");
+  const validationResult = validateResponse(response, "crash logs");
+  if (validationResult) return validationResult;
 
   const logText = await response.text();
-  return filterCrashFailures(logText);
+  return { logs: filterCrashFailures(logText) };
 }
 
 // FILTER HELPERS
-
 export function filterDeviceFailures(logText: string): string[] {
   const keywords = [
     "error",
