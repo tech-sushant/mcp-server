@@ -2,7 +2,8 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import packageJson from "../package.json" with { type: "json" };
+
+import packageJson from "../package.json";
 import "dotenv/config";
 import logger from "./logger.js";
 import addSDKTools from "./tools/bstack-sdk.js";
