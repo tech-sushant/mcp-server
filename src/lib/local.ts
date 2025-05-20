@@ -73,7 +73,7 @@ export async function killExistingBrowserStackLocalProcesses() {
   }
 }
 
-export async function ensureLocalBinarySetup(): Promise<void> {
+export async function ensureLocalBinarySetup(localIdentifier?: string): Promise<void> {
   logger.info(
     "Ensuring local binary setup as it is required for private URLs...",
   );
@@ -86,6 +86,7 @@ export async function ensureLocalBinarySetup(): Promise<void> {
       {
         key: config.browserstackAccessKey,
         username: config.browserstackUsername,
+        ...(localIdentifier ? { localIdentifier } : {}),
       },
       (error?: Error) => {
         if (error) {
