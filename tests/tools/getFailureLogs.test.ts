@@ -111,24 +111,29 @@ describe('BrowserStack Failure Logs', () => {
   });
 
   describe('Automate Session Logs', () => {
-    const mockNetworkFailures = {
-      logs: [
+    const mockNetworkFailures =
+      'Network Failures (1 found):\n' +
+      JSON.stringify([
         {
           startedDateTime: '2024-03-20T10:00:00Z',
           request: { method: 'GET', url: 'https://test.com' },
-          response: { status: 404, statusText: 'Not Found' }
-        }
-      ]
-    };
+          response: { status: 404, statusText: 'Not Found' },
+          serverIPAddress: undefined,
+          time: undefined,
+        },
+      ], null, 2);
 
     beforeEach(() => {
       // Reset all mocks
       vi.clearAllMocks();
-      
-      // Setup mock implementations with LogResponse objects
+      // Setup mock implementations with string return values
       vi.mocked(automate.retrieveNetworkFailures).mockResolvedValue(mockNetworkFailures);
-      vi.mocked(automate.retrieveSessionFailures).mockResolvedValue({ logs: ['[ERROR] Test failed'] });
-      vi.mocked(automate.retrieveConsoleFailures).mockResolvedValue({ logs: ['Uncaught TypeError'] });
+      vi.mocked(automate.retrieveSessionFailures).mockResolvedValue(
+        'Session Failures (1 found):\n' + JSON.stringify(['[ERROR] Test failed'], null, 2)
+      );
+      vi.mocked(automate.retrieveConsoleFailures).mockResolvedValue(
+        'Console Failures (1 found):\n' + JSON.stringify(['Uncaught TypeError'], null, 2)
+      );
     });
 
     it('should fetch network logs successfully', async () => {
@@ -170,9 +175,15 @@ describe('BrowserStack Failure Logs', () => {
 
   describe('App-Automate Session Logs', () => {
     beforeEach(() => {
-      vi.mocked(appAutomate.retrieveDeviceLogs).mockResolvedValue({ logs: ['Fatal Exception: NullPointerException'] });
-      vi.mocked(appAutomate.retrieveAppiumLogs).mockResolvedValue({ logs: ['Error: Element not found'] });
-      vi.mocked(appAutomate.retrieveCrashLogs).mockResolvedValue({ logs: ['Application crashed due to signal 11'] });
+      vi.mocked(appAutomate.retrieveDeviceLogs).mockResolvedValue(
+        'Device Failures (1 found):\n' + JSON.stringify(['Fatal Exception: NullPointerException'], null, 2)
+      );
+      vi.mocked(appAutomate.retrieveAppiumLogs).mockResolvedValue(
+        'Appium Failures (1 found):\n' + JSON.stringify(['Error: Element not found'], null, 2)
+      );
+      vi.mocked(appAutomate.retrieveCrashLogs).mockResolvedValue(
+        'Crash Failures (1 found):\n' + JSON.stringify(['Application crashed due to signal 11'], null, 2)
+      );
     });
 
     it('should fetch device logs successfully', async () => {
@@ -217,7 +228,7 @@ describe('BrowserStack Failure Logs', () => {
 
   describe('Error Handling', () => {
     it('should handle empty log responses', async () => {
-      vi.mocked(automate.retrieveNetworkFailures).mockResolvedValue({ logs: [] });
+      vi.mocked(automate.retrieveNetworkFailures).mockResolvedValue('No network failures found');
 
       const result = await getFailureLogs({
         sessionId: mockSessionId,
