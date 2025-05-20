@@ -1,6 +1,6 @@
 import logger from "../logger.js";
 import config from "../config.js";
-import packageJson from "../../package.json";
+import packageJson from "../../package.json" with { type: "json" };
 import axios from "axios";
 
 interface MCPEventPayload {
