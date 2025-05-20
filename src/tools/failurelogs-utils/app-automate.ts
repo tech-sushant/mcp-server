@@ -2,7 +2,6 @@ import config from "../../config.js";
 import {
   filterLinesByKeywords,
   validateLogResponse,
-  LogResponse,
 } from "./utils.js";
 
 const auth = Buffer.from(
