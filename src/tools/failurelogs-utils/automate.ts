@@ -32,25 +32,29 @@ export async function retrieveNetworkFailures(
     (entry: HarEntry) =>
       entry.response.status === 0 ||
       entry.response.status >= 400 ||
-      entry.response._error !== undefined
+      entry.response._error !== undefined,
   );
-  
+
   return failureEntries.length > 0
-    ? `Network Failures (${failureEntries.length} found):\n${JSON.stringify(failureEntries.map((entry: any) => ({
-        startedDateTime: entry.startedDateTime,
-        request: {
-          method: entry.request?.method,
-          url: entry.request?.url,
-          queryString: entry.request?.queryString,
-        },
-        response: {
-          status: entry.response?.status,
-          statusText: entry.response?.statusText,
-          _error: entry.response?._error,
-        },
-        serverIPAddress: entry.serverIPAddress,
-        time: entry.time,
-      })), null, 2)}`
+    ? `Network Failures (${failureEntries.length} found):\n${JSON.stringify(
+        failureEntries.map((entry: any) => ({
+          startedDateTime: entry.startedDateTime,
+          request: {
+            method: entry.request?.method,
+            url: entry.request?.url,
+            queryString: entry.request?.queryString,
+          },
+          response: {
+            status: entry.response?.status,
+            statusText: entry.response?.statusText,
+            _error: entry.response?._error,
+          },
+          serverIPAddress: entry.serverIPAddress,
+          time: entry.time,
+        })),
+        null,
+        2,
+      )}`
     : "No network failures found";
 }
 

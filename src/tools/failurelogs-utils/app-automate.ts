@@ -1,8 +1,5 @@
 import config from "../../config.js";
-import {
-  filterLinesByKeywords,
-  validateLogResponse,
-} from "./utils.js";
+import { filterLinesByKeywords, validateLogResponse } from "./utils.js";
 
 const auth = Buffer.from(
   `${config.browserstackUsername}:${config.browserstackAccessKey}`,
