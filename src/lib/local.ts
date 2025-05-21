@@ -81,13 +81,22 @@ export async function ensureLocalBinarySetup(localIdentifier?: string): Promise<
   const localBinary = new Local();
   await killExistingBrowserStackLocalProcesses();
 
+  const requestBody: {
+    key: string;
+    username: string;
+    localIdentifier?: string;
+  } = {
+    key: config.browserstackAccessKey,
+    username: config.browserstackUsername
+  };
+
+  if (localIdentifier) {
+    requestBody.localIdentifier = localIdentifier;
+  }
+
   return await new Promise((resolve, reject) => {
     localBinary.start(
-      {
-        key: config.browserstackAccessKey,
-        username: config.browserstackUsername,
-        ...(localIdentifier ? { localIdentifier } : {}),
-      },
+      requestBody,
       (error?: Error) => {
         if (error) {
           logger.error(

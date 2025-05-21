@@ -33,7 +33,8 @@ export class AccessibilityScanner {
     // Check if any URL is local
     const hasLocal = urlList.some(isLocalURL);
     const localIdentifier = crypto.randomUUID();
-    const localHosts = new Set(["127.0.0.1", "localhost"]);
+    const LOCAL_IP = "127.0.0.1";
+    const BS_LOCAL_DOMAIN = "bs-local.com";
 
     if (hasLocal) {
       await ensureLocalBinarySetup(localIdentifier);
@@ -44,8 +45,8 @@ export class AccessibilityScanner {
     const transformedUrlList = urlList.map((url) => {
       try {
         const parsed = new URL(url);
-        if (localHosts.has(parsed.hostname)) {
-          parsed.hostname = "bs-local.com";
+        if (parsed.hostname === LOCAL_IP) {
+          parsed.hostname = BS_LOCAL_DOMAIN;
           return parsed.toString();
         }
         return url;
@@ -55,20 +56,22 @@ export class AccessibilityScanner {
       }
     });
 
-    const requestBody = {
+    const baseRequestBody = {
       name,
       urlList: transformedUrlList,
       recurring: false,
-      ...(hasLocal
-        ? {
-            local: true,
-            localTestingInfo: {
-              localIdentifier: localIdentifier,
-              localEnabled: true,
-            },
-          }
-        : {}),
     };
+
+    let requestBody = baseRequestBody;
+    if (hasLocal) {
+      const localConfig = {
+        localTestingInfo: {
+          localIdentifier,
+          localEnabled: true,
+        }
+      };
+      requestBody = { ...baseRequestBody, ...localConfig };
+    }
 
     try {
       const { data } = await axios.post<AccessibilityScanResponse>(
