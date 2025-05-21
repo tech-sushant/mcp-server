@@ -72,6 +72,6 @@ jobs:
           body: |
             ${{ steps.set_release_info.outputs.body }}
 
-            • Published by ${{ github.actor }}
+            Published by ${{ github.actor }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
