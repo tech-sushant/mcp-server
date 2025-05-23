@@ -2,14 +2,6 @@ name: "Release New Version"
 
 on:
   workflow_dispatch:
-    inputs:
-      release_title:
-        description: "Title for the release"
-        required: true
-      release_body:
-        description: "Additional notes (optional)"
-        required: false
-        default: ""
 
 permissions:
   contents: write
@@ -115,10 +107,8 @@ jobs:
         uses: actions/create-release@v1
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: ${{ github.event.inputs.release_title }}
+          release_name: ${{ steps.get_version.outputs.version }}
           body: |
-            ${{ github.event.inputs.release_body }}
-
             ${{ steps.fetch_prs.outputs.pr_list }}
 
             Published by ${{ github.actor }}
