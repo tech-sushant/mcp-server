@@ -37,49 +37,36 @@ function extractHealedSelectors(logText: string): SelectorMapping[] {
 
   // Pattern to match preceding selector requests
   const requestPattern =
-    /POST \/session\/[^/]+\/element.*?"using":"css selector","value":"(.*?)"/g;
+    /POST \/session\/[^/]+\/element.*?"using":"css selector","value":"(.*?)"/;
 
   // Find all successful healed selectors with their line numbers and context
-  const healedSelectors: Array<{
-    selector: string;
-    lineNumber: number;
-    context: { before: string; after: string };
-  }> = [];
+  const healedMappings: SelectorMapping[] = [];
 
-  logLines.forEach((line, index) => {
-    const match = line.match(selfhealPattern);
+  for (let i = 0; i < logLines.length; i++) {
+    const match = logLines[i].match(selfhealPattern);
     if (match) {
-      const beforeLine = index > 0 ? logLines[index - 1] : "";
-      const afterLine = index < logLines.length - 1 ? logLines[index + 1] : "";
+      const beforeLine = i > 0 ? logLines[i - 1] : "";
+      const afterLine = i < logLines.length - 1 ? logLines[i + 1] : "";
 
-      healedSelectors.push({
-        selector: match[1],
-        lineNumber: index,
+      // Look backwards to find the most recent original selector request
+      let originalSelector = "UNKNOWN";
+      for (let j = i - 1; j >= 0; j--) {
+        const requestMatch = logLines[j].match(requestPattern);
+        if (requestMatch) {
+          originalSelector = requestMatch[1];
+          break;
+        }
+      }
+
+      healedMappings.push({
+        originalSelector,
+        healedSelector: match[1],
         context: {
           before: beforeLine,
           after: afterLine,
         },
       });
     }
-  });
-
-  // Find all selector requests
-  const selectorRequests: string[] = [];
-  let requestMatch;
-  while ((requestMatch = requestPattern.exec(logText)) !== null) {
-    selectorRequests.push(requestMatch[1]);
-  }
-
-  // Pair each healed selector with its corresponding original selector
-  const healedMappings: SelectorMapping[] = [];
-  const minLength = Math.min(selectorRequests.length, healedSelectors.length);
-
-  for (let i = 0; i < minLength; i++) {
-    healedMappings.push({
-      originalSelector: selectorRequests[i],
-      healedSelector: healedSelectors[i].selector,
-      context: healedSelectors[i].context,
-    });
   }
 
   return healedMappings;
