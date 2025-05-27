@@ -30,7 +30,7 @@ export async function fetchSelfHealSelectorTool(args: {
 export default function addSelfHealTools(server: McpServer) {
   server.tool(
     "fetchSelfHealSelector",
-    "Fetch self-healing selector suggestions for a broken selector",
+    "Retrieves AI-generated, self-healed selectors for a BrowserStack Automate session to resolve flaky tests caused by dynamic DOM changes.",
     {
       sessionId: z.string().describe("The session ID of the test run"),
     },
