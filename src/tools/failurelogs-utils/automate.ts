@@ -178,3 +178,40 @@ export function filterHookRunFailures(logText: string): string[] {
 
   return filterLinesByKeywords(logText, keywords);
 }
+
+export function filterSeleniumFailures(logText: string): string[] {
+  const keywords = [
+    "NoSuchElementException",
+    "TimeoutException",
+    "StaleElementReferenceException",
+    "ElementNotInteractableException",
+    "ElementClickInterceptedException",
+    "InvalidSelectorException",
+    "SessionNotCreatedException",
+    "InvalidSessionIdException",
+    "WebDriverException",
+    "error",
+    "exception",
+    "fail"
+  ];
+  return filterLinesByKeywords(logText, keywords);
+}
+
+
+export function filterPlaywrightFailures(logText: string): string[] {
+  const keywords = [
+    "TimeoutError",
+    "page crashed",
+    "browser closed",
+    "navigation timeout",
+    "element handle is detached",
+    "protocol error",
+    "execution context was destroyed",
+    "strict mode violation",
+    "network error",
+    "error",
+    "exception",
+    "fail"
+  ];
+  return filterLinesByKeywords(logText, keywords);
+}

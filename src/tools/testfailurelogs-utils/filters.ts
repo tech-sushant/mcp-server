@@ -16,6 +16,8 @@ import {
 import {
   filterSDKFailures,
   filterHookRunFailures,
+  filterSeleniumFailures,
+  filterPlaywrightFailures,
 } from "../failurelogs-utils/automate.js";
 import {
   filterLogsByTimestamp,
@@ -25,6 +27,7 @@ import {
   filterLogsByTimestampSelenium,
   filterLogsByTimestampDevice,
   filterLogsByTimestampAppium,
+  filterLogsByTimestampPlaywright
 } from "./utils.js";
 import { BrowserstackLogTypes } from "../../lib/constants.js";
 
@@ -374,8 +377,9 @@ export async function validateAndFilterSeleniumLogs(
       ? filterLogsByTimestampSelenium(logText, startTime, endTime)
       : logText.split("\n").filter((line) => line.trim());
 
+  const logs = filterSeleniumFailures(filteredLines.join("\n"));
   return filteredLines.length > 0
-    ? `Selenium Failures (${filteredLines.length} found):\n${JSON.stringify(filteredLines, null, 2)}`
+    ? `Selenium Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
     : "No Selenium failures found";
 }
 
@@ -393,8 +397,8 @@ export async function validateAndFilterPlaywrightLogs(
     startTime && endTime
       ? filterLogsByTimestampPlaywright(logText, startTime, endTime)
       : logText.split("\n").filter((line) => line.trim());
-
+  const logs = filterPlaywrightFailures(filteredLines.join("\n"));
   return filteredLines.length > 0
-    ? `Playwright Failures (${filteredLines.length} found):\n${JSON.stringify(filteredLines, null, 2)}`
+    ? `Playwright Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
     : "No Playwright failures found";
 }
