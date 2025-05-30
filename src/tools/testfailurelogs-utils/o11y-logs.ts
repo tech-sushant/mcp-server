@@ -17,27 +17,26 @@ export async function retrieveTestObservabilityLogs(
 ): Promise<TestObservabilityLog> {
   const url = `https://api-observability.browserstack.com/ext/v1/testRun/${testId}/logs`;
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic ${auth}`,
-      },
-    });
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Basic ${auth}`,
+    },
+  });
 
-    if (!response.ok) {
-      const errorText = await response.text();
+  if (!response.ok) {
+    if (response.status === 404) {
       throw new Error(
-        `Failed to retrieve logs: ${response.status} ${response.statusText} - ${errorText}`,
+        `Test with ID ${testId} not found. Please check the test ID and try again.`
       );
     }
-
-    const ollyLogs = (await response.json()) as TestObservabilityLogResponse;
-    return await processAndFilterLogs(ollyLogs);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to retrieve observability logs: ${message}`);
+    throw new Error(
+      `Failed to retrieve observability logs for test ID ${testId}`
+    );
   }
+
+  const ollyLogs = (await response.json()) as TestObservabilityLogResponse;
+  return await processAndFilterLogs(ollyLogs);
 }
 
 // Filter and structure logs for output
