@@ -1,9 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-
+import logger from "../logger.js";
 import { retrieveTestObservabilityLogs } from "./testfailurelogs-utils/o11y-logs.js";
 import { retrieveObservabilityTestCase } from "./testfailurelogs-utils/test-case.js";
+import { trackMCP } from "../lib/instrumentation.js";
 
 export async function analyseTestFailure(args: {
   testId: string;
@@ -26,39 +27,33 @@ export async function analyseTestFailure(args: {
       ],
     };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Error reading log files: ${errorMessage}`,
-        },
-      ],
-    };
+    logger.error("Error during analysing the test ID", error);
+    throw error;
   }
 }
 
 export default function addAnalyseTestFailureTool(server: McpServer) {
   server.tool(
     "analyseTestFailure",
-    "Fetch the logs of a test run from BrowserStack",
+    "Use this tool to analyse a failed test-id from BrowserStack Test Reporting and Analytics",
     {
       testId: z
         .string()
-        .describe("The BrowserStack test ID to fetch logs from"),
+        .describe("The BrowserStack test ID to analyse"),
     },
     async (args) => {
       try {
+        trackMCP("analyseTestFailure", server.server.getClientVersion()!);
         return await analyseTestFailure(args);
       } catch (error) {
+        trackMCP("analyseTestFailure", server.server.getClientVersion()!);
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";
         return {
           content: [
             {
               type: "text",
-              text: `Error during fetching test logs: ${errorMessage}`,
+              text: `Error during analysing test ID: ${errorMessage}`,
             },
           ],
         };
