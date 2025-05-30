@@ -27,11 +27,11 @@ export async function retrieveTestObservabilityLogs(
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error(
-        `Test with ID ${testId} not found. Please check the test ID and try again.`
+        `Test with ID ${testId} not found. Please check the test ID and try again.`,
       );
     }
     throw new Error(
-      `Failed to retrieve observability logs for test ID ${testId}`
+      `Failed to retrieve observability logs for test ID ${testId}`,
     );
   }
 

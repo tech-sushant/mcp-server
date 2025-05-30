@@ -37,9 +37,7 @@ export default function addAnalyseTestFailureTool(server: McpServer) {
     "analyseTestFailure",
     "Use this tool to analyse a failed test-id from BrowserStack Test Reporting and Analytics",
     {
-      testId: z
-        .string()
-        .describe("The BrowserStack test ID to analyse"),
+      testId: z.string().describe("The BrowserStack test ID to analyse"),
     },
     async (args) => {
       try {
