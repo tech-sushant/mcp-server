@@ -100,6 +100,15 @@ export async function filterBrowserstackLogs(
             );
           }
           break;
+        case BrowserstackLogTypes.Playwright:
+          if (logData.url) {
+            finalLogContent = await validateAndFilterPlaywrightLogs(
+              logData.url,
+              startTime,
+              endTime,
+            );
+          }
+          break;
       }
       result[logType] = finalLogContent;
     } catch (error) {
@@ -368,4 +377,24 @@ export async function validateAndFilterSeleniumLogs(
   return filteredLines.length > 0
     ? `Selenium Failures (${filteredLines.length} found):\n${JSON.stringify(filteredLines, null, 2)}`
     : "No Selenium failures found";
+}
+
+export async function validateAndFilterPlaywrightLogs(
+  url: string,
+  startTime: string | null = null,
+  endTime: string | null = null,
+): Promise<string> {
+  const response = await fetch(url);
+  const validationError = validateLogResponse(response, "Playwright logs");
+  if (validationError) return validationError.message!;
+
+  const logText = await response.text();
+  const filteredLines =
+    startTime && endTime
+      ? filterLogsByTimestampPlaywright(logText, startTime, endTime)
+      : logText.split("\n").filter((line) => line.trim());
+
+  return filteredLines.length > 0
+    ? `Playwright Failures (${filteredLines.length} found):\n${JSON.stringify(filteredLines, null, 2)}`
+    : "No Playwright failures found";
 }

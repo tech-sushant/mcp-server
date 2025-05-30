@@ -125,12 +125,31 @@ export function filterLogsByTimestampDevice(
   const year = startTime.getUTCFullYear();
   const logLines = logContent.split("\n").filter((line) => line.trim());
 
+  const androidRgx = /^(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})/;
+  const iosRgx = /^(\w{3} [0-9 ]{1,2} \d{2}:\d{2}:\d{2})/;
+
   return logLines.filter((line) => {
-    const match = line.match(/^(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})/);
-    if (!match) return false;
-    const monthDayTime = match[1];
-    const fullTimestampStr = `${year}-${monthDayTime.replace(" ", "T")}Z`;
-    const logTime = new Date(fullTimestampStr);
+    let logTime: Date | null = null;
+
+    let match = line.match(androidRgx);
+    if (match) {
+      const monthDayTime = match[1];
+      const fullTimestampStr = `${year}-${monthDayTime.replace(" ", "T")}Z`;
+      logTime = new Date(fullTimestampStr);
+    } else {
+      match = line.match(iosRgx);
+      if (match) {
+        const iosTimestamp = match[1];
+        const padded = iosTimestamp.replace(
+          /^(\w{3}) ([0-9 ])(\d{2}:\d{2}:\d{2})$/,
+          (_, m, d, t) => `${m} ${d.trim().padStart(2, "0")} ${t}`
+        );
+        const fullTimestampStr = `${year} ${padded}`;
+        logTime = new Date(fullTimestampStr);
+      }
+    }
+
+    if (!logTime || isNaN(logTime.getTime())) return false;
     return logTime >= startTime && logTime <= endTime;
   });
 }
@@ -151,6 +170,25 @@ export function filterLogsByTimestampAppium(
     const [, datePart, millisPart] = match;
     const isoString = `${datePart.replace(" ", "T")}.${millisPart}Z`;
     const logTime = new Date(isoString);
+    return logTime >= startTime && logTime <= endTime;
+  });
+}
+
+// Filters Playwright log lines by ISO 8601 timestamp (YYYY-MM-DDTHH:mm:ss.sssZ)
+export function filterLogsByTimestampPlaywright(
+  logContent: string,
+  testStartedAt: string,
+  testFinishedAt: string,
+): string[] {
+  const startTime = new Date(testStartedAt);
+  const endTime = new Date(testFinishedAt);
+  const logLines = logContent.split("\n").filter((line) => line.trim());
+
+  return logLines.filter((line) => {
+    // Match ISO 8601 timestamp at the start of the line
+    const match = line.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)/);
+    if (!match) return false;
+    const logTime = new Date(match[1]);
     return logTime >= startTime && logTime <= endTime;
   });
 }
