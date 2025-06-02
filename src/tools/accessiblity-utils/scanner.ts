@@ -74,7 +74,7 @@ export class AccessibilityScanner {
     }
 
     try {
-      const { data } = await axios.post(
+      const { data } = await axios.post<AccessibilityScanResponse>(
         `${DOMAINS.API_ACCESSIBILITY}/api/website-scanner/v1/scans`,
         requestBody,
         { auth: this.auth },
