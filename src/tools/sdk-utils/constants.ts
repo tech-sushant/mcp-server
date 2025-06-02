@@ -52,30 +52,6 @@ dependencies {
 }
 \`\`\`
 
-**Automated Step:**
-To migrate your project to use BrowserStack, automatically replace all local WebDriver instantiations (such as \`new ChromeDriver()\`, \`new FirefoxDriver()\`, etc.) with the following BrowserStack RemoteWebDriver code:
-
-\`\`\`java
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.MutableCapabilities;
-import java.net.URL;
-
-MutableCapabilities capabilities = new MutableCapabilities();
-// Add any desired capabilities here
-
-capabilities.setCapability("browserstack.user", System.getenv("BROWSERSTACK_USERNAME"));
-capabilities.setCapability("browserstack.key", System.getenv("BROWSERSTACK_ACCESS_KEY"));
-
-WebDriver driver = new RemoteWebDriver(
-    new URL("https://hub-cloud.browserstack.com/wd/hub"),
-    capabilities
-);
-\`\`\`
-
-You can use MCP or a code automation tool to:
-- Search for all occurrences of \`new ChromeDriver()\`, \`new FirefoxDriver()\`, \`new EdgeDriver()\`, and \`new SafariDriver()\` in your codebase.
-- Replace them with the above BrowserStack RemoteWebDriver code.
-
 Inform user to export BROWSERSTACK_USERNAME=${config.browserstackUsername} and 
 BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey} as environment variables.
 
