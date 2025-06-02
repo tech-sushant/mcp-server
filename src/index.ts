@@ -17,6 +17,7 @@ import addFailureLogsTools from "./tools/getFailureLogs.js";
 import addAutomateTools from "./tools/automate.js";
 import addSelfHealTools from "./tools/selfheal.js";
 import { setupOnInitialized } from "./oninitialized.js";
+import { DOMAINS } from "./lib/domains.js";
 
 function registerTools(server: McpServer) {
   addSDKTools(server);
@@ -29,6 +30,8 @@ function registerTools(server: McpServer) {
   addAutomateTools(server);
   addSelfHealTools(server);
 }
+
+console.log(DOMAINS.APP_LIVE);
 
 // Create an MCP server
 const server: McpServer = new McpServer({
