@@ -17,7 +17,7 @@ import addFailureLogsTools from "./tools/getFailureLogs.js";
 import addAutomateTools from "./tools/automate.js";
 import addSelfHealTools from "./tools/selfheal.js";
 import addAnalyseTestFailureTools from "./tools/analyse-test-failure.js";
-import { setupOnInitialized } from "./oninitialized.js";
+
 
 function registerTools(server: McpServer) {
   addSDKTools(server);
@@ -38,7 +38,6 @@ const server: McpServer = new McpServer({
   version: packageJson.version,
 });
 
-setupOnInitialized(server);
 
 registerTools(server);
 

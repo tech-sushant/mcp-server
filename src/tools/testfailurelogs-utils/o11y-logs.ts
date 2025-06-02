@@ -1,5 +1,4 @@
 import { TestObservabilityLog, TestObservabilityLogResponse } from "./types.js";
-import config from "../../config.js";
 import {
   filterBrowserstackLogs,
   filterHookRunLogs,
@@ -7,9 +6,15 @@ import {
 } from "./filters.js";
 
 // Authentication
-const auth = Buffer.from(
-  `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-).toString("base64");
+let customAuth: string | undefined;
+
+export function setObservabilityLogsAuth(authString: string) {
+  customAuth = authString;
+}
+
+function getAuth() {
+  return customAuth;
+}
 
 // Fetch and filter observability logs for a test run
 export async function retrieveTestObservabilityLogs(
@@ -20,7 +25,7 @@ export async function retrieveTestObservabilityLogs(
   const response = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Basic ${auth}`,
+      Authorization: `Basic ${getAuth()}`,
     },
   });
 

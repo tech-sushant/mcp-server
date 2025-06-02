@@ -1,11 +1,16 @@
 import logger from "../../logger.js";
 import { ObservabilityTestDetails } from "./types.js";
-import config from "../../config.js";
 
 // Authentication
-const auth = Buffer.from(
-  `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-).toString("base64");
+let customAuth: string | undefined;
+
+export function setObservabilityAuth(authString: string) {
+  customAuth = authString;
+}
+
+function getAuth() {
+  return customAuth;
+}
 
 export async function retrieveObservabilityTestCase(
   testId: string,
@@ -18,7 +23,7 @@ export async function retrieveObservabilityTestCase(
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${auth}`,
+        Authorization: `Basic ${getAuth()}`,
       },
     });
 

@@ -3,13 +3,27 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
 import { retrieveTestObservabilityLogs } from "./testfailurelogs-utils/o11y-logs.js";
-import { retrieveObservabilityTestCase } from "./testfailurelogs-utils/test-case.js";
+import {
+  retrieveObservabilityTestCase,
+  setObservabilityAuth,
+} from "./testfailurelogs-utils/test-case.js";
+import { setObservabilityLogsAuth } from "./testfailurelogs-utils/o11y-logs.js";
 import { trackMCP } from "../lib/instrumentation.js";
 
 export async function analyseTestFailure(args: {
   testId: string;
+  browserstackUsername: string;
+  browserstackAccessKey: string;
 }): Promise<CallToolResult> {
   try {
+    // Set custom auth for this tool (if needed)
+    const authString = Buffer.from(
+      `${args.browserstackUsername || ""}:${args.browserstackAccessKey || ""}`,
+    ).toString("base64");
+
+    setObservabilityAuth(authString);
+    setObservabilityLogsAuth(authString);
+
     const failureLogs = await retrieveTestObservabilityLogs(args.testId);
     const testCase = await retrieveObservabilityTestCase(args.testId);
 
@@ -38,6 +52,10 @@ export default function addAnalyseTestFailureTool(server: McpServer) {
     "Use this tool to analyse a failed test-id from BrowserStack Test Reporting and Analytics",
     {
       testId: z.string().describe("The BrowserStack test ID to analyse"),
+      browserstackUsername: z.string().describe("Your BrowserStack username"),
+      browserstackAccessKey: z
+        .string()
+        .describe("Your BrowserStack access key"),
     },
     async (args) => {
       try {
