@@ -1,7 +1,6 @@
 import sharp from "sharp";
 import path from "path";
 import { fileURLToPath } from "url";
-import logger from "../logger.js";
 
 export function sanitizeUrlParam(param: string): string {
   // Remove any characters that could be used for command injection
