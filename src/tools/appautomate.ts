@@ -148,7 +148,6 @@ async function runAppTestsOnBrowserStack(args: {
   project: string;
   detectedAutomationFramework: string;
 }): Promise<CallToolResult> {
-
   switch (args.detectedAutomationFramework) {
     case AppTestPlatform.ESPRESSO: {
       try {
@@ -257,8 +256,17 @@ export default function addAppAutomationTools(server: McpServer) {
     },
     async (args) => {
       try {
+        trackMCP(
+          "runAppTestsOnBrowserStack",
+          server.server.getClientVersion()!,
+        );
         return await runAppTestsOnBrowserStack(args);
       } catch (error) {
+        trackMCP(
+          "runAppTestsOnBrowserStack",
+          server.server.getClientVersion()!,
+          error,
+        );
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";
         return {
