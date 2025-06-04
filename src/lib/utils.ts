@@ -44,8 +44,7 @@ export function detectRunMode(): "npx" | "local" | "unknown" {
     const normalizedPath = path.normalize(scriptPath);
     const npxPattern = path.sep + "_npx" + path.sep;
     return normalizedPath.includes(npxPattern) ? "npx" : "local";
-  } catch (err) {
-    logger.error("Error determining execution mode:", err);
+  } catch {
     return "unknown";
   }
 }
