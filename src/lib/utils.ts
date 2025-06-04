@@ -1,6 +1,7 @@
 import sharp from "sharp";
 import path from "path";
 import { fileURLToPath } from "url";
+import logger from "../logger.js";
 
 export function sanitizeUrlParam(param: string): string {
   // Remove any characters that could be used for command injection
@@ -38,8 +39,13 @@ export async function assertOkResponse(response: Response, action: string) {
 }
 
 export function isRunningViaNpx() {
-  const scriptPath = fileURLToPath(import.meta.url);
-  const normalizedPath = path.normalize(scriptPath);
-  const npxPattern = path.sep + "_npx" + path.sep;
-  return normalizedPath.includes(npxPattern);
+  try {
+    const scriptPath = fileURLToPath(import.meta.url);
+    const normalizedPath = path.normalize(scriptPath);
+    const npxPattern = path.sep + "_npx" + path.sep;
+    return normalizedPath.includes(npxPattern);
+  } catch (err) {
+    logger.error("Error checking if running via npx:", err);
+    return false;
+  }
 }
