@@ -273,8 +273,7 @@ export default function addAppAutomationTools(server: McpServer) {
           content: [
             {
               type: "text",
-              text: `Error running App Automate test: ${errorMessage}`,
-              isError: true,
+              text: `Error running App Automate test: ${errorMessage}`
             },
           ],
           isError: true,
