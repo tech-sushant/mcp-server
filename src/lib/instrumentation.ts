@@ -1,7 +1,7 @@
 import logger from "../logger.js";
 import config from "../config.js";
 import { createRequire } from "module";
-import { isRunningViaNpx } from "./utils.js";
+import { detectRunMode } from "./utils.js";
 const require = createRequire(import.meta.url);
 const packageJson = require("../../package.json");
 import axios from "axios";
@@ -60,11 +60,7 @@ export function trackMCP(
       error instanceof Error ? error.constructor.name : "Unknown";
   }
 
-  if (isRunningViaNpx()) {
-    event.event_properties.mode = "npx";
-  } else {
-    event.event_properties.mode = "local";
-  }
+  event.event_properties.mode = detectRunMode();
 
   axios
     .post(instrumentationEndpoint, event, {

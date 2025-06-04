@@ -38,14 +38,14 @@ export async function assertOkResponse(response: Response, action: string) {
   }
 }
 
-export function isRunningViaNpx() {
+export function detectRunMode(): "npx" | "local" | "unknown" {
   try {
     const scriptPath = fileURLToPath(import.meta.url);
     const normalizedPath = path.normalize(scriptPath);
     const npxPattern = path.sep + "_npx" + path.sep;
-    return normalizedPath.includes(npxPattern);
+    return normalizedPath.includes(npxPattern) ? "npx" : "local";
   } catch (err) {
-    logger.error("Error checking if running via npx:", err);
-    return false;
+    logger.error("Error determining execution mode:", err);
+    return "unknown";
   }
 }
