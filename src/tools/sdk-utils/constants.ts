@@ -97,6 +97,7 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     selenium: {
       testng: { instructions: javaInstructions },
       cucumber: { instructions: javaInstructions },
+      junit: { instructions: javaInstructions },
     },
   },
 };
