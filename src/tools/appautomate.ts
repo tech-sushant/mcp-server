@@ -104,13 +104,20 @@ async function takeAppScreenshot(args: {
     };
 
     logger.info("Starting WebDriver session on BrowserStack...");
-    driver = await remote({
-      protocol: "https",
-      hostname: "hub.browserstack.com",
-      port: 443,
-      path: "/wd/hub",
-      capabilities,
-    });
+    try {
+      driver = await remote({
+        protocol: "https",
+        hostname: "hub.browserstack.com",
+        port: 443,
+        path: "/wd/hub",
+        capabilities,
+      });
+    } catch (error) {
+      logger.error("Error initializing WebDriver:", error);
+      throw new Error(
+        "Failed to initialize the WebDriver or a timeout occurred. Please try again.",
+      );
+    }
 
     const screenshotBase64 = await driver.takeScreenshot();
     const compressed = await maybeCompressBase64(screenshotBase64);
