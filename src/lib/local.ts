@@ -83,21 +83,19 @@ export async function ensureLocalBinarySetup(
   const localBinary = new Local();
   await killExistingBrowserStackLocalProcesses();
 
-  const requestBody: {
-    key: string;
-    username: string;
-    localIdentifier?: string;
-  } = {
+  // Use a single options object from config and extend with required fields
+  const bsLocalArgs: Record<string, any> = {
+    ...(config.browserstackLocalOptions || {}),
     key: config.browserstackAccessKey,
     username: config.browserstackUsername,
   };
 
   if (localIdentifier) {
-    requestBody.localIdentifier = localIdentifier;
+    bsLocalArgs.localIdentifier = localIdentifier;
   }
 
   return await new Promise((resolve, reject) => {
-    localBinary.start(requestBody, (error?: Error) => {
+    localBinary.start(bsLocalArgs, (error?: Error) => {
       if (error) {
         logger.error(
           `Unable to start BrowserStack Local... please check your credentials and try again. Error: ${error}`,
