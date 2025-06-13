@@ -37,7 +37,7 @@ const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
 const javaInstructions = `
-Add the following dependency to your \`pom.xml\`:
+Strictly Add the following dependencies to your \`pom.xml\`:
 \`\`\`xml
 <dependency>
     <groupId>com.browserstack</groupId>
