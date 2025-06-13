@@ -33,9 +33,11 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
+const ins =
+  '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
 const javaInstructions = `
-Add the following dependency to your pom.xml:
+Add the following dependency to your \`pom.xml\`:
 \`\`\`xml
 <dependency>
     <groupId>com.browserstack</groupId>
@@ -43,17 +45,22 @@ Add the following dependency to your pom.xml:
     <version>LATEST</version>
     <scope>compile</scope>
 </dependency>
+
+${ins}
 \`\`\`
 
-For Gradle projects, add to build.gradle:
+For Gradle projects, add to \`build.gradle\`:
 \`\`\`groovy
 dependencies {
     implementation 'com.browserstack:browserstack-java-sdk:LATEST'
 }
 \`\`\`
 
-Inform user to export BROWSERSTACK_USERNAME=${config.browserstackUsername} and 
-BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey} as environment variables.
+Inform user to export:
+\`\`\`bash
+export BROWSERSTACK_USERNAME=${config.browserstackUsername}
+export BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey}
+\`\`\`
 
 Run tests using:
 \`\`\`bash
