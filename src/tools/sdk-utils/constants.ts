@@ -33,7 +33,7 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
-const ins =
+const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
 const javaInstructions = `
@@ -46,7 +46,7 @@ Add the following dependency to your \`pom.xml\`:
     <scope>compile</scope>
 </dependency>
 
-${ins}
+${argsInstruction}
 \`\`\`
 
 For Gradle projects, add to \`build.gradle\`:
