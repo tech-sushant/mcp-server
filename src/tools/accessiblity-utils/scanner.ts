@@ -83,6 +83,11 @@ export class AccessibilityScanner {
       return data;
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data) {
+        if (err.response.status === 422) {
+          throw new Error(
+            "A scan with this name already exists. please update the name and run again.",
+          );
+        }
         const msg =
           (err.response.data as any).error ||
           (err.response.data as any).message ||

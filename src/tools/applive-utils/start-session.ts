@@ -64,6 +64,10 @@ export async function startSession(args: StartSessionArgs): Promise<string> {
   const { app_url } = await uploadApp(appPath);
   logger.info(`App uploaded: ${app_url}`);
 
+  if (!app_url) {
+    throw new Error("Failed to upload app. Please try again.");
+  }
+
   // 7) Build URL & open
   const deviceParam = sanitizeUrlParam(
     selected.display_name.replace(/\s+/g, "+"),
