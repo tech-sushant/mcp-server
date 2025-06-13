@@ -33,6 +33,46 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
+const argsInstruction =
+  '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
+
+const javaInstructions = `
+Strictly Add the following dependencies to your \`pom.xml\`:
+\`\`\`xml
+<dependency>
+    <groupId>com.browserstack</groupId>
+    <artifactId>browserstack-java-sdk</artifactId>
+    <version>LATEST</version>
+    <scope>compile</scope>
+</dependency>
+
+${argsInstruction}
+\`\`\`
+
+For Gradle projects, add to \`build.gradle\`:
+\`\`\`groovy
+dependencies {
+    implementation 'com.browserstack:browserstack-java-sdk:LATEST'
+}
+\`\`\`
+
+Inform user to export:
+\`\`\`bash
+export BROWSERSTACK_USERNAME=${config.browserstackUsername}
+export BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey}
+\`\`\`
+
+Run tests using:
+\`\`\`bash
+mvn clean test 
+\`\`\`
+
+Or for Gradle:
+\`\`\`bash
+gradle clean test
+\`\`\`
+`;
+
 export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   nodejs: {
     playwright: {
@@ -57,6 +97,14 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
       pytest: { instructions: pythonInstructions },
       robot: { instructions: pythonInstructions },
       behave: { instructions: pythonInstructions },
+    },
+  },
+  java: {
+    playwright: {},
+    selenium: {
+      testng: { instructions: javaInstructions },
+      cucumber: { instructions: javaInstructions },
+      junit: { instructions: javaInstructions },
     },
   },
 };
