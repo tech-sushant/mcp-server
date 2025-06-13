@@ -1,4 +1,4 @@
-// List of supported BrowserStack Local option names (as per CLI/API)
+// List of supported BrowserStack Local option names (as per SDK)
 const BROWSERSTACK_LOCAL_OPTION_KEYS = [
   "proxyHost",
   "proxyPort",
