@@ -33,6 +33,22 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
+const robotInstructions = `
+Run the following command to install the browserstack-sdk:
+\`\`\`bash
+python3 -m pip install browserstack-sdk
+\`\`\`
+
+Run the following command to setup the browserstack-sdk:
+\`\`\`bash
+browserstack-sdk setup --framework "robot" --username "${config.browserstackUsername}" --key "${config.browserstackAccessKey}"
+\`\`\`
+
+In order to run tests on BrowserStack, run the following command:
+\`\`\`bash
+browserstack-sdk robot <path-to-test-files>
+\`\`\`
+`;
 const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
@@ -73,6 +89,66 @@ gradle clean test
 \`\`\`
 `;
 
+// Reusable function to generate JUnit instructions
+const generateJUnitInstructions = (framework: string) => `
+Set BrowserStack credentials as environment variables:
+\`\`\`bash
+export BROWSERSTACK_USERNAME="${config.browserstackUsername}"
+export BROWSERSTACK_ACCESS_KEY="${config.browserstackAccessKey}"
+\`\`\`
+
+For Maven projects, run the following command to add browserstack-java-sdk dependency and browserstack.yml file:
+\`\`\`bash
+mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
+-DarchetypeArtifactId=browserstack-sdk-archetype-integrate -DarchetypeVersion=1.0 \\
+-DgroupId=com.browserstack -DartifactId=browserstack-sdk-archetype-integrate -Dversion=1.0 \\
+-DBROWSERSTACK_USERNAME=${config.browserstackUsername} -DBROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey} \\
+-DBROWSERSTACK_FRAMEWORK=${framework}
+\`\`\`
+
+For Gradle projects, add to build.gradle:
+\`\`\`groovy
+implementation 'com.browserstack:browserstack-java-sdk:latest.release'
+
+def browserstackSDKArtifact = configurations.compileClasspath.resolvedConfiguration.resolvedArtifacts.find { it.name == 'browserstack-java-sdk' }
+
+test {
+    jvmArgs "-javaagent:\${browserstackSDKArtifact.file}"
+}
+\`\`\`
+
+Run tests using:
+\`\`\`bash
+mvn clean test
+\`\`\`
+
+Or for Gradle:
+\`\`\`bash
+gradle clean test
+\`\`\`
+`;
+
+const junit4Instructions = generateJUnitInstructions("junit4");
+const junit5Instructions = generateJUnitInstructions("junit5");
+
+const pythonPytestInstructions = `
+Install BrowserStack Pytest SDK:
+\`\`\`bash
+python3 -m pip install browserstack-sdk
+\`\`\`
+
+Set up your credentials as environment variables:
+\`\`\`bash
+Inform user to export BROWSERSTACK_USERNAME=${config.browserstackUsername} and 
+BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey} as environment variables.
+\`\`\`
+
+Run your test suite on BrowserStack:
+\`\`\`bash
+browserstack-sdk pytest <path-to-test-files>
+\`\`\`
+`;
+
 export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   nodejs: {
     playwright: {
@@ -94,8 +170,8 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
       pytest: { instructions: pythonInstructions },
     },
     selenium: {
-      pytest: { instructions: pythonInstructions },
-      robot: { instructions: pythonInstructions },
+      pytest: { instructions: pythonPytestInstructions },
+      robot: { instructions: robotInstructions },
       behave: { instructions: pythonInstructions },
     },
   },
@@ -104,7 +180,8 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     selenium: {
       testng: { instructions: javaInstructions },
       cucumber: { instructions: javaInstructions },
-      junit: { instructions: javaInstructions },
+      junit4: { instructions: junit4Instructions },
+      junit5: { instructions: junit5Instructions },
     },
   },
 };

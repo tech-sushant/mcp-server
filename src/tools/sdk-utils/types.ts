@@ -11,7 +11,8 @@ export type SDKSupportedTestingFramework =
   | "nightwatch"
   | "webdriverio"
   | "mocha"
-  | "junit"
+  | "junit4"
+  | "junit5"
   | "testng";
 
 export type ConfigMapping = Record<
