@@ -1,3 +1,4 @@
+// ========== FILE: src/tools/bstack-sdk.ts ==========
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
@@ -5,12 +6,20 @@ import {
   SDKSupportedBrowserAutomationFramework,
   SDKSupportedLanguage,
   SDKSupportedTestingFramework,
+  SDKSupportedLanguageEnum,
+  SDKSupportedBrowserAutomationFrameworkEnum,
+  SDKSupportedTestingFrameworkEnum,
 } from "./sdk-utils/types.js";
 import {
   generateBrowserStackYMLInstructions,
   getInstructionsForProjectConfiguration,
 } from "./sdk-utils/instructions.js";
 import { trackMCP } from "../lib/instrumentation.js";
+import {
+  formatPercyInstructions,
+  getPercyInstructions,
+} from "./sdk-utils/percy/instructions.js";
+import { getSDKPrefixCommand } from "./sdk-utils/commands.js";
 
 /**
  * BrowserStack SDK hooks into your test framework to seamlessly run tests on BrowserStack.
@@ -21,13 +30,41 @@ export async function bootstrapProjectWithSDK({
   detectedTestingFramework,
   detectedLanguage,
   desiredPlatforms,
+  enablePercy,
 }: {
   detectedBrowserAutomationFramework: SDKSupportedBrowserAutomationFramework;
   detectedTestingFramework: SDKSupportedTestingFramework;
   detectedLanguage: SDKSupportedLanguage;
   desiredPlatforms: string[];
+  enablePercy: boolean;
 }): Promise<CallToolResult> {
-  const instructions = generateBrowserStackYMLInstructions(desiredPlatforms);
+  // Handle frameworks with unique setup instructions that don't use browserstack.yml
+  if (
+    detectedBrowserAutomationFramework === "cypress" ||
+    detectedTestingFramework === "webdriverio"
+  ) {
+    const instructions = getInstructionsForProjectConfiguration(
+      detectedBrowserAutomationFramework,
+      detectedTestingFramework,
+      detectedLanguage,
+    );
+    return {
+      content: [{ type: "text", text: instructions, isError: false }],
+    };
+  }
+
+  // --- Default flow for frameworks using browserstack.yml (e.g., Playwright, Selenium) ---
+
+  let fullInstructions = "";
+  // Add language-dependent prefix command
+  fullInstructions += getSDKPrefixCommand(detectedLanguage);
+
+  const ymlInstructions = generateBrowserStackYMLInstructions(
+    desiredPlatforms,
+    enablePercy,
+  );
+  fullInstructions += `${ymlInstructions}`;
+
   const instructionsForProjectConfiguration =
     getInstructionsForProjectConfiguration(
       detectedBrowserAutomationFramework,
@@ -35,11 +72,26 @@ export async function bootstrapProjectWithSDK({
       detectedLanguage,
     );
 
+  if (enablePercy) {
+    const percyInstructions = getPercyInstructions(
+      detectedLanguage,
+      detectedBrowserAutomationFramework,
+      detectedTestingFramework,
+    );
+    if (percyInstructions) {
+      fullInstructions += formatPercyInstructions(percyInstructions);
+    } else {
+      fullInstructions += `\n\nNote: Percy SDK instructions for ${detectedLanguage} with ${detectedTestingFramework} are not yet available through this tool. Please refer to the official BrowserStack Percy documentation.`;
+    }
+  }
+
+  fullInstructions += `\n\nAfter setting up the files above, follow these final steps:\n${instructionsForProjectConfiguration}`;
+
   return {
     content: [
       {
         type: "text",
-        text: `${instructions}\n\n After creating the browserstack.yml file above, do the following: ${instructionsForProjectConfiguration}`,
+        text: fullInstructions,
         isError: false,
       },
     ],
@@ -49,27 +101,34 @@ export async function bootstrapProjectWithSDK({
 export default function addSDKTools(server: McpServer) {
   server.tool(
     "runTestsOnBrowserStack",
-    "Use this tool to get instructions for running tests on BrowserStack.",
+    "Use this tool to get instructions for running tests on BrowserStack and browserstack percy",
     {
       detectedBrowserAutomationFramework: z
-        .string()
+        .nativeEnum(SDKSupportedBrowserAutomationFrameworkEnum)
         .describe(
           "The automation framework configured in the project. Example: 'playwright', 'selenium'",
         ),
       detectedTestingFramework: z
-        .string()
+        .nativeEnum(SDKSupportedTestingFrameworkEnum)
         .describe(
-          "The testing framework used in the project. Example: 'jest', 'pytest'",
+          "The testing framework used in the project. Example: 'jest', 'pytest' 'webdriverio'",
         ),
       detectedLanguage: z
-        .string()
+        .nativeEnum(SDKSupportedLanguageEnum)
         .describe(
-          "The programming language used in the project. Example: 'nodejs', 'python'",
+          "The programming language used in the project. Example: 'nodejs', 'python', 'java'",
         ),
       desiredPlatforms: z
         .array(z.enum(["windows", "macos", "android", "ios"]))
         .describe(
           "The platforms the user wants to test on. Always ask this to the user, do not try to infer this.",
+        ),
+      enablePercy: z
+        .boolean()
+        .optional()
+        .default(false)
+        .describe(
+          "Set to true if the user wants to enable Percy for visual testing. Defaults to false.",
         ),
     },
     async (args) => {
@@ -83,6 +142,7 @@ export default function addSDKTools(server: McpServer) {
             args.detectedTestingFramework as SDKSupportedTestingFramework,
           detectedLanguage: args.detectedLanguage as SDKSupportedLanguage,
           desiredPlatforms: args.desiredPlatforms,
+          enablePercy: args.enablePercy,
         });
       } catch (error) {
         trackMCP(
