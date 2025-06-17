@@ -33,7 +33,8 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
-const robotInstructions = `
+// Reusable function to generate Python framework instructions
+const generatePythonFrameworkInstructions = (framework: string) => `
 Run the following command to install the browserstack-sdk:
 \`\`\`bash
 python3 -m pip install browserstack-sdk
@@ -41,14 +42,18 @@ python3 -m pip install browserstack-sdk
 
 Run the following command to setup the browserstack-sdk:
 \`\`\`bash
-browserstack-sdk setup --framework "robot" --username "${config.browserstackUsername}" --key "${config.browserstackAccessKey}"
+browserstack-sdk setup --framework "${framework}" --username "${config.browserstackUsername}" --key "${config.browserstackAccessKey}"
 \`\`\`
 
 In order to run tests on BrowserStack, run the following command:
 \`\`\`bash
-browserstack-sdk robot <path-to-test-files>
+browserstack-sdk ${framework} <path-to-test-files>
 \`\`\`
 `;
+
+const robotInstructions = generatePythonFrameworkInstructions("robot");
+const behaveInstructions = generatePythonFrameworkInstructions("behave");
+
 const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
@@ -149,6 +154,56 @@ browserstack-sdk pytest <path-to-test-files>
 \`\`\`
 `;
 
+const csharpInstructions = `
+Add the BrowserStack TestAdapter NuGet package to your project:
+\`\`\`bash
+dotnet add package BrowserStack.TestAdapter
+\`\`\`
+
+Build your project:
+\`\`\`bash
+dotnet build
+\`\`\`
+
+Setup BrowserStack SDK with your credentials:
+\`\`\`bash
+dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
+\`\`\`
+
+Run your xUnit tests on BrowserStack:
+\`\`\`bash
+dotnet test
+\`\`\`
+`;
+
+const csharpNunitInstructions = `
+\`\`\`bash
+dotnet add package BrowserStack.TestAdapter
+dotnet build
+dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
+\`\`\`
+
+For macOS (Apple Silicon) - additional setup required:
+Install dotnet x64 for BrowserStack compatibility. The automated download may require sudo permissions:
+\`\`\`bash
+# First, check your current dotnet version and decide on installation path
+dotnet --version
+# Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+
+# Run setup with your chosen path and version
+sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
+\`\`\`
+
+Run tests:
+\`\`\`bash
+# For macOS with x64 setup (use the path you specified above):
+<your-chosen-path>/dotnet test
+
+# For Windows/Intel or if alias was set:
+dotnet test
+\`\`\`
+`;
+
 export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   nodejs: {
     playwright: {
@@ -172,7 +227,7 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     selenium: {
       pytest: { instructions: pythonPytestInstructions },
       robot: { instructions: robotInstructions },
-      behave: { instructions: pythonInstructions },
+      behave: { instructions: behaveInstructions },
     },
   },
   java: {
@@ -182,6 +237,13 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
       cucumber: { instructions: javaInstructions },
       junit4: { instructions: junit4Instructions },
       junit5: { instructions: junit5Instructions },
+    },
+  },
+  csharp: {
+    playwright: {},
+    selenium: {
+      xunit: { instructions: csharpInstructions },
+      nunit: { instructions: csharpNunitInstructions },
     },
   },
 };

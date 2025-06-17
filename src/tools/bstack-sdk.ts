@@ -59,12 +59,12 @@ export default function addSDKTools(server: McpServer) {
       detectedTestingFramework: z
         .string()
         .describe(
-          "The testing framework used in the project. Be precise with framework selection Example: 'jest', 'pytest', 'junit4', 'junit5', 'mocha'",
+          "The testing framework used in the project. Be precise with framework selection Example: 'jest', 'pytest', 'junit4', 'junit5', 'mocha', 'xunit', 'nunit'",
         ),
       detectedLanguage: z
         .string()
         .describe(
-          "The programming language used in the project. Example: 'nodejs', 'python'",
+          "The programming language used in the project. Example: 'nodejs', 'python', 'java', 'csharp'",
         ),
       desiredPlatforms: z
         .array(z.enum(["windows", "macos", "android", "ios"]))

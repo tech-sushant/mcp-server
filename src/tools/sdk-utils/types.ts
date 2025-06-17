@@ -1,4 +1,4 @@
-export type SDKSupportedLanguage = "nodejs" | "python" | "java";
+export type SDKSupportedLanguage = "nodejs" | "python" | "java" | "csharp";
 export type SDKSupportedBrowserAutomationFramework = "playwright" | "selenium";
 export type SDKSupportedTestingFramework =
   | "jest"
@@ -13,7 +13,9 @@ export type SDKSupportedTestingFramework =
   | "mocha"
   | "junit4"
   | "junit5"
-  | "testng";
+  | "testng"
+  | "xunit"
+  | "nunit";
 
 export type ConfigMapping = Record<
   SDKSupportedLanguage,
