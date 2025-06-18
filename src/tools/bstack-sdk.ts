@@ -57,7 +57,10 @@ export async function bootstrapProjectWithSDK({
 
   let fullInstructions = "";
   // Add language-dependent prefix command
-  fullInstructions += getSDKPrefixCommand(detectedLanguage);
+  fullInstructions += getSDKPrefixCommand(
+    detectedLanguage,
+    detectedTestingFramework,
+  );
 
   const ymlInstructions = generateBrowserStackYMLInstructions(
     desiredPlatforms,
