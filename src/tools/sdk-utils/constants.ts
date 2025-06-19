@@ -147,7 +147,7 @@ const csharpCommonInstructions = `
 3. Set up BrowserStack SDK  
    Replace the placeholders with your actual BrowserStack credentials:
    \`\`\`bash
-   dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
+   dotnet browserstack-sdk setup --userName ${config.browserstackUsername} --accessKey ${config.browserstackAccessKey}
    \`\`\`
 
 4. Detect if you are running on Apple Silicon (macOS only)  
@@ -167,7 +167,7 @@ const csharpCommonInstructions = `
      dotnet --version
      \`\`\`
 
-   - Create the target path if it doesn't exist, then run:
+   - Ensure the path exists strictly; if not, create it first and then run the setup.
      \`\`\`bash
      sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
      \`\`\`
@@ -184,8 +184,7 @@ const csharpCommonInstructions = `
      \`\`\`
 `;
 
-
-const csharpPlaywrightNunitInstructions = `
+const csharpPlaywrightCommonInstructions = `
 1. Install BrowserStack TestAdapter NuGet package  
    Run the following command:
    \`\`\`bash
@@ -200,7 +199,7 @@ const csharpPlaywrightNunitInstructions = `
 3. Set up BrowserStack SDK  
    Replace the placeholders with your actual credentials:
    \`\`\`bash
-   dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
+   dotnet browserstack-sdk setup --userName ${config.browserstackUsername} --accessKey ${config.browserstackAccessKey}
    \`\`\`
 
 4. Supported browsers  
@@ -224,7 +223,7 @@ const csharpPlaywrightNunitInstructions = `
      dotnet --version
      \`\`\`
 
-   - Ensure the path exists and run setup:
+   - Ensure the path exists strictly; if not, create it first and then run the setup.
      \`\`\`bash
      sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
      \`\`\`
@@ -291,7 +290,8 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   },
   csharp: {
     playwright: {
-      nunit: { instructions: csharpPlaywrightNunitInstructions },
+      nunit: { instructions: csharpPlaywrightCommonInstructions },
+      mstest: { instructions: csharpPlaywrightCommonInstructions },
     },
     selenium: {
       xunit: { instructions: csharpCommonInstructions },
