@@ -59,7 +59,7 @@ export default function addSDKTools(server: McpServer) {
       detectedTestingFramework: z
         .string()
         .describe(
-          "The testing framework used in the project. Be precise with framework selection Example: 'jest', 'pytest', 'junit4', 'junit5', 'mocha', 'xunit', 'nunit'",
+          "The testing framework used in the project. Be precise with framework selection Example: 'jest', 'pytest', 'junit4', 'junit5', 'mocha'",
         ),
       detectedLanguage: z
         .string()
