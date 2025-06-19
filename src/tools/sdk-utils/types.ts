@@ -15,7 +15,8 @@ export type SDKSupportedTestingFramework =
   | "junit5"
   | "testng"
   | "xunit"
-  | "nunit";
+  | "nunit"
+  | "mstest";
 
 export type ConfigMapping = Record<
   SDKSupportedLanguage,

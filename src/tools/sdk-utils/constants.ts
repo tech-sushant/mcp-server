@@ -147,29 +147,37 @@ const csharpCommonInstructions = `
 3. Set up BrowserStack SDK  
    Replace the placeholders with your actual BrowserStack credentials:
    \`\`\`bash
-   dotnet browserstack-sdk setup --userName "\${config.browserstackUsername}" --accessKey "\${config.browserstackAccessKey}"
+   dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
    \`\`\`
 
-4. macOS (Apple Silicon) setup (required)  
-   Install the x64 version of .NET for BrowserStack compatibility. The setup may require sudo permissions.
+4. Detect if you are running on Apple Silicon (macOS only)  
+   Run this check to determine if Apple Silicon-specific setup is required:
+   \`\`\`bash
+   ARCH="$(uname -m)"
+   if [ "$ARCH" = "arm64" ]; then
+     echo "Detected arm64 architecture - running Apple-Silicon flow"
+   fi
+   \`\`\`
 
-   - Check your current .NET version and decide the installation path:
+5. macOS (Apple Silicon) setup (required only if arm64 detected)  
+   Install the x64 version of .NET for BrowserStack compatibility.
+
+   - Check your current .NET version:
      \`\`\`bash
      dotnet --version
      \`\`\`
-     # Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
 
-   - Run the setup with your chosen path and version:
+   - Create the target path if it doesn't exist, then run:
      \`\`\`bash
      sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
      \`\`\`
+     Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
 
-5. Run the tests  
-   - For macOS (Apple Silicon) with x64 setup:
+6. Run the tests  
+   - For macOS (Apple Silicon), use the full path:
      \`\`\`bash
      <your-chosen-path>/dotnet browserstack-sdk
      \`\`\`
-
    - For Windows, Intel Macs, or if dotnet alias is configured:
      \`\`\`bash
      dotnet test
@@ -192,32 +200,42 @@ const csharpPlaywrightNunitInstructions = `
 3. Set up BrowserStack SDK  
    Replace the placeholders with your actual credentials:
    \`\`\`bash
-   dotnet browserstack-sdk setup --userName "\${config.browserstackUsername}" --accessKey "\${config.browserstackAccessKey}"
+   dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
    \`\`\`
 
 4. Supported browsers  
-   Use this list of the following browser names exactly as shown (case-sensitive) if required:  
+   Use exactly one of the following (case-sensitive):  
    \`chrome\`, \`edge\`, \`playwright-chromium\`, \`playwright-webkit\`, \`playwright-firefox\`
 
-5. macOS (Apple Silicon) setup  
-   This step is required for Apple Silicon devices:
-   - Check .NET version:
+5. Detect if you are running on Apple Silicon (macOS only)  
+   Run this check to determine if Apple Silicon-specific setup is required:
+   \`\`\`bash
+   ARCH="$(uname -m)"
+   if [ "$ARCH" = "arm64" ]; then
+     echo "Detected arm64 architecture - running Apple-Silicon flow"
+   fi
+   \`\`\`
+
+6. macOS (Apple Silicon) setup (required only if arm64 detected)  
+   Install the x64 version of .NET for compatibility with BrowserStack.
+
+   - Check your .NET version:
      \`\`\`bash
      dotnet --version
      \`\`\`
-   - Set up the correct .NET path and version:
+
+   - Ensure the path exists and run setup:
      \`\`\`bash
      sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
      \`\`\`
-     #Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+     Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
 
-
-6. Fix for Playwright architecture (macOS only)  
+7. Fix for Playwright architecture (macOS only)  
    If the folder exists:  
    \`<project-folder>/bin/Debug/net8.0/.playwright/node/darwin-arm64\`  
    Rename \`darwin-arm64\` to \`darwin-x64\`
 
-7. Run the tests  
+8. Run the tests  
    - For macOS (Apple Silicon), use the full path:
      \`\`\`bash
      <your-chosen-path>/dotnet browserstack-sdk
@@ -227,7 +245,6 @@ const csharpPlaywrightNunitInstructions = `
      dotnet test
      \`\`\`
 `;
-
 
 /**
  * ---------- NODEJS INSTRUCTIONS ----------
@@ -279,6 +296,7 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     selenium: {
       xunit: { instructions: csharpCommonInstructions },
       nunit: { instructions: csharpCommonInstructions },
+      mstest: { instructions: csharpCommonInstructions },
     },
   },
   nodejs: {
