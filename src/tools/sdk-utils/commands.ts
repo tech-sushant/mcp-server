@@ -14,13 +14,14 @@ export function getSDKPrefixCommand(
 ): string {
   switch (language) {
     case "nodejs":
-      return `Install BrowserStack Node SDK\nusing command | npm i -D browserstack-node-sdk@latest\n| and then run following command to setup browserstack sdk:\n npx setup --username ${process.env.BROWSERSTACK_USERNAME} --key ${process.env.BROWSERSTACK_ACCESS_KEY}\n\n`;
+      return `Install BrowserStack Node SDK\nusing command | npm i -D browserstack-node-sdk@latest\n| and then run following command to setup browserstack sdk:\n npx setup --username ${process.env.BROWSERSTACK_USERNAME} --key ${process.env.BROWSERSTACK_ACCESS_KEY}\n\n. This will create browserstack.yml file in the project root. Edit the file to add your desired platforms and browsers. If the file is not created :\n`;
 
     case "java": {
       const mavenFramework = getJavaFrameworkForMaven(framework);
       return `Install BrowserStack Java SDK
 
 **Maven command for ${framework}:**
+Run the command, it is required to generate the browserstack-sdk-archetype-integrate project:
 mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
 -DarchetypeArtifactId=browserstack-sdk-archetype-integrate -DarchetypeVersion=1.0 \\
 -DgroupId=com.browserstack -DartifactId=browserstack-sdk-archetype-integrate -Dversion=1.0 \\
