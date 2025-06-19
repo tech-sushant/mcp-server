@@ -204,6 +204,43 @@ dotnet test
 \`\`\`
 `;
 
+const csharpPlaywrightNunitInstructions = `
+Add the BrowserStack TestAdapter NuGet package to your project:
+\`\`\`bash
+dotnet add package BrowserStack.TestAdapter
+\`\`\`
+
+Build your project:
+\`\`\`bash
+dotnet build
+\`\`\`
+
+Setup BrowserStack SDK with your credentials:
+\`\`\`bash
+dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
+\`\`\`
+
+For macOS (Apple Silicon) - strictly follow these steps:
+Install dotnet x64 for BrowserStack compatibility. The automated download may require sudo permissions:
+\`\`\`bash
+# First, check your current dotnet version and decide on installation path
+dotnet --version
+# Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+
+# Run setup with your chosen path and version
+sudo <your-chosen-path>/dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
+\`\`\`
+
+Run your Playwright NUnit tests on BrowserStack:
+\`\`\`bash
+# For macOS with x64 setup (use the path you specified above):
+<your-chosen-path>/dotnet browserstack-sdk
+
+# For Windows/Intel or if alias was set:
+dotnet test
+\`\`\`
+`;
+
 export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   nodejs: {
     playwright: {
@@ -240,7 +277,9 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     },
   },
   csharp: {
-    playwright: {},
+    playwright: {
+      nunit: { instructions: csharpPlaywrightNunitInstructions },
+    },
     selenium: {
       xunit: { instructions: csharpInstructions },
       nunit: { instructions: csharpNunitInstructions },
