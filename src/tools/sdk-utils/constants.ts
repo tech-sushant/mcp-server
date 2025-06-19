@@ -1,20 +1,9 @@
 import { ConfigMapping } from "./types.js";
 import config from "../../config.js";
 
-const nodejsInstructions = `
-- Ensure that \`browserstack-node-sdk\` is present in package.json, use the latest version.
-- Add new scripts to package.json for running tests on BrowserStack (use \`npx\` to trigger the sdk):
-  \`\`\`json
-  "scripts": {
-    "test:browserstack": "npx browserstack-node-sdk <framework-specific-test-execution-command>"
-  }
-  \`\`\`
-- Add to dependencies:
-  \`\`\`json
-  "browserstack-node-sdk": "latest"
-  \`\`\`
-- Inform user to export BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY as environment variables.
-`;
+/**
+ * ---------- PYTHON INSTRUCTIONS ----------
+ */
 
 const pythonInstructions = `
 Run the following command to install the browserstack-sdk:
@@ -33,7 +22,6 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
-// Reusable function to generate Python framework instructions
 const generatePythonFrameworkInstructions = (framework: string) => `
 Run the following command to install the browserstack-sdk:
 \`\`\`bash
@@ -53,6 +41,11 @@ browserstack-sdk ${framework} <path-to-test-files>
 
 const robotInstructions = generatePythonFrameworkInstructions("robot");
 const behaveInstructions = generatePythonFrameworkInstructions("behave");
+const pytestInstructions = generatePythonFrameworkInstructions("pytest");
+
+/**
+ * ---------- JAVA INSTRUCTIONS ----------
+ */
 
 const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
@@ -94,7 +87,6 @@ gradle clean test
 \`\`\`
 `;
 
-// Reusable function to generate JUnit instructions
 const generateJUnitInstructions = (framework: string) => `
 Set BrowserStack credentials as environment variables:
 \`\`\`bash
@@ -136,133 +128,137 @@ gradle clean test
 const junit4Instructions = generateJUnitInstructions("junit4");
 const junit5Instructions = generateJUnitInstructions("junit5");
 
-const pythonPytestInstructions = `
-Install BrowserStack Pytest SDK:
-\`\`\`bash
-python3 -m pip install browserstack-sdk
-\`\`\`
+/**
+ * ---------- CSharp INSTRUCTIONS ----------
+ */
 
-Set up your credentials as environment variables:
-\`\`\`bash
-Inform user to export BROWSERSTACK_USERNAME=${config.browserstackUsername} and 
-BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey} as environment variables.
-\`\`\`
+const csharpCommonInstructions = `
+1. Install BrowserStack TestAdapter NuGet package  
+   Add the package to your project:
+   \`\`\`bash
+   dotnet add package BrowserStack.TestAdapter
+   \`\`\`
 
-Run your test suite on BrowserStack:
-\`\`\`bash
-browserstack-sdk pytest <path-to-test-files>
-\`\`\`
+2. Build the project  
+   \`\`\`bash
+   dotnet build
+   \`\`\`
+
+3. Set up BrowserStack SDK  
+   Replace the placeholders with your actual BrowserStack credentials:
+   \`\`\`bash
+   dotnet browserstack-sdk setup --userName "\${config.browserstackUsername}" --accessKey "\${config.browserstackAccessKey}"
+   \`\`\`
+
+4. macOS (Apple Silicon) setup (required)  
+   Install the x64 version of .NET for BrowserStack compatibility. The setup may require sudo permissions.
+
+   - Check your current .NET version and decide the installation path:
+     \`\`\`bash
+     dotnet --version
+     \`\`\`
+     # Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+
+   - Run the setup with your chosen path and version:
+     \`\`\`bash
+     sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
+     \`\`\`
+
+5. Run the tests  
+   - For macOS (Apple Silicon) with x64 setup:
+     \`\`\`bash
+     <your-chosen-path>/dotnet browserstack-sdk
+     \`\`\`
+
+   - For Windows, Intel Macs, or if dotnet alias is configured:
+     \`\`\`bash
+     dotnet test
+     \`\`\`
 `;
 
-const csharpInstructions = `
-Add the BrowserStack TestAdapter NuGet package to your project:
-\`\`\`bash
-dotnet add package BrowserStack.TestAdapter
-\`\`\`
-
-Build your project:
-\`\`\`bash
-dotnet build
-\`\`\`
-
-Setup BrowserStack SDK with your credentials:
-\`\`\`bash
-dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
-\`\`\`
-
-Run your xUnit tests on BrowserStack:
-\`\`\`bash
-dotnet test
-\`\`\`
-`;
-
-const csharpNunitInstructions = `
-\`\`\`bash
-dotnet add package BrowserStack.TestAdapter
-dotnet build
-dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
-\`\`\`
-
-For macOS (Apple Silicon) - additional setup required:
-Install dotnet x64 for BrowserStack compatibility. The automated download may require sudo permissions:
-\`\`\`bash
-# First, check your current dotnet version and decide on installation path
-dotnet --version
-# Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
-
-# Run setup with your chosen path and version
-sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
-\`\`\`
-
-Run tests:
-\`\`\`bash
-# For macOS with x64 setup (use the path you specified above):
-<your-chosen-path>/dotnet test
-
-# For Windows/Intel or if alias was set:
-dotnet test
-\`\`\`
-`;
 
 const csharpPlaywrightNunitInstructions = `
-Add the BrowserStack TestAdapter NuGet package to your project:
-\`\`\`bash
-dotnet add package BrowserStack.TestAdapter
-\`\`\`
+1. Install BrowserStack TestAdapter NuGet package  
+   Run the following command:
+   \`\`\`bash
+   dotnet add package BrowserStack.TestAdapter
+   \`\`\`
 
-Build your project:
-\`\`\`bash
-dotnet build
-\`\`\`
+2. Build the project  
+   \`\`\`bash
+   dotnet build
+   \`\`\`
 
-Setup BrowserStack SDK with your credentials:
-\`\`\`bash
-dotnet browserstack-sdk setup --userName "${config.browserstackUsername}" --accessKey "${config.browserstackAccessKey}"
-\`\`\`
+3. Set up BrowserStack SDK  
+   Replace the placeholders with your actual credentials:
+   \`\`\`bash
+   dotnet browserstack-sdk setup --userName "\${config.browserstackUsername}" --accessKey "\${config.browserstackAccessKey}"
+   \`\`\`
 
-For macOS (Apple Silicon) - strictly follow these steps:
-Install dotnet x64 for BrowserStack compatibility. The automated download may require sudo permissions:
-\`\`\`bash
-# First, check your current dotnet version and decide on installation path
-dotnet --version
-# Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+4. Supported browsers  
+   Use this list of the following browser names exactly as shown (case-sensitive) if required:  
+   \`chrome\`, \`edge\`, \`playwright-chromium\`, \`playwright-webkit\`, \`playwright-firefox\`
 
-# Run setup with your chosen path and version
-sudo <your-chosen-path>/dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
-\`\`\`
+5. macOS (Apple Silicon) setup  
+   This step is required for Apple Silicon devices:
+   - Check .NET version:
+     \`\`\`bash
+     dotnet --version
+     \`\`\`
+   - Set up the correct .NET path and version:
+     \`\`\`bash
+     sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
+     \`\`\`
+     #Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
 
-Run your Playwright NUnit tests on BrowserStack:
-\`\`\`bash
-# For macOS with x64 setup (use the path you specified above):
-<your-chosen-path>/dotnet browserstack-sdk
 
-# For Windows/Intel or if alias was set:
-dotnet test
-\`\`\`
+6. Fix for Playwright architecture (macOS only)  
+   If the folder exists:  
+   \`<project-folder>/bin/Debug/net8.0/.playwright/node/darwin-arm64\`  
+   Rename \`darwin-arm64\` to \`darwin-x64\`
+
+7. Run the tests  
+   - For macOS (Apple Silicon), use the full path:
+     \`\`\`bash
+     <your-chosen-path>/dotnet browserstack-sdk
+     \`\`\`
+   - For Windows, Intel Macs, or if dotnet alias is configured:
+     \`\`\`bash
+     dotnet test
+     \`\`\`
 `;
 
+
+/**
+ * ---------- NODEJS INSTRUCTIONS ----------
+ */
+
+const nodejsInstructions = `
+- Ensure that \`browserstack-node-sdk\` is present in package.json, use the latest version.
+- Add new scripts to package.json for running tests on BrowserStack (use \`npx\` to trigger the sdk):
+  \`\`\`json
+  "scripts": {
+    "test:browserstack": "npx browserstack-node-sdk <framework-specific-test-execution-command>"
+  }
+  \`\`\`
+- Add to dependencies:
+  \`\`\`json
+  "browserstack-node-sdk": "latest"
+  \`\`\`
+- Inform user to export BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY as environment variables.
+`;
+
+/**
+ * ---------- EXPORT CONFIG ----------
+ */
+
 export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
-  nodejs: {
-    playwright: {
-      jest: { instructions: nodejsInstructions },
-      codeceptjs: { instructions: nodejsInstructions },
-      playwright: { instructions: nodejsInstructions },
-    },
-    selenium: {
-      jest: { instructions: nodejsInstructions },
-      webdriverio: { instructions: nodejsInstructions },
-      mocha: { instructions: nodejsInstructions },
-      cucumber: { instructions: nodejsInstructions },
-      nightwatch: { instructions: nodejsInstructions },
-      codeceptjs: { instructions: nodejsInstructions },
-    },
-  },
   python: {
     playwright: {
       pytest: { instructions: pythonInstructions },
     },
     selenium: {
-      pytest: { instructions: pythonPytestInstructions },
+      pytest: { instructions: pytestInstructions },
       robot: { instructions: robotInstructions },
       behave: { instructions: behaveInstructions },
     },
@@ -281,8 +277,23 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
       nunit: { instructions: csharpPlaywrightNunitInstructions },
     },
     selenium: {
-      xunit: { instructions: csharpInstructions },
-      nunit: { instructions: csharpNunitInstructions },
+      xunit: { instructions: csharpCommonInstructions },
+      nunit: { instructions: csharpCommonInstructions },
+    },
+  },
+  nodejs: {
+    playwright: {
+      jest: { instructions: nodejsInstructions },
+      codeceptjs: { instructions: nodejsInstructions },
+      playwright: { instructions: nodejsInstructions },
+    },
+    selenium: {
+      jest: { instructions: nodejsInstructions },
+      webdriverio: { instructions: nodejsInstructions },
+      mocha: { instructions: nodejsInstructions },
+      cucumber: { instructions: nodejsInstructions },
+      nightwatch: { instructions: nodejsInstructions },
+      codeceptjs: { instructions: nodejsInstructions },
     },
   },
 };
