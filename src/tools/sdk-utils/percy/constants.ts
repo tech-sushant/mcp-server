@@ -110,6 +110,38 @@ describe("My WebdriverIO Test", () => {
 \`\`\`
 `;
 
+const csharpSeleniumInstructions = `
+To manually capture screenshots alongside the auto mode, implement the following steps in your test script:
+
+1. **Import the BrowserStack Percy SDK** in your test script.
+2. Add the \`PercySDK.Screenshot(driver, name)\` method at required points in your test script to get the screenshots you want.
+
+Here's an example:
+
+\`\`\`csharp
+using BrowserStackSDK.Percy;
+using NUnit.Framework;
+
+namespace Tests;
+
+public class MyTest
+{
+    [Test]
+    public void SampleTest()
+    {
+        // your test logic
+        // ...
+        
+        // Capture a Percy screenshot
+        PercySDK.Screenshot(driver, "Screenshot name");
+        
+        // ...
+        // more test logic
+    }
+}
+\`\`\`
+`;
+
 export const PERCY_INSTRUCTIONS: PercyConfigMapping = {
   java: {
     selenium: {
@@ -117,6 +149,11 @@ export const PERCY_INSTRUCTIONS: PercyConfigMapping = {
       cucumber: { script_updates: javaSeleniumInstructions },
       junit4: { script_updates: javaSeleniumInstructions },
       junit5: { script_updates: javaSeleniumInstructions },
+    },
+  },
+  csharp: {
+    selenium: {
+      nunit: { script_updates: csharpSeleniumInstructions },
     },
   },
   nodejs: {

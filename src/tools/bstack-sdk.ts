@@ -55,6 +55,10 @@ export async function bootstrapProjectWithSDK({
       );
       if (percyInstructions) {
         instructions += formatPercyInstructions(percyInstructions);
+      } else {
+        throw new Error(
+          `Percy is currently not supported through MCP for ${detectedLanguage} with ${detectedTestingFramework}. If you want to run the test cases without Percy, disable Percy and run it again.`,
+        );
       }
     }
     return {
@@ -91,7 +95,9 @@ export async function bootstrapProjectWithSDK({
     if (percyInstructions) {
       fullInstructions += formatPercyInstructions(percyInstructions);
     } else {
-      fullInstructions += `\n\nNote: Percy SDK instructions for ${detectedLanguage} with ${detectedTestingFramework} are not yet available through this tool. Please refer to the official BrowserStack Percy documentation.`;
+      throw new Error(
+        `Percy is currently not supported through MCP for ${detectedLanguage} with ${detectedTestingFramework}. If you want to run the test cases without Percy, disable Percy and run it again.`,
+      );
     }
   }
 
