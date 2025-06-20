@@ -172,5 +172,4 @@ export const PERCY_INSTRUCTIONS: PercyConfigMapping = {
       },
     },
   },
-  // You can add instructions for other stacks like nodejs+playwright here
 };
