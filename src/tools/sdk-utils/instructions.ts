@@ -49,7 +49,7 @@ export function generateBrowserStackYMLInstructions(
 # A single name for your project to organize all your tests. This is required for Percy.
 projectName: BrowserStack Sample
 # A name for the group of tests you are running
-build: mcp-run
+buildName: mcp-run
 
 # =======================================
 # Platforms (Browsers / Devices to test)

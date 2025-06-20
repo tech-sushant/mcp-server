@@ -87,47 +87,6 @@ gradle clean test
 \`\`\`
 `;
 
-const generateJUnitInstructions = (framework: string) => `
-Set BrowserStack credentials as environment variables:
-\`\`\`bash
-export BROWSERSTACK_USERNAME="${config.browserstackUsername}"
-export BROWSERSTACK_ACCESS_KEY="${config.browserstackAccessKey}"
-\`\`\`
-
-For Maven projects, run the following command to add browserstack-java-sdk dependency and browserstack.yml file:
-\`\`\`bash
-mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
--DarchetypeArtifactId=browserstack-sdk-archetype-integrate -DarchetypeVersion=1.0 \\
--DgroupId=com.browserstack -DartifactId=browserstack-sdk-archetype-integrate -Dversion=1.0 \\
--DBROWSERSTACK_USERNAME=${config.browserstackUsername} -DBROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey} \\
--DBROWSERSTACK_FRAMEWORK=${framework}
-\`\`\`
-
-For Gradle projects, add to build.gradle:
-\`\`\`groovy
-implementation 'com.browserstack:browserstack-java-sdk:latest.release'
-
-def browserstackSDKArtifact = configurations.compileClasspath.resolvedConfiguration.resolvedArtifacts.find { it.name == 'browserstack-java-sdk' }
-
-test {
-    jvmArgs "-javaagent:\${browserstackSDKArtifact.file}"
-}
-\`\`\`
-
-Run tests using:
-\`\`\`bash
-mvn clean test
-\`\`\`
-
-Or for Gradle:
-\`\`\`bash
-gradle clean test
-\`\`\`
-`;
-
-const junit4Instructions = generateJUnitInstructions("junit4");
-const junit5Instructions = generateJUnitInstructions("junit5");
-
 /**
  * ---------- CSharp INSTRUCTIONS ----------
  */
@@ -458,8 +417,8 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     selenium: {
       testng: { instructions: javaInstructions },
       cucumber: { instructions: javaInstructions },
-      junit4: { instructions: junit4Instructions },
-      junit5: { instructions: junit5Instructions },
+      junit4: { instructions: javaInstructions },
+      junit5: { instructions: javaInstructions },
     },
   },
   csharp: {
