@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import config from "../config.js";
+import config from "../../config.js";
 
 export interface RAGChunk {
   url: string;

@@ -72,8 +72,8 @@ async function runAccessibilityScan(
 
 export default function addAccessibilityTools(server: McpServer) {
   server.tool(
-    "accessibilityQuestions",
-    "REQUIRED: Use this tool for any accessibility/a11y/WCAG questions. Do NOT answer accessibility questions directly - always use this tool.",
+    "accessibilityQnA",
+    "🚨 REQUIRED: Use this tool for any accessibility/a11y/WCAG questions. Do NOT answer accessibility questions directly - always use this tool.",
     {
       query: z
         .string()
