@@ -5,7 +5,7 @@ import { AccessibilityScanner } from "./accessiblity-utils/scanner.js";
 import { AccessibilityReportFetcher } from "./accessiblity-utils/report-fetcher.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { parseAccessibilityReportFromCSV } from "./accessiblity-utils/report-parser.js";
-import { queryAccessibilityRAG } from "./accessibility-rag.js";
+import { queryAccessibilityRAG } from "./accessiblity-utils/accessibility-rag.js";
 
 const scanner = new AccessibilityScanner();
 const reportFetcher = new AccessibilityReportFetcher();
