@@ -40,7 +40,7 @@ To manually capture screenshots, implement the following steps in your test scri
      
      test("my test", async () => {
        // ....
-       await percy.snapshot(driver, "My Snapshot")
+       await percy.screenshot(driver, "My Snapshot")
        // ....
      });
    })
