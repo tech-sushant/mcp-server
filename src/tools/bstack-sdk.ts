@@ -1,4 +1,3 @@
-// ========== FILE: src/tools/bstack-sdk.ts ==========
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
@@ -43,17 +42,25 @@ export async function bootstrapProjectWithSDK({
     detectedBrowserAutomationFramework === "cypress" ||
     detectedTestingFramework === "webdriverio"
   ) {
-    const instructions = getInstructionsForProjectConfiguration(
+    let instructions = getInstructionsForProjectConfiguration(
       detectedBrowserAutomationFramework,
       detectedTestingFramework,
       detectedLanguage,
     );
+    if (enablePercy) {
+      const percyInstructions = getPercyInstructions(
+        detectedLanguage,
+        detectedBrowserAutomationFramework,
+        detectedTestingFramework,
+      );
+      if (percyInstructions) {
+        instructions += formatPercyInstructions(percyInstructions);
+      }
+    }
     return {
       content: [{ type: "text", text: instructions, isError: false }],
     };
   }
-
-  // --- Default flow for frameworks using browserstack.yml (e.g., Playwright, Selenium) ---
 
   let fullInstructions = "";
   // Add language-dependent prefix command
