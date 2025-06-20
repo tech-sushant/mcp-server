@@ -115,7 +115,8 @@ export const PERCY_INSTRUCTIONS: PercyConfigMapping = {
     selenium: {
       testng: { script_updates: javaSeleniumInstructions },
       cucumber: { script_updates: javaSeleniumInstructions },
-      junit: { script_updates: javaSeleniumInstructions },
+      junit4: { script_updates: javaSeleniumInstructions },
+      junit5: { script_updates: javaSeleniumInstructions },
     },
   },
   nodejs: {

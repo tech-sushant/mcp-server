@@ -4,9 +4,23 @@ import { SDKSupportedLanguage } from "./types.js";
 // Framework mapping for Java Maven archetype generation
 const JAVA_FRAMEWORK_MAP: Record<string, string> = {
   testng: "testng",
-  junit: "junit5", // Map generic junit to junit5 as default
-  cucumber: "cucumber-testng", // Map generic cucumber to cucumber-testng as default
+  junit5: "junit5",
+  junit4: "junit4",
+  cucumber: "cucumber-testng",
 };
+
+// Common Gradle setup instructions (platform-independent)
+const GRADLE_SETUP_INSTRUCTIONS = `
+**For Gradle setup:**
+1. Add browserstack-java-sdk to dependencies:
+   compileOnly 'com.browserstack:browserstack-java-sdk:latest.release'
+
+2. Add browserstackSDK path variable:
+   def browserstackSDKArtifact = configurations.compileClasspath.resolvedConfiguration.resolvedArtifacts.find { it.name == 'browserstack-java-sdk' }
+
+3. Add javaagent to gradle tasks:
+   jvmArgs "-javaagent:\${browserstackSDKArtifact.file}"
+`;
 
 export function getSDKPrefixCommand(
   language: SDKSupportedLanguage,
@@ -18,26 +32,25 @@ export function getSDKPrefixCommand(
 
     case "java": {
       const mavenFramework = getJavaFrameworkForMaven(framework);
-      return `Install BrowserStack Java SDK
+      const isWindows = process.platform === "win32";
 
-**Maven command for ${framework}:**
-Run the command, it is required to generate the browserstack-sdk-archetype-integrate project:
-mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
+      const mavenCommand = isWindows
+        ? `mvn archetype:generate -B -DarchetypeGroupId="com.browserstack" -DarchetypeArtifactId="browserstack-sdk-archetype-integrate" -DarchetypeVersion="1.0" -DgroupId="com.browserstack" -DartifactId="browserstack-sdk-archetype-integrate" -Dversion="1.0" -DBROWSERSTACK_USERNAME="${process.env.BROWSERSTACK_USERNAME}" -DBROWSERSTACK_ACCESS_KEY="${process.env.BROWSERSTACK_ACCESS_KEY}" -DBROWSERSTACK_FRAMEWORK="${mavenFramework}"`
+        : `mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
 -DarchetypeArtifactId=browserstack-sdk-archetype-integrate -DarchetypeVersion=1.0 \\
 -DgroupId=com.browserstack -DartifactId=browserstack-sdk-archetype-integrate -Dversion=1.0 \\
--DBROWSERSTACK_USERNAME=${process.env.BROWSERSTACK_USERNAME} -DBROWSERSTACK_ACCESS_KEY=${process.env.BROWSERSTACK_ACCESS_KEY} \\
--DBROWSERSTACK_FRAMEWORK=${mavenFramework}
+-DBROWSERSTACK_USERNAME="${process.env.BROWSERSTACK_USERNAME}" \\
+-DBROWSERSTACK_ACCESS_KEY="${process.env.BROWSERSTACK_ACCESS_KEY}" \\
+-DBROWSERSTACK_FRAMEWORK="${mavenFramework}"`;
 
-**For Gradle setup:**
-1. Add browserstack-java-sdk to dependencies:
-   compileOnly 'com.browserstack:browserstack-java-sdk:latest.release'
+      const platformLabel = isWindows ? "Windows" : "macOS/Linux";
 
-2. Add browserstackSDK path variable:
-   def browserstackSDKArtifact = configurations.compileClasspath.resolvedConfiguration.resolvedArtifacts.find { it.name == 'browserstack-java-sdk' }
+      return `Install BrowserStack Java SDK
 
-3. Add javaagent to gradle tasks:
-   jvmArgs "-javaagent:\${browserstackSDKArtifact.file}"
-`;
+**Maven command for ${framework} (${platformLabel}):**
+Run the command, it is required to generate the browserstack-sdk-archetype-integrate project:
+${mavenCommand}
+${GRADLE_SETUP_INSTRUCTIONS}`;
     }
 
     // Add more languages as needed

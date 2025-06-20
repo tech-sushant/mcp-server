@@ -268,7 +268,6 @@ const nodejsInstructions = `
  * ---------- EXPORT CONFIG ----------
  */
 
-=======
 const webdriverioInstructions = `
 To integrate your WebdriverIO test suite with BrowserStack, follow these steps. This process uses the @wdio/browserstack-service and does not require a browserstack.yml file.
 
