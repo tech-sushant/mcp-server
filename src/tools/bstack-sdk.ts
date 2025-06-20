@@ -121,12 +121,12 @@ export default function addSDKTools(server: McpServer) {
       detectedTestingFramework: z
         .nativeEnum(SDKSupportedTestingFrameworkEnum)
         .describe(
-          "The testing framework used in the project. Example: 'jest', 'pytest' 'webdriverio'",
+          "The testing framework used in the project. Be precise with framework selection Example: 'webdriverio', 'jest', 'pytest', 'junit4', 'junit5', 'mocha'",
         ),
       detectedLanguage: z
         .nativeEnum(SDKSupportedLanguageEnum)
         .describe(
-          "The programming language used in the project. Example: 'nodejs', 'python', 'java'",
+          "The programming language used in the project. Example: 'nodejs', 'python', 'java', 'csharp'",
         ),
       desiredPlatforms: z
         .array(z.enum(["windows", "macos", "android", "ios"]))
