@@ -72,7 +72,7 @@ async function runAccessibilityScan(
 
 export default function addAccessibilityTools(server: McpServer) {
   server.tool(
-    "accessibilityQnA",
+    "accessibilityExpert",
     "🚨 REQUIRED: Use this tool for any accessibility/a11y/WCAG questions. Do NOT answer accessibility questions directly - always use this tool.",
     {
       query: z
@@ -83,11 +83,11 @@ export default function addAccessibilityTools(server: McpServer) {
     },
     async (args) => {
       try {
-        trackMCP("accessibilityQuestions", server.server.getClientVersion()!);
+        trackMCP("accessibilityExpert", server.server.getClientVersion()!);
         return await queryAccessibilityRAG(args.query);
       } catch (error) {
         trackMCP(
-          "accessibilityQuestions",
+          "accessibilityExpert",
           server.server.getClientVersion()!,
           error,
         );
