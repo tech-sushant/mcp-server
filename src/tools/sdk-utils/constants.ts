@@ -413,7 +413,10 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     },
   },
   java: {
-    playwright: {},
+    playwright: {
+      junit4: { instructions: javaInstructions },
+      junit5: { instructions: javaInstructions },
+    },
     selenium: {
       testng: { instructions: javaInstructions },
       cucumber: { instructions: javaInstructions },

@@ -66,7 +66,10 @@ export async function bootstrapProjectWithSDK({
     };
   }
 
-  let fullInstructions = "";
+  let fullInstructions =`⚠️ IMPORTANT: DO NOT SKIP ANY STEP
+  All the setup steps described in this file MUST be executed regardless of any existing configuration or setup.
+  This ensures proper BrowserStack SDK setup.`;
+
   // Add language-dependent prefix command
   fullInstructions += getSDKPrefixCommand(
     detectedLanguage,
