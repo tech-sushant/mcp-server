@@ -80,6 +80,13 @@ export async function ensureLocalBinarySetup(
     "Ensuring local binary setup as it is required for private URLs...",
   );
 
+  if (config.USE_OWN_LOCAL_BINARY_PROCESS) {
+    logger.info(
+      "Using user's own BrowserStack Local binary process, skipping setup...",
+    );
+    return;
+  }
+  
   const localBinary = new Local();
   await killExistingBrowserStackLocalProcesses();
 

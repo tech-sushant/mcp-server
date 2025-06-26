@@ -41,6 +41,12 @@ export class AccessibilityScanner {
       await killExistingBrowserStackLocalProcesses();
     }
 
+    if (config.USE_OWN_LOCAL_BINARY_PROCESS) {
+      throw new Error(
+        "Cannot start scan with local URLs when using own BrowserStack Local binary process. Please set USE_OWN_LOCAL_BINARY_PROCESS to false.",
+      );
+    }
+
     const transformedUrlList = urlList.map((url) => {
       try {
         const parsed = new URL(url);
