@@ -177,9 +177,6 @@ export const PERCY_INSTRUCTIONS: PercyConfigMapping = {
       webdriverio: {
         script_updates: webdriverioPercyInstructions,
       },
-      cucumber: {
-        script_updates: nodejsSeleniumInstructions,
-      },
     },
   },
 };

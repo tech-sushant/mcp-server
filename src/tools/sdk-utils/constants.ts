@@ -285,14 +285,14 @@ Export your BrowserStack username and access key as environment variables.
 
 For macOS/Linux:
 \`\`\`bash
-export BROWSERSTACK_USERNAME="YOUR_USERNAME"
-export BROWSERSTACK_ACCESS_KEY="YOUR_ACCESS_KEY"
+export BROWSERSTACK_USERNAME= ${config.browserstackUsername}
+export BROWSERSTACK_ACCESS_KEY= ${config.browserstackAccessKey}
 \`\`\`
 
 For Windows PowerShell:
 \`\`\`powershell
-$env:BROWSERSTACK_USERNAME="YOUR_USERNAME"
-$env:BROWSERSTACK_ACCESS_KEY="YOUR_ACCESS_KEY"
+$env:BROWSERSTACK_USERNAME=${config.browserstackUsername}
+$env:BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey}
 \`\`\`
 
 ---STEP---
