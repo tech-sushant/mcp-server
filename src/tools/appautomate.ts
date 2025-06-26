@@ -22,6 +22,9 @@ import {
   uploadEspressoApp,
   uploadEspressoTestSuite,
   triggerEspressoBuild,
+  uploadXcuiApp,
+  uploadXcuiTestSuite,
+  triggerXcuiBuild,
 } from "./appautomate-utils/appautomate.js";
 
 // Types
@@ -166,7 +169,7 @@ async function runAppTestsOnBrowserStack(args: {
           content: [
             {
               type: "text",
-              text: `✅ Test run started successfully!\n\n🔧 Build ID: ${build_id}\n🔗 View your build: https://app-automate.browserstack.com/builds/${build_id}`,
+              text: `✅ Espresso run started successfully!\n\n🔧 Build ID: ${build_id}\n🔗 View your build: https://app-automate.browserstack.com/builds/${build_id}`,
             },
           ],
         };
@@ -175,10 +178,32 @@ async function runAppTestsOnBrowserStack(args: {
         throw err;
       }
     }
-
+    case AppTestPlatform.XCUITEST: {
+      try {
+        const app_url = await uploadXcuiApp(args.appPath);
+        const test_suite_url = await uploadXcuiTestSuite(args.testSuitePath);
+        const build_id = await triggerXcuiBuild(
+          app_url,
+          test_suite_url,
+          args.devices,
+          args.project,
+        );
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ XCUITest run started successfully!\n\n🔧 Build ID: ${build_id}\n🔗 View your build: https://app-automate.browserstack.com/builds/${build_id}`,
+            },
+          ],
+        };
+      } catch (err) {
+        logger.error("Error running XCUITest App Automate test", err);
+        throw err;
+      }
+    }
     default:
       throw new Error(
-        `Unsupported automation framework: ${args.detectedAutomationFramework}`,
+        `Unsupported automation framework: ${args.detectedAutomationFramework}. If you need support for this framework, please open an issue at Github`,
       );
   }
 }
@@ -230,18 +255,22 @@ export default function addAppAutomationTools(server: McpServer) {
 
   server.tool(
     "runAppTestsOnBrowserStack",
-    "Run AppAutomate tests on BrowserStack by uploading app and test suite, then triggering a test run.",
+    "Run AppAutomate tests on BrowserStack by uploading app and test suite, then triggering a test run. Supports both Espresso (Android) and XCUITest (iOS).",
     {
       appPath: z
         .string()
-        .describe("Path to the .apk or .aab file for your app."),
+        .describe(
+          "Path to the .apk/.aab (Espresso) or .ipa (XCUITest) file for your app. Export on your own in local IDEs.",
+        ),
       testSuitePath: z
         .string()
-        .describe("Path to the Espresso test suite .apk file."),
+        .describe(
+          "Path to the Espresso test suite .apk or XCUITest .zip file. Export on your own in local IDEs.",
+        ),
       devices: z
         .array(z.string())
         .describe(
-          "List of devices to run the test on, e.g., ['Samsung Galaxy S20-10.0', 'Google Pixel 3-9.0'].",
+          "List of devices to run the test on, e.g., ['Samsung Galaxy S20-10.0', 'iPhone 12 Pro-16.0'].",
         ),
       project: z
         .string()
@@ -251,7 +280,7 @@ export default function addAppAutomationTools(server: McpServer) {
       detectedAutomationFramework: z
         .string()
         .describe(
-          "The automation framework used in the project, such as 'espresso' or 'appium'.",
+          "The automation framework used in the project, such as 'espresso' (Android) or 'xcuitest' (iOS).",
         ),
     },
     async (args) => {
@@ -273,7 +302,7 @@ export default function addAppAutomationTools(server: McpServer) {
           content: [
             {
               type: "text",
-              text: `Error running App Automate test: ${errorMessage}`
+              text: `Error running App Automate test: ${errorMessage}`,
             },
           ],
           isError: true,
