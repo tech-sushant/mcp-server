@@ -41,7 +41,6 @@ export class AccessibilityScanner {
       );
     }
 
-    
     if (hasLocal) {
       await ensureLocalBinarySetup(localIdentifier);
     } else {

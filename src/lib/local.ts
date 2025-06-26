@@ -86,7 +86,7 @@ export async function ensureLocalBinarySetup(
     );
     return;
   }
-  
+
   const localBinary = new Local();
   await killExistingBrowserStackLocalProcesses();
 
