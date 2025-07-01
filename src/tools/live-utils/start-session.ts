@@ -1,5 +1,3 @@
-import logger from "../../logger.js";
-import childProcess from "child_process";
 import { filterDesktop } from "./desktop-filter.js";
 import { filterMobile } from "./mobile-filter.js";
 import {
@@ -58,7 +56,7 @@ export async function startBrowserSession(
         )
       : buildMobileUrl(args as MobileSearchArgs, entry as MobileEntry, isLocal);
 
-  openBrowser(url);
+  // openBrowser(url);
   return entry.notes ? `${url}, ${entry.notes}` : url;
 }
 
@@ -110,25 +108,25 @@ function buildMobileUrl(
 
 // ——— Open a browser window ———
 
-function openBrowser(launchUrl: string): void {
-  try {
-    const command =
-      process.platform === "darwin"
-        ? ["open", launchUrl]
-        : process.platform === "win32"
-          ? ["cmd", "/c", "start", launchUrl]
-          : ["xdg-open", launchUrl];
+// function openBrowser(launchUrl: string): void {
+//   try {
+//     const command =
+//       process.platform === "darwin"
+//         ? ["open", launchUrl]
+//         : process.platform === "win32"
+//           ? ["cmd", "/c", "start", launchUrl]
+//           : ["xdg-open", launchUrl];
 
-    // nosemgrep:javascript.lang.security.detect-child-process.detect-child-process
-    const child = childProcess.spawn(command[0], command.slice(1), {
-      stdio: "ignore",
-      detached: true,
-    });
-    child.on("error", (err) =>
-      logger.error(`Failed to open browser: ${err}. URL: ${launchUrl}`),
-    );
-    child.unref();
-  } catch (err) {
-    logger.error(`Failed to launch browser: ${err}. URL: ${launchUrl}`);
-  }
-}
+//     // nosemgrep:javascript.lang.security.detect-child-process.detect-child-process
+//     const child = childProcess.spawn(command[0], command.slice(1), {
+//       stdio: "ignore",
+//       detached: true,
+//     });
+//     child.on("error", (err) =>
+//       logger.error(`Failed to open browser: ${err}. URL: ${launchUrl}`),
+//     );
+//     child.unref();
+//   } catch (err) {
+//     logger.error(`Failed to launch browser: ${err}. URL: ${launchUrl}`);
+//   }
+// }

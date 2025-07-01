@@ -1,5 +1,4 @@
 import logger from "../../logger.js";
-import childProcess from "child_process";
 import {
   getDevicesAndBrowsers,
   BrowserStackProducts,
@@ -93,40 +92,40 @@ export async function startSession(
   });
   const launchUrl = `https://app-live.browserstack.com/dashboard#${params.toString()}&device=${deviceParam}`;
 
-  openBrowser(launchUrl);
+  // openBrowser(launchUrl);
   return launchUrl + note;
 }
 
-/**
- * Opens the launch URL in the default browser.
- * @param launchUrl - The URL to open.
- * @throws Will throw an error if the browser fails to open.
- */
-function openBrowser(launchUrl: string): void {
-  try {
-    const command =
-      process.platform === "darwin"
-        ? ["open", launchUrl]
-        : process.platform === "win32"
-          ? ["cmd", "/c", "start", launchUrl]
-          : ["xdg-open", launchUrl];
+// /**
+//  * Opens the launch URL in the default browser.
+//  * @param launchUrl - The URL to open.
+//  * @throws Will throw an error if the browser fails to open.
+//  */
+// function openBrowser(launchUrl: string): void {
+//   try {
+//     const command =
+//       process.platform === "darwin"
+//         ? ["open", launchUrl]
+//         : process.platform === "win32"
+//           ? ["cmd", "/c", "start", launchUrl]
+//           : ["xdg-open", launchUrl];
 
-    // nosemgrep:javascript.lang.security.detect-child-process.detect-child-process
-    const child = childProcess.spawn(command[0], command.slice(1), {
-      stdio: "ignore",
-      detached: true,
-    });
+//     // nosemgrep:javascript.lang.security.detect-child-process.detect-child-process
+//     const child = childProcess.spawn(command[0], command.slice(1), {
+//       stdio: "ignore",
+//       detached: true,
+//     });
 
-    child.on("error", (error) => {
-      logger.error(
-        `Failed to open browser automatically: ${error}. Please open this URL manually: ${launchUrl}`,
-      );
-    });
+//     child.on("error", (error) => {
+//       logger.error(
+//         `Failed to open browser automatically: ${error}. Please open this URL manually: ${launchUrl}`,
+//       );
+//     });
 
-    child.unref();
-  } catch (error) {
-    logger.error(
-      `Failed to open browser automatically: ${error}. Please open this URL manually: ${launchUrl}`,
-    );
-  }
-}
+//     child.unref();
+//   } catch (error) {
+//     logger.error(
+//       `Failed to open browser automatically: ${error}. Please open this URL manually: ${launchUrl}`,
+//     );
+//   }
+// }
