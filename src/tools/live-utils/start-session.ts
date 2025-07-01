@@ -15,13 +15,14 @@ import {
   killExistingBrowserStackLocalProcesses,
 } from "../../lib/local.js";
 
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 /**
  * Prepares local tunnel setup based on URL type
  */
-async function prepareLocalTunnel(url: string): Promise<boolean> {
+async function prepareLocalTunnel(url: string, username: string, password: string): Promise<boolean> {
   const isLocal = isLocalURL(url);
   if (isLocal) {
-    await ensureLocalBinarySetup();
+    await ensureLocalBinarySetup(username, password);
   } else {
     await killExistingBrowserStackLocalProcesses();
   }
@@ -33,13 +34,18 @@ async function prepareLocalTunnel(url: string): Promise<boolean> {
  */
 export async function startBrowserSession(
   args: DesktopSearchArgs | MobileSearchArgs,
+  server: any
 ): Promise<string> {
   const entry =
     args.platformType === PlatformType.DESKTOP
       ? await filterDesktop(args as DesktopSearchArgs)
       : await filterMobile(args as MobileSearchArgs);
 
-  const isLocal = await prepareLocalTunnel(args.url);
+  // Get credentials from server
+  const authString = getBrowserStackAuth(server);
+  const [username, password] = authString.split(":");
+
+  const isLocal = await prepareLocalTunnel(args.url, username, password);
 
   const url =
     args.platformType === PlatformType.DESKTOP

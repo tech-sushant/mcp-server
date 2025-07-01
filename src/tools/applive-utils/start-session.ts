@@ -6,6 +6,7 @@ import {
 } from "../../lib/device-cache.js";
 import { sanitizeUrlParam } from "../../lib/utils.js";
 import { uploadApp } from "./upload-app.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { findDeviceByName } from "./device-search.js";
 import { pickVersion } from "./version-utils.js";
 import { DeviceEntry } from "./types.js";
@@ -17,12 +18,17 @@ interface StartSessionArgs {
   desiredPlatformVersion: string;
 }
 
+interface StartSessionOptions {
+  server: any;
+}
+
 /**
  * Start an App Live session: filter, select, upload, and open.
  */
-export async function startSession(args: StartSessionArgs): Promise<string> {
+export async function startSession(args: StartSessionArgs, options: StartSessionOptions): Promise<string> {
   const { appPath, desiredPlatform, desiredPhone, desiredPlatformVersion } =
     args;
+  const { server } = options;
 
   // 1) Fetch devices for APP_LIVE
   const data = await getDevicesAndBrowsers(BrowserStackProducts.APP_LIVE);
@@ -61,7 +67,9 @@ export async function startSession(args: StartSessionArgs): Promise<string> {
   }
 
   // 6) Upload app
-  const { app_url } = await uploadApp(appPath);
+  const authString = getBrowserStackAuth(server);
+  const [username, password] = authString.split(":");
+  const { app_url } = await uploadApp(appPath, username, password);
   logger.info(`App uploaded: ${app_url}`);
 
   if (!app_url) {

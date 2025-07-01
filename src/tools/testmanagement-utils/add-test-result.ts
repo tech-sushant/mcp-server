@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../../config.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
@@ -33,6 +33,7 @@ export type AddTestResultArgs = z.infer<typeof AddTestResultSchema>;
  */
 export async function addTestResult(
   rawArgs: AddTestResultArgs,
+  server: any
 ): Promise<CallToolResult> {
   try {
     const args = AddTestResultSchema.parse(rawArgs);
@@ -45,10 +46,13 @@ export async function addTestResult(
       test_case_id: args.test_case_id,
     } as any;
 
+    const authString = getBrowserStackAuth(server);
+    const [username, password] = authString.split(":");
+
     const response = await axios.post(url, body, {
       auth: {
-        username: config.browserstackUsername,
-        password: config.browserstackAccessKey,
+        username,
+        password,
       },
       headers: { "Content-Type": "application/json" },
     });

@@ -5,7 +5,7 @@ import FormData from "form-data";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import config from "../../config.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { signedUrlMap } from "../../lib/inmemory-store.js";
 import { projectIdentifierToId } from "./TCG-utils/api.js";
 
@@ -28,6 +28,7 @@ export const UploadFileSchema = z.object({
  */
 export async function uploadFile(
   args: z.infer<typeof UploadFileSchema>,
+  server: any
 ): Promise<CallToolResult> {
   const { project_identifier, file_path } = args;
 
@@ -46,7 +47,7 @@ export async function uploadFile(
       };
     }
     // Get the project ID
-    const projectIdResponse = await projectIdentifierToId(project_identifier);
+    const projectIdResponse = await projectIdentifierToId(project_identifier,server);
 
     const formData = new FormData();
     formData.append("attachments[]", fs.createReadStream(file_path));
@@ -56,7 +57,7 @@ export async function uploadFile(
     const response = await axios.post(uploadUrl, formData, {
       headers: {
         ...formData.getHeaders(),
-        "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+        "API-TOKEN": getBrowserStackAuth(server),
         accept: "application/json, text/plain, */*",
       },
     });

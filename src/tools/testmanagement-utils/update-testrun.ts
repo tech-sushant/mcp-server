@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../../config.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
@@ -35,6 +35,7 @@ type UpdateTestRunArgs = z.infer<typeof UpdateTestRunSchema>;
  */
 export async function updateTestRun(
   args: UpdateTestRunArgs,
+  server: any
 ): Promise<CallToolResult> {
   try {
     const body = { test_run: args.test_run };
@@ -42,10 +43,13 @@ export async function updateTestRun(
       args.project_identifier,
     )}/test-runs/${encodeURIComponent(args.test_run_id)}/update`;
 
+    const authString = getBrowserStackAuth(server);
+    const [username, password] = authString.split(":");
+
     const resp = await axios.patch(url, body, {
       auth: {
-        username: config.browserstackUsername,
-        password: config.browserstackAccessKey,
+        username,
+        password,
       },
     });
 

@@ -14,7 +14,6 @@ import {
   CreateTestCaseSchema,
 } from "./testmanagement-utils/create-testcase.js";
 
-let serverInstance: McpServer;
 
 import {
   listTestCases,
@@ -61,18 +60,19 @@ import {
  */
 export async function createProjectOrFolderTool(
   args: z.infer<typeof CreateProjFoldSchema>,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
     trackMCP(
       "createProjectOrFolder",
-      serverInstance.server.getClientVersion()!,
+      server.server.getClientVersion()!,
     );
-    return await createProjectOrFolder(args);
+    return await createProjectOrFolder(args,server);
   } catch (err) {
     logger.error("Failed to create project/folder: %s", err);
     trackMCP(
       "createProjectOrFolder",
-      serverInstance.server.getClientVersion()!,
+      server.server.getClientVersion()!,
       err,
     );
     return {
@@ -95,15 +95,16 @@ export async function createProjectOrFolderTool(
  */
 export async function createTestCaseTool(
   args: TestCaseCreateRequest,
+  server: McpServer
 ): Promise<CallToolResult> {
   // Sanitize input arguments
   const cleanedArgs = sanitizeArgs(args);
   try {
-    trackMCP("createTestCase", serverInstance.server.getClientVersion()!);
-    return await createTestCaseAPI(cleanedArgs);
+    trackMCP("createTestCase", server.server.getClientVersion()!);
+    return await createTestCaseAPI(cleanedArgs, server);
   } catch (err) {
     logger.error("Failed to create test case: %s", err);
-    trackMCP("createTestCase", serverInstance.server.getClientVersion()!, err);
+    trackMCP("createTestCase", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -125,12 +126,13 @@ export async function createTestCaseTool(
 
 export async function listTestCasesTool(
   args: z.infer<typeof ListTestCasesSchema>,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
-    trackMCP("listTestCases", serverInstance.server.getClientVersion()!);
-    return await listTestCases(args);
+    trackMCP("listTestCases", server.server.getClientVersion()!);
+    return await listTestCases(args, server);
   } catch (err) {
-    trackMCP("listTestCases", serverInstance.server.getClientVersion()!, err);
+    trackMCP("listTestCases", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -151,12 +153,13 @@ export async function listTestCasesTool(
  */
 export async function createTestRunTool(
   args: z.infer<typeof CreateTestRunSchema>,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
-    trackMCP("createTestRun", serverInstance.server.getClientVersion()!);
-    return await createTestRun(args);
+    trackMCP("createTestRun", server.server.getClientVersion()!);
+    return await createTestRun(args, server);
   } catch (err) {
-    trackMCP("createTestRun", serverInstance.server.getClientVersion()!, err);
+    trackMCP("createTestRun", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -177,12 +180,13 @@ export async function createTestRunTool(
  */
 export async function listTestRunsTool(
   args: z.infer<typeof ListTestRunsSchema>,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
-    trackMCP("listTestRuns", serverInstance.server.getClientVersion()!);
-    return await listTestRuns(args);
+    trackMCP("listTestRuns", server.server.getClientVersion()!);
+    return await listTestRuns(args, server);
   } catch (err) {
-    trackMCP("listTestRuns", serverInstance.server.getClientVersion()!, err);
+    trackMCP("listTestRuns", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -205,12 +209,13 @@ export async function listTestRunsTool(
  */
 export async function updateTestRunTool(
   args: z.infer<typeof UpdateTestRunSchema>,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
-    trackMCP("updateTestRun", serverInstance.server.getClientVersion()!);
-    return await updateTestRun(args);
+    trackMCP("updateTestRun", server.server.getClientVersion()!);
+    return await updateTestRun(args, server);
   } catch (err) {
-    trackMCP("updateTestRun", serverInstance.server.getClientVersion()!, err);
+    trackMCP("updateTestRun", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -231,12 +236,13 @@ export async function updateTestRunTool(
  */
 export async function addTestResultTool(
   args: z.infer<typeof AddTestResultSchema>,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
-    trackMCP("addTestResult", serverInstance.server.getClientVersion()!);
-    return await addTestResult(args);
+    trackMCP("addTestResult", server.server.getClientVersion()!);
+    return await addTestResult(args, server);
   } catch (err) {
-    trackMCP("addTestResult", serverInstance.server.getClientVersion()!, err);
+    trackMCP("addTestResult", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -257,17 +263,18 @@ export async function addTestResultTool(
  */
 export async function uploadProductRequirementFileTool(
   args: z.infer<typeof UploadFileSchema>,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
     trackMCP(
       "uploadProductRequirementFile",
-      serverInstance.server.getClientVersion()!,
+      server.server.getClientVersion()!,
     );
-    return await uploadFile(args);
+    return await uploadFile(args, server);
   } catch (err) {
     trackMCP(
       "uploadProductRequirementFile",
-      serverInstance.server.getClientVersion()!,
+      server.server.getClientVersion()!,
       err,
     );
     return {
@@ -291,17 +298,18 @@ export async function uploadProductRequirementFileTool(
 export async function createTestCasesFromFileTool(
   args: z.infer<typeof CreateTestCasesFromFileSchema>,
   context: any,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
     trackMCP(
       "createTestCasesFromFile",
-      serverInstance.server.getClientVersion()!,
+      server.server.getClientVersion()!,
     );
-    return await createTestCasesFromFile(args, context);
+    return await createTestCasesFromFile(args, context,server);
   } catch (err) {
     trackMCP(
       "createTestCasesFromFile",
-      serverInstance.server.getClientVersion()!,
+      server.server.getClientVersion()!,
       err,
     );
     return {
@@ -325,12 +333,13 @@ export async function createTestCasesFromFileTool(
 export async function createLCAStepsTool(
   args: z.infer<typeof CreateLCAStepsSchema>,
   context: any,
+  server: McpServer
 ): Promise<CallToolResult> {
   try {
-    trackMCP("createLCASteps", serverInstance.server.getClientVersion()!);
-    return await createLCASteps(args, context);
+    trackMCP("createLCASteps", server.server.getClientVersion()!);
+    return await createLCASteps(args, context, server);
   } catch (err) {
-    trackMCP("createLCASteps", serverInstance.server.getClientVersion()!, err);
+    trackMCP("createLCASteps", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -350,70 +359,69 @@ export async function createLCAStepsTool(
  * Registers both project/folder and test-case tools.
  */
 export default function addTestManagementTools(server: McpServer) {
-  serverInstance = server;
   server.tool(
     "createProjectOrFolder",
     "Create a project and/or folder in BrowserStack Test Management.",
     CreateProjFoldSchema.shape,
-    createProjectOrFolderTool,
+    (args) => createProjectOrFolderTool(args, server),
   );
 
   server.tool(
     "createTestCase",
     "Use this tool to create a test case in BrowserStack Test Management.",
     CreateTestCaseSchema.shape,
-    createTestCaseTool,
+    (args) => createTestCaseTool(args, server),
   );
 
   server.tool(
     "listTestCases",
     "List test cases in a project with optional filters (status, priority, custom fields, etc.)",
     ListTestCasesSchema.shape,
-    listTestCasesTool,
+    (args) => listTestCasesTool(args, server),
   );
 
   server.tool(
     "createTestRun",
     "Create a test run in BrowserStack Test Management.",
     CreateTestRunSchema.shape,
-    createTestRunTool,
+    (args) => createTestRunTool(args, server),
   );
 
   server.tool(
     "listTestRuns",
     "List test runs in a project with optional filters (date ranges, assignee, state, etc.)",
     ListTestRunsSchema.shape,
-    listTestRunsTool,
+    (args) => listTestRunsTool(args, server),
   );
   server.tool(
     "updateTestRun",
     "Update a test run in BrowserStack Test Management.",
     UpdateTestRunSchema.shape,
-    updateTestRunTool,
+    (args) => updateTestRunTool(args, server),
   );
   server.tool(
     "addTestResult",
     "Add a test result to a specific test run via BrowserStack Test Management API.",
     AddTestResultSchema.shape,
-    addTestResultTool,
+    (args) => addTestResultTool(args, server),
   );
 
   server.tool(
     "uploadProductRequirementFile",
     "Upload files (e.g., PDRs, PDFs) to BrowserStack Test Management and retrieve a file mapping ID. This is utilized for generating test cases from files and is part of the Test Case Generator AI Agent in BrowserStack.",
     UploadFileSchema.shape,
-    uploadProductRequirementFileTool,
+    (args) => uploadProductRequirementFileTool(args, server),
   );
   server.tool(
     "createTestCasesFromFile",
     "Generate test cases from a file in BrowserStack Test Management using the Test Case Generator AI Agent.",
     CreateTestCasesFromFileSchema.shape,
-    createTestCasesFromFileTool,
+    (args, context) => createTestCasesFromFileTool(args, context, server),
   );
   server.tool(
     "createLCASteps",
     "Generate Low Code Automation (LCA) steps for a test case in BrowserStack Test Management using the Low Code Automation Agent.",
     CreateLCAStepsSchema.shape,
-    createLCAStepsTool,
+    (args, context) => createLCAStepsTool(args, context, server),
   );
 }

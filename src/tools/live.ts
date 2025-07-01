@@ -41,6 +41,7 @@ const LiveArgsSchema = z.object(LiveArgsShape);
  */
 async function launchDesktopSession(
   args: z.infer<typeof LiveArgsSchema>,
+  server: any
 ): Promise<string> {
   if (!args.desiredBrowser)
     throw new Error("You must provide a desiredBrowser");
@@ -54,7 +55,7 @@ async function launchDesktopSession(
     osVersion: args.desiredOSVersion,
     browser: args.desiredBrowser,
     browserVersion: args.desiredBrowserVersion,
-  });
+  }, server);
 }
 
 /**
@@ -62,6 +63,7 @@ async function launchDesktopSession(
  */
 async function launchMobileSession(
   args: z.infer<typeof LiveArgsSchema>,
+  server: any
 ): Promise<string> {
   if (!args.desiredDevice) throw new Error("You must provide a desiredDevice");
 
@@ -72,21 +74,21 @@ async function launchMobileSession(
     os: args.desiredOS,
     osVersion: args.desiredOSVersion,
     device: args.desiredDevice,
-  });
+  }, server);
 }
 
 /**
  * Handles the core logic for running a browser session
  */
-async function runBrowserSession(rawArgs: any) {
+async function runBrowserSession(rawArgs: any, server: any) {
   // Validate and narrow
   const args = LiveArgsSchema.parse(rawArgs);
 
   // Branch desktop vs mobile and delegate
   const launchUrl =
     args.platformType === PlatformType.DESKTOP
-      ? await launchDesktopSession(args)
-      : await launchMobileSession(args);
+      ? await launchDesktopSession(args, server)
+      : await launchMobileSession(args, server);
 
   return {
     content: [
@@ -106,7 +108,7 @@ export default function addBrowserLiveTools(server: McpServer) {
     async (args) => {
       try {
         trackMCP("runBrowserLiveSession", server.server.getClientVersion()!);
-        return await runBrowserSession(args);
+        return await runBrowserSession(args, server);
       } catch (error) {
         logger.error("Live session failed: %s", error);
         trackMCP(

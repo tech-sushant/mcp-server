@@ -7,14 +7,18 @@ import { trackMCP } from "../lib/instrumentation.js";
 import logger from "../logger.js";
 
 // Tool function that fetches and processes screenshots from BrowserStack Automate session
-export async function fetchAutomationScreenshotsTool(args: {
-  sessionId: string;
-  sessionType: SessionType;
-}): Promise<CallToolResult> {
+export async function fetchAutomationScreenshotsTool(
+  args: {
+    sessionId: string;
+    sessionType: SessionType;
+  },
+  server: any
+): Promise<CallToolResult> {
   try {
     const screenshots = await fetchAutomationScreenshots(
       args.sessionId,
       args.sessionType,
+      server,
     );
 
     if (screenshots.length === 0) {
@@ -71,7 +75,7 @@ export default function addAutomationTools(server: McpServer) {
           "fetchAutomationScreenshots",
           server.server.getClientVersion()!,
         );
-        return await fetchAutomationScreenshotsTool(args);
+        return await fetchAutomationScreenshotsTool(args, server);
       } catch (error) {
         trackMCP(
           "fetchAutomationScreenshots",

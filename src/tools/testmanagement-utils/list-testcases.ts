@@ -1,8 +1,8 @@
 import axios from "axios";
-import config from "../../config.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 
 /**
  * Schema for listing test cases with optional filters.
@@ -38,6 +38,7 @@ export type ListTestCasesArgs = z.infer<typeof ListTestCasesSchema>;
  */
 export async function listTestCases(
   args: ListTestCasesArgs,
+  server: any
 ): Promise<CallToolResult> {
   try {
     // Build query string
@@ -51,10 +52,12 @@ export async function listTestCases(
       args.project_identifier,
     )}/test-cases?${params.toString()}`;
 
+    const authString = getBrowserStackAuth(server);
+    const [username, password] = authString.split(":");
     const resp = await axios.get(url, {
       auth: {
-        username: config.browserstackUsername,
-        password: config.browserstackAccessKey,
+        username,
+        password,
       },
     });
 

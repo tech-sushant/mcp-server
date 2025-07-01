@@ -6,11 +6,12 @@ import logger from "../logger.js";
 import { trackMCP } from "../lib/instrumentation.js";
 
 // Tool function that fetches self-healing selectors
-export async function fetchSelfHealSelectorTool(args: {
-  sessionId: string;
-}): Promise<CallToolResult> {
+export async function fetchSelfHealSelectorTool(
+  args: { sessionId: string },
+  server: any
+): Promise<CallToolResult> {
   try {
-    const selectors = await getSelfHealSelectors(args.sessionId);
+    const selectors = await getSelfHealSelectors(args.sessionId, server);
     return {
       content: [
         {
@@ -38,7 +39,7 @@ export default function addSelfHealTools(server: McpServer) {
     async (args) => {
       try {
         trackMCP("fetchSelfHealedSelectors", server.server.getClientVersion()!);
-        return await fetchSelfHealSelectorTool(args);
+        return await fetchSelfHealSelectorTool(args, server);
       } catch (error) {
         trackMCP(
           "fetchSelfHealedSelectors",

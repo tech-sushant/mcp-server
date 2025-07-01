@@ -1,13 +1,12 @@
 import axios, { AxiosError } from "axios";
 import FormData from "form-data";
 import fs from "fs";
-import config from "../../config.js";
 
 interface UploadResponse {
   app_url: string;
 }
 
-export async function uploadApp(filePath: string): Promise<UploadResponse> {
+export async function uploadApp(filePath: string, username: string, password: string): Promise<UploadResponse> {
   if (!fs.existsSync(filePath)) {
     throw new Error(`File not found at path: ${filePath}`);
   }
@@ -24,8 +23,8 @@ export async function uploadApp(filePath: string): Promise<UploadResponse> {
           ...formData.getHeaders(),
         },
         auth: {
-          username: config.browserstackUsername,
-          password: config.browserstackAccessKey,
+          username,
+          password,
         },
       },
     );

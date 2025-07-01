@@ -1,6 +1,5 @@
 import fs from "fs";
 import axios from "axios";
-import config from "../../config.js";
 import FormData from "form-data";
 import { customFuzzySearch } from "../../lib/fuzzy.js";
 
@@ -124,7 +123,7 @@ export function validateArgs(args: {
 /**
  * Uploads an application file to AppAutomate and returns the app URL
  */
-export async function uploadApp(appPath: string): Promise<string> {
+export async function uploadApp(appPath: string,username: string, password:string): Promise<string> {
   const filePath = appPath;
 
   if (!fs.existsSync(filePath)) {
@@ -133,7 +132,7 @@ export async function uploadApp(appPath: string): Promise<string> {
 
   const formData = new FormData();
   formData.append("file", fs.createReadStream(filePath));
-
+  
   const response = await axios.post<UploadResponse>(
     "https://api-cloud.browserstack.com/app-automate/upload",
     formData,
@@ -142,8 +141,8 @@ export async function uploadApp(appPath: string): Promise<string> {
         ...formData.getHeaders(),
       },
       auth: {
-        username: config.browserstackUsername,
-        password: config.browserstackAccessKey,
+        username,
+        password
       },
     },
   );

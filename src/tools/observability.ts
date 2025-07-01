@@ -8,8 +8,9 @@ import logger from "../logger.js";
 export async function getFailuresInLastRun(
   buildName: string,
   projectName: string,
+  server:any
 ): Promise<CallToolResult> {
-  const buildsData = await getLatestO11YBuildInfo(buildName, projectName);
+  const buildsData = await getLatestO11YBuildInfo(buildName, projectName, server);
 
   const observabilityUrl = buildsData.observability_url;
   if (!observabilityUrl) {
@@ -60,7 +61,7 @@ export default function addObservabilityTools(server: McpServer) {
     async (args) => {
       try {
         trackMCP("getFailuresInLastRun", server.server.getClientVersion()!);
-        return await getFailuresInLastRun(args.buildName, args.projectName);
+        return await getFailuresInLastRun(args.buildName, args.projectName, server);
       } catch (error) {
         logger.error("Failed to get failures in the last run: %s", error);
         trackMCP(

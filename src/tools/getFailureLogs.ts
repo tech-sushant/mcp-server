@@ -26,12 +26,15 @@ type LogType = AutomateLogType | AppAutomateLogType;
 type SessionTypeValues = SessionType;
 
 // Main log fetcher function
-export async function getFailureLogs(args: {
-  sessionId: string;
-  buildId?: string;
-  logTypes: LogType[];
-  sessionType: SessionTypeValues;
-}): Promise<CallToolResult> {
+export async function getFailureLogs(
+  args: {
+    sessionId: string;
+    buildId?: string;
+    logTypes: LogType[];
+    sessionType: SessionTypeValues;
+  },
+  server: any
+): Promise<CallToolResult> {
   const results: CallToolResult["content"] = [];
   const errors: string[] = [];
   let validLogTypes: LogType[] = [];
@@ -97,37 +100,37 @@ export async function getFailureLogs(args: {
     for (const logType of validLogTypes) {
       switch (logType) {
         case AutomateLogType.NetworkLogs: {
-          response = await retrieveNetworkFailures(args.sessionId);
+          response = await retrieveNetworkFailures(args.sessionId, server);
           results.push({ type: "text", text: response });
           break;
         }
 
         case AutomateLogType.SessionLogs: {
-          response = await retrieveSessionFailures(args.sessionId);
+          response = await retrieveSessionFailures(args.sessionId, server);
           results.push({ type: "text", text: response });
           break;
         }
 
         case AutomateLogType.ConsoleLogs: {
-          response = await retrieveConsoleFailures(args.sessionId);
+          response = await retrieveConsoleFailures(args.sessionId, server);
           results.push({ type: "text", text: response });
           break;
         }
 
         case AppAutomateLogType.DeviceLogs: {
-          response = await retrieveDeviceLogs(args.sessionId, args.buildId!);
+          response = await retrieveDeviceLogs(args.sessionId, args.buildId!, server);
           results.push({ type: "text", text: response });
           break;
         }
 
         case AppAutomateLogType.AppiumLogs: {
-          response = await retrieveAppiumLogs(args.sessionId, args.buildId!);
+          response = await retrieveAppiumLogs(args.sessionId, args.buildId!, server);
           results.push({ type: "text", text: response });
           break;
         }
 
         case AppAutomateLogType.CrashLogs: {
-          response = await retrieveCrashLogs(args.sessionId, args.buildId!);
+          response = await retrieveCrashLogs(args.sessionId, args.buildId!, server);
           results.push({ type: "text", text: response });
           break;
         }
@@ -186,7 +189,7 @@ export default function registerGetFailureLogs(server: McpServer) {
     async (args) => {
       try {
         trackMCP("getFailureLogs", server.server.getClientVersion()!);
-        return await getFailureLogs(args);
+        return await getFailureLogs(args, server);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         trackMCP("getFailureLogs", server.server.getClientVersion()!, error);

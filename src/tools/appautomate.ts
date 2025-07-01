@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
-import config from "../config.js";
+import { getBrowserStackAuth } from "../lib/get-auth.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { maybeCompressBase64 } from "../lib/utils.js";
 import { remote } from "webdriverio";
@@ -47,11 +47,12 @@ async function takeAppScreenshot(args: {
   desiredPlatformVersion: string;
   appPath: string;
   desiredPhone: string;
+  server: any;
 }): Promise<CallToolResult> {
   let driver;
   try {
     validateArgs(args);
-    const { desiredPlatform, desiredPhone, appPath } = args;
+    const { desiredPlatform, desiredPhone, appPath, server } = args;
     let { desiredPlatformVersion } = args;
 
     const platforms = (
@@ -86,8 +87,10 @@ async function takeAppScreenshot(args: {
         `Device "${desiredPhone}" with version ${desiredPlatformVersion} not found.`,
       );
     }
+    const authString = getBrowserStackAuth(server);
+    const [username, password] = authString.split(":");
 
-    const app_url = await uploadApp(appPath);
+    const app_url = await uploadApp(appPath, username, password);
     logger.info(`App uploaded. URL: ${app_url}`);
 
     const capabilities = {
@@ -97,8 +100,8 @@ async function takeAppScreenshot(args: {
       "appium:app": app_url,
       "appium:autoGrantPermissions": true,
       "bstack:options": {
-        userName: config.browserstackUsername,
-        accessKey: config.browserstackAccessKey,
+        userName: username,
+        accessKey: password,
         appiumVersion: "2.0.1",
       },
     };
@@ -173,7 +176,7 @@ export default function addAppAutomationTools(server: McpServer) {
     async (args) => {
       try {
         trackMCP("takeAppScreenshot", server.server.getClientVersion()!);
-        return await takeAppScreenshot(args);
+        return await takeAppScreenshot({ ...args, server });
       } catch (error) {
         trackMCP("takeAppScreenshot", server.server.getClientVersion()!, error);
         const errorMessage =

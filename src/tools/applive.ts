@@ -9,12 +9,15 @@ import { trackMCP } from "../lib/instrumentation.js";
 /**
  * Launches an App Live Session on BrowserStack.
  */
-export async function startAppLiveSession(args: {
-  desiredPlatform: string;
-  desiredPlatformVersion: string;
-  appPath: string;
-  desiredPhone: string;
-}): Promise<CallToolResult> {
+export async function startAppLiveSession(
+  args: {
+    desiredPlatform: string;
+    desiredPlatformVersion: string;
+    appPath: string;
+    desiredPhone: string;
+  },
+  server: any
+): Promise<CallToolResult> {
   if (!args.desiredPlatform) {
     throw new Error("You must provide a desiredPlatform.");
   }
@@ -46,12 +49,15 @@ export async function startAppLiveSession(args: {
     throw new Error("The app path does not exist or is not readable.");
   }
 
-  const launchUrl = await startSession({
-    appPath: args.appPath,
-    desiredPlatform: args.desiredPlatform as "android" | "ios",
-    desiredPhone: args.desiredPhone,
-    desiredPlatformVersion: args.desiredPlatformVersion,
-  });
+  const launchUrl = await startSession(
+    {
+      appPath: args.appPath,
+      desiredPlatform: args.desiredPlatform as "android" | "ios",
+      desiredPhone: args.desiredPhone,
+      desiredPlatformVersion: args.desiredPlatformVersion,
+    },
+    { server }
+  );
 
   return {
     content: [
@@ -92,7 +98,7 @@ export default function addAppLiveTools(server: McpServer) {
     async (args) => {
       try {
         trackMCP("runAppLiveSession", server.server.getClientVersion()!);
-        return await startAppLiveSession(args);
+        return await startAppLiveSession(args, server);
       } catch (error) {
         logger.error("App live session failed: %s", error);
         trackMCP("runAppLiveSession", server.server.getClientVersion()!, error);

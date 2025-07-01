@@ -6,15 +6,20 @@ import { AccessibilityReportFetcher } from "./accessiblity-utils/report-fetcher.
 import { trackMCP } from "../lib/instrumentation.js";
 import { parseAccessibilityReportFromCSV } from "./accessiblity-utils/report-parser.js";
 import { queryAccessibilityRAG } from "./accessiblity-utils/accessibility-rag.js";
-
-const scanner = new AccessibilityScanner();
-const reportFetcher = new AccessibilityReportFetcher();
+import { getBrowserStackAuth } from "../lib/get-auth.js";
 
 async function runAccessibilityScan(
   name: string,
   pageURL: string,
   context: any,
+  server: any
 ): Promise<CallToolResult> {
+  // Create scanner and set auth on the go
+  const scanner = new AccessibilityScanner();
+  const authString = getBrowserStackAuth(server);
+  const [username, password] = authString.split(":");
+  scanner.setAuth({ username, password });
+
   // Start scan
   const startResp = await scanner.startScan(name, [pageURL]);
   const scanId = startResp.data!.id;
@@ -45,6 +50,10 @@ async function runAccessibilityScan(
       isError: true,
     };
   }
+
+  // Create report fetcher and set auth on the go
+  const reportFetcher = new AccessibilityReportFetcher();
+  reportFetcher.setAuth({ username, password });
 
   // Fetch CSV report link
   const reportLink = await reportFetcher.getReportLink(scanId, scanRunId);
@@ -84,7 +93,7 @@ export default function addAccessibilityTools(server: McpServer) {
     async (args) => {
       try {
         trackMCP("accessibilityExpert", server.server.getClientVersion()!);
-        return await queryAccessibilityRAG(args.query);
+        return await queryAccessibilityRAG(args.query, server);
       } catch (error) {
         trackMCP(
           "accessibilityExpert",
@@ -116,7 +125,7 @@ export default function addAccessibilityTools(server: McpServer) {
     async (args, context) => {
       try {
         trackMCP("startAccessibilityScan", server.server.getClientVersion()!);
-        return await runAccessibilityScan(args.name, args.pageURL, context);
+        return await runAccessibilityScan(args.name, args.pageURL, context, server);
       } catch (error) {
         trackMCP(
           "startAccessibilityScan",
