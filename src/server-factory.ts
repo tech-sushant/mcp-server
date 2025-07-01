@@ -4,7 +4,6 @@ const require = createRequire(import.meta.url);
 const packageJson = require("../package.json");
 import logger from "./logger.js";
 import addSDKTools from "./tools/bstack-sdk.js";
-import addAppLiveTools from "./tools/applive.js";
 import addBrowserLiveTools from "./tools/live.js";
 import addAccessibilityTools from "./tools/accessibility.js";
 import addTestManagementTools from "./tools/testmanagement.js";
@@ -16,8 +15,8 @@ import { setupOnInitialized } from "./oninitialized.js";
 
 function registerTools(server: McpServer) {
   addAccessibilityTools(server); //done
-  addSDKTools(server); 
-//   addAppLiveTools(server); //done
+  addSDKTools(server);
+  //   addAppLiveTools(server); //done
   addBrowserLiveTools(server); //done
   addTestManagementTools(server); //done
   addAppAutomationTools(server); //done

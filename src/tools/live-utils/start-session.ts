@@ -9,23 +9,19 @@ import {
   MobileEntry,
   PlatformType,
 } from "./types.js";
-import {
-  isLocalURL
-} from "../../lib/local.js";
+import { isLocalURL } from "../../lib/local.js";
 
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 /**
  * Prepares local tunnel setup based on URL type
  */
-async function prepareLocalTunnel(
-  url: string
-): Promise<boolean> {
+async function prepareLocalTunnel(url: string): Promise<boolean> {
   const isLocal = isLocalURL(url);
   if (isLocal) {
     throw new Error(
       "Local URLs are not supported for BrowserStack Remote MCP. Please use a public URL or the local MCP.",
     );
-  } 
+  }
   return isLocal;
 }
 
