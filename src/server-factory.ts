@@ -16,8 +16,8 @@ import { setupOnInitialized } from "./oninitialized.js";
 
 function registerTools(server: McpServer) {
   addAccessibilityTools(server); //done
-  addSDKTools(server);
-  addAppLiveTools(server); //done
+  addSDKTools(server); 
+//   addAppLiveTools(server); //done
   addBrowserLiveTools(server); //done
   addTestManagementTools(server); //done
   addAppAutomationTools(server); //done

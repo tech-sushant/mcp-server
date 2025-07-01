@@ -10,9 +10,7 @@ import {
   PlatformType,
 } from "./types.js";
 import {
-  isLocalURL,
-  ensureLocalBinarySetup,
-  killExistingBrowserStackLocalProcesses,
+  isLocalURL
 } from "../../lib/local.js";
 
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
@@ -20,16 +18,14 @@ import { getBrowserStackAuth } from "../../lib/get-auth.js";
  * Prepares local tunnel setup based on URL type
  */
 async function prepareLocalTunnel(
-  url: string,
-  username: string,
-  password: string,
+  url: string
 ): Promise<boolean> {
   const isLocal = isLocalURL(url);
   if (isLocal) {
-    await ensureLocalBinarySetup(username, password);
-  } else {
-    await killExistingBrowserStackLocalProcesses();
-  }
+    throw new Error(
+      "Local URLs are not supported for BrowserStack Remote MCP. Please use a public URL or the local MCP.",
+    );
+  } 
   return isLocal;
 }
 
@@ -49,7 +45,13 @@ export async function startBrowserSession(
   const authString = getBrowserStackAuth(server);
   const [username, password] = authString.split(":");
 
-  const isLocal = await prepareLocalTunnel(args.url, username, password);
+  if (!username || !password) {
+    throw new Error(
+      "BrowserStack credentials are not set. Please configure them in the server settings.",
+    );
+  }
+
+  const isLocal = await prepareLocalTunnel(args.url);
 
   const url =
     args.platformType === PlatformType.DESKTOP
