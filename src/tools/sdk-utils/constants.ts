@@ -5,17 +5,23 @@ import { ConfigMapping } from "./types.js";
  */
 
 const pythonInstructions = (username: string, accessKey: string) => `
-Run the following command to install the browserstack-sdk:
+---STEP---
+
+Install the BrowserStack SDK:
 \`\`\`bash
 python3 -m pip install browserstack-sdk
 \`\`\`
 
-Run the following command to setup the browserstack-sdk:
+---STEP---
+
+Setup the BrowserStack SDK with your credentials:
 \`\`\`bash
 browserstack-sdk setup --username "${username}" --key "${accessKey}"
 \`\`\`
 
-In order to run tests on BrowserStack, run the following command:
+---STEP---
+
+Run your tests on BrowserStack:
 \`\`\`bash
 browserstack-sdk python <path-to-test-file>
 \`\`\`
@@ -23,17 +29,24 @@ browserstack-sdk python <path-to-test-file>
 
 const generatePythonFrameworkInstructions =
   (framework: string) => (username: string, accessKey: string) => `
-Run the following command to install the browserstack-sdk:
+---STEP---
+
+Install the BrowserStack SDK:
+
 \`\`\`bash
 python3 -m pip install browserstack-sdk
 \`\`\`
 
-Run the following command to setup the browserstack-sdk:
+---STEP---
+
+Setup the BrowserStack SDK with framework-specific configuration:
 \`\`\`bash
 browserstack-sdk setup --framework "${framework}" --username "${username}" --key "${accessKey}"
 \`\`\`
 
-In order to run tests on BrowserStack, run the following command:
+---STEP---
+
+Run your ${framework} tests on BrowserStack:
 \`\`\`bash
 browserstack-sdk ${framework} <path-to-test-files>
 \`\`\`
@@ -50,8 +63,11 @@ const pytestInstructions = generatePythonFrameworkInstructions("pytest");
 const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
+
 const javaInstructions = (username: string, accessKey: string) => `
-Strictly Add the following dependencies to your \`pom.xml\`:
+---STEP---
+
+Add the BrowserStack Java SDK dependency to your \`pom.xml\`:
 \`\`\`xml
 <dependency>
     <groupId>com.browserstack</groupId>
@@ -70,13 +86,17 @@ dependencies {
 }
 \`\`\`
 
-Inform user to export:
+---STEP---
+
+Export your BrowserStack credentials as environment variables:
 \`\`\`bash
 export BROWSERSTACK_USERNAME=${username}
 export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\`
 
-Run tests using:
+---STEP---
+
+Run your tests using Maven:
 \`\`\`bash
 mvn clean test 
 \`\`\`
@@ -91,120 +111,142 @@ gradle clean test
  * ---------- CSharp INSTRUCTIONS ----------
  */
 
+
 const csharpCommonInstructions = (username: string, accessKey: string) => `
-1. Install BrowserStack TestAdapter NuGet package  
-   Add the package to your project:
-   \`\`\`bash
-   dotnet add package BrowserStack.TestAdapter
-   \`\`\`
+---STEP---
 
-2. Build the project  
-   \`\`\`bash
-   dotnet build
-   \`\`\`
+Install BrowserStack TestAdapter NuGet package:
+\`\`\`bash
+dotnet add package BrowserStack.TestAdapter
+\`\`\`
 
-3. Set up BrowserStack SDK  
-   Replace the placeholders with your actual BrowserStack credentials:
-   \`\`\`bash
-   dotnet browserstack-sdk setup --userName ${username} --accessKey ${accessKey}
-   \`\`\`
+---STEP---
 
-4. Detect if you are running on Apple Silicon (macOS only)  
-   Run this check to determine if Apple Silicon-specific setup is required:
-   \`\`\`bash
-   ARCH="$(uname -m)"
-   if [ "$ARCH" = "arm64" ]; then
-     echo "Detected arm64 architecture - running Apple-Silicon flow"
-   fi
-   \`\`\`
+Build the project:
+\`\`\`bash
+dotnet build
+\`\`\`
 
-5. macOS (Apple Silicon) setup (required only if arm64 detected)  
-   Install the x64 version of .NET for BrowserStack compatibility.
+---STEP---
 
-   - Check your current .NET version:
-     \`\`\`bash
-     dotnet --version
-     \`\`\`
+Set up BrowserStack SDK with your credentials:
+\`\`\`bash
+dotnet browserstack-sdk setup --userName ${config.browserstackUsername} --accessKey ${config.browserstackAccessKey}
+\`\`\`
 
-   - Ensure the path exists strictly; if not, create it first and then run the setup.
-     \`\`\`bash
-     sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
-     \`\`\`
-     Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+---STEP---
 
-6. Run the tests  
-   - For macOS (Apple Silicon), use the full path:
-     \`\`\`bash
-     <your-chosen-path>/dotnet browserstack-sdk
-     \`\`\`
-   - For Windows, Intel Macs, or if dotnet alias is configured:
-     \`\`\`bash
-     dotnet test
-     \`\`\`
+Detect if you are running on Apple Silicon (macOS only):
+Run this check to determine if Apple Silicon-specific setup is required:
+\`\`\`bash
+ARCH="$(uname -m)"
+if [ "$ARCH" = "arm64" ]; then
+  echo "Detected arm64 architecture - running Apple-Silicon flow"
+fi
+\`\`\`
+
+---STEP---
+
+macOS (Apple Silicon) setup (required only if arm64 detected):
+Install the x64 version of .NET for BrowserStack compatibility.
+
+- Check your current .NET version:
+  \`\`\`bash
+  dotnet --version
+  \`\`\`
+
+- Ensure the path exists strictly; if not, create it first and then run the setup:
+  \`\`\`bash
+  sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
+  \`\`\`
+  Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+
+---STEP---
+
+Run the tests:
+- For macOS (Apple Silicon), use the full path:
+  \`\`\`bash
+  <your-chosen-path>/dotnet browserstack-sdk
+  \`\`\`
+- For Windows, Intel Macs, or if dotnet alias is configured:
+  \`\`\`bash
+  dotnet test
+  \`\`\`
 `;
 
-const csharpPlaywrightCommonInstructions = (
-  username: string,
-  accessKey: string,
-) => `
-1. Install BrowserStack TestAdapter NuGet package  
-   Run the following command:
-   \`\`\`bash
-   dotnet add package BrowserStack.TestAdapter
-   \`\`\`
+const csharpPlaywrightCommonInstructions = `
+---STEP---
 
-2. Build the project  
-   \`\`\`bash
-   dotnet build
-   \`\`\`
+Install BrowserStack TestAdapter NuGet package:
+\`\`\`bash
+dotnet add package BrowserStack.TestAdapter
+\`\`\`
 
-3. Set up BrowserStack SDK  
-   Replace the placeholders with your actual credentials:
-   \`\`\`bash
-   dotnet browserstack-sdk setup --userName ${username} --accessKey ${accessKey}
-   \`\`\`
+---STEP---
 
-4. Supported browsers  
-   Use exactly one of the following (case-sensitive):  
-   \`chrome\`, \`edge\`, \`playwright-chromium\`, \`playwright-webkit\`, \`playwright-firefox\`
+Build the project:
+\`\`\`bash
+dotnet build
+\`\`\`
 
-5. Detect if you are running on Apple Silicon (macOS only)  
-   Run this check to determine if Apple Silicon-specific setup is required:
-   \`\`\`bash
-   ARCH="$(uname -m)"
-   if [ "$ARCH" = "arm64" ]; then
-     echo "Detected arm64 architecture - running Apple-Silicon flow"
-   fi
-   \`\`\`
+---STEP---
 
-6. macOS (Apple Silicon) setup (required only if arm64 detected)  
-   Install the x64 version of .NET for compatibility with BrowserStack.
+Set up BrowserStack SDK with your credentials:
+\`\`\`bash
+dotnet browserstack-sdk setup --userName ${config.browserstackUsername} --accessKey ${config.browserstackAccessKey}
+\`\`\`
 
-   - Check your .NET version:
-     \`\`\`bash
-     dotnet --version
-     \`\`\`
+---STEP---
 
-   - Ensure the path exists strictly; if not, create it first and then run the setup.
-     \`\`\`bash
-     sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
-     \`\`\`
-     Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+Choose supported browser:
+Use exactly one of the following (case-sensitive):  
+\`chrome\`, \`edge\`, \`playwright-chromium\`, \`playwright-webkit\`, \`playwright-firefox\`
 
-7. Fix for Playwright architecture (macOS only)  
-   If the folder exists:  
-   \`<project-folder>/bin/Debug/net8.0/.playwright/node/darwin-arm64\`  
-   Rename \`darwin-arm64\` to \`darwin-x64\`
+---STEP---
 
-8. Run the tests  
-   - For macOS (Apple Silicon), use the full path:
-     \`\`\`bash
-     <your-chosen-path>/dotnet browserstack-sdk
-     \`\`\`
-   - For Windows, Intel Macs, or if dotnet alias is configured:
-     \`\`\`bash
-     dotnet test
-     \`\`\`
+Detect if you are running on Apple Silicon (macOS only):
+Run this check to determine if Apple Silicon-specific setup is required:
+\`\`\`bash
+ARCH="$(uname -m)"
+if [ "$ARCH" = "arm64" ]; then
+  echo "Detected arm64 architecture - running Apple-Silicon flow"
+fi
+\`\`\`
+
+---STEP---
+
+macOS (Apple Silicon) setup (required only if arm64 detected):
+Install the x64 version of .NET for compatibility with BrowserStack.
+
+- Check your .NET version:
+  \`\`\`bash
+  dotnet --version
+  \`\`\`
+
+- Ensure the path exists strictly; if not, create it first and then run the setup:
+  \`\`\`bash
+  sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
+  \`\`\`
+  Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+
+---STEP---
+
+Fix for Playwright architecture (macOS only):
+If the folder exists:  
+\`<project-folder>/bin/Debug/net8.0/.playwright/node/darwin-arm64\`  
+Rename \`darwin-arm64\` to \`darwin-x64\`
+
+---STEP---
+
+Run the tests:
+- For macOS (Apple Silicon), use the full path:
+  \`\`\`bash
+  <your-chosen-path>/dotnet browserstack-sdk
+  \`\`\`
+- For Windows, Intel Macs, or if dotnet alias is configured:
+  \`\`\`bash
+  dotnet test
+  \`\`\`
 `;
 
 /**
@@ -212,24 +254,27 @@ const csharpPlaywrightCommonInstructions = (
  */
 
 const nodejsInstructions = (username: string, accessKey: string) => `
-- Ensure that \`browserstack-node-sdk\` is present in package.json, use the latest version.
-- Add new scripts to package.json for running tests on BrowserStack (use \`npx\` to trigger the sdk):
-  \`\`\`json
-  "scripts": {
-    "test:browserstack": "npx browserstack-node-sdk <framework-specific-test-execution-command>"
-  }
-  \`\`\`
-- Add to dependencies:
-  \`\`\`json
-  "browserstack-node-sdk": "latest"
-  \`\`\`
-- Inform user to export BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY as environment variables.
-- For example, in bash:
-  \`\`\`bash
-  export BROWSERSTACK_USERNAME=${username}
-  export BROWSERSTACK_ACCESS_KEY=${accessKey}
-  \`\`\`
-  
+const nodejsInstructions = `
+---STEP---
+
+Ensure \`browserstack-node-sdk\` is present in package.json with the latest version:
+\`\`\`json
+"browserstack-node-sdk": "latest"
+\`\`\`
+
+---STEP---
+
+Add new scripts to package.json for running tests on BrowserStack:
+\`\`\`json
+"scripts": {
+  "test:browserstack": "npx browserstack-node-sdk <framework-specific-test-execution-command>"
+}
+\`\`\`
+
+---STEP---
+
+Export BrowserStack credentials as environment variables:
+Set the following environment variables before running tests.
 `;
 
 /**
@@ -237,10 +282,9 @@ const nodejsInstructions = (username: string, accessKey: string) => `
  */
 
 const webdriverioInstructions = (username: string, accessKey: string) => `
-To integrate your WebdriverIO test suite with BrowserStack, follow these steps. This process uses the @wdio/browserstack-service and does not require a browserstack.yml file.
+---STEP---
 
-**1. Set BrowserStack Credentials**
-
+Set BrowserStack Credentials:
 Export your BrowserStack username and access key as environment variables.
 
 For macOS/Linux:
@@ -255,15 +299,17 @@ $env:BROWSERSTACK_USERNAME=${username}
 $env:BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\`
 
-**2. Install the BrowserStack WDIO Service**
+---STEP---
 
+Install the BrowserStack WDIO Service:
 Add the service to your project's dev dependencies.
 \`\`\`bash
 npm install @wdio/browserstack-service --save-dev
 \`\`\`
 
-**3. Update your WebdriverIO Config File (e.g., wdio.conf.js)**
+---STEP---
 
+Update your WebdriverIO Config File (e.g., wdio.conf.js):
 Modify your configuration file to use the BrowserStack service and define the platforms you want to test on.
 
 Here is an example configuration:
@@ -335,30 +381,33 @@ exports.config.capabilities.forEach(function (caps) {
 });
 \`\`\`
 
-**4. Run your tests**
+---STEP---
 
+Run your tests:
 You can now run your tests on BrowserStack using your standard WebdriverIO command.
 `;
 
+
 const cypressInstructions = (username: string, accessKey: string) => `
-To integrate your Cypress test suite with BrowserStack, follow these steps. This process uses the BrowserStack Cypress CLI and a \`browserstack.json\` file for configuration.
+---STEP---
 
-**1. Install the BrowserStack Cypress CLI**
-
+Install the BrowserStack Cypress CLI:
 Install the CLI as a dev dependency in your project.
 \`\`\`bash
 npm install browserstack-cypress-cli --save-dev
 \`\`\`
 
-**2. Create the Configuration File**
+---STEP---
 
+Create the Configuration File:
 Generate the \`browserstack.json\` configuration file in your project's root directory by running the following command:
 \`\`\`bash
 npx browserstack-cypress init
 \`\`\`
 
-**3. Configure \`browserstack.json\`**
+---STEP---
 
+Configure \`browserstack.json\`:
 Open the generated \`browserstack.json\` file and update it with your BrowserStack credentials and desired capabilities. Below is an example configuration.
 
 * **auth**: Your BrowserStack username and access key.
@@ -398,10 +447,12 @@ Open the generated \`browserstack.json\` file and update it with your BrowserSta
   }
 }
 \`\`\`
+
 **Note:** For Cypress v9 or lower, use \`"cypress_config_file": "./cypress.json"\`. The \`testObservability: true\` flag enables the [Test Reporting & Analytics dashboard](https://www.browserstack.com/docs/test-management/test-reporting-and-analytics) for deeper insights into your test runs.
 
-**4. Run Your Tests on BrowserStack**
+---STEP---
 
+Run Your Tests on BrowserStack:
 Execute your tests on BrowserStack using the following command:
 \`\`\`bash
 npx browserstack-cypress run --sync
@@ -422,7 +473,11 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     },
   },
   java: {
-    playwright: {},
+    playwright: {
+      junit4: { instructions: javaInstructions },
+      junit5: { instructions: javaInstructions },
+      testng: { instructions: javaInstructions },
+    },
     selenium: {
       testng: { instructions: javaInstructions },
       cucumber: { instructions: javaInstructions },
