@@ -12,7 +12,7 @@ export async function fetchAutomationScreenshotsTool(
     sessionId: string;
     sessionType: SessionType;
   },
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   try {
     const screenshots = await fetchAutomationScreenshots(

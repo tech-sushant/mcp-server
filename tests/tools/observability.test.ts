@@ -32,13 +32,15 @@ describe('getFailuresInLastRun', () => {
   it('should successfully retrieve failures for a valid build', async () => {
     (getLatestO11YBuildInfo as Mock).mockResolvedValue(validBuildData);
 
-    const result = await getFailuresInLastRun('test-build', 'test-project');
+    const mockServer = { getClientVersion: () => "test-version" };
+    const result = await getFailuresInLastRun('test-build', 'test-project', mockServer);
 
-    expect(getLatestO11YBuildInfo).toHaveBeenCalledWith('test-build', 'test-project');
-    expect(result.content[0].text).toContain('https://observability.browserstack.com/123');
-    expect(result.content[0].text).toContain('Test insight message');
-    expect(result.content[0].text).toContain('Error 1');
-    expect(result.content[0].text).toContain('Error 2');
+    expect(getLatestO11YBuildInfo).toHaveBeenCalledWith('test-build', 'test-project', mockServer);
+    expect(result.content).toBeDefined();
+    expect(result.content![0].text).toContain('https://observability.browserstack.com/123');
+    expect(result.content![0].text).toContain('Test insight message');
+    expect(result.content![0].text).toContain('Error 1');
+    expect(result.content![0].text).toContain('Error 2');
   });
 
   it('should handle missing observability URL', async () => {
@@ -47,7 +49,8 @@ describe('getFailuresInLastRun', () => {
       observability_url: null
     });
 
-    await expect(getFailuresInLastRun('test-build', 'test-project'))
+    const mockServer = { getClientVersion: () => "test-version" };
+    await expect(getFailuresInLastRun('test-build', 'test-project', mockServer))
       .rejects.toThrow('No observability URL found in build data');
   });
 
@@ -60,8 +63,10 @@ describe('getFailuresInLastRun', () => {
       }
     });
 
-    const result = await getFailuresInLastRun('test-build', 'test-project');
-    expect(result.content[0].text).toContain('No overview available');
+    const mockServer = { getClientVersion: () => "test-version" };
+    const result = await getFailuresInLastRun('test-build', 'test-project', mockServer);
+    expect(result.content).toBeDefined();
+    expect(result.content![0].text).toContain('No overview available');
   });
 
   it('should handle missing error details', async () => {
@@ -73,21 +78,25 @@ describe('getFailuresInLastRun', () => {
       }
     });
 
-    const result = await getFailuresInLastRun('test-build', 'test-project');
-    expect(result.content[0].text).toContain('No error details available');
+    const mockServer = { getClientVersion: () => "test-version" };
+    const result = await getFailuresInLastRun('test-build', 'test-project', mockServer);
+    expect(result.content).toBeDefined();
+    expect(result.content![0].text).toContain('No error details available');
   });
 
   it('should handle API errors', async () => {
     (getLatestO11YBuildInfo as Mock).mockRejectedValue(new Error('API Error'));
 
-    await expect(getFailuresInLastRun('test-build', 'test-project'))
+    const mockServer = { getClientVersion: () => "test-version" };
+    await expect(getFailuresInLastRun('test-build', 'test-project', mockServer))
       .rejects.toThrow('API Error');
   });
 
   it('should handle empty build data', async () => {
     (getLatestO11YBuildInfo as Mock).mockResolvedValue({});
 
-    await expect(getFailuresInLastRun('test-build', 'test-project'))
+    const mockServer = { getClientVersion: () => "test-version" };
+    await expect(getFailuresInLastRun('test-build', 'test-project', mockServer))
       .rejects.toThrow('No observability URL found in build data');
   });
 
@@ -97,8 +106,10 @@ describe('getFailuresInLastRun', () => {
       unique_errors: {}
     });
 
-    const result = await getFailuresInLastRun('test-build', 'test-project');
-    expect(result.content[0].text).toContain('No overview available');
-    expect(result.content[0].text).toContain('No error details available');
+    const mockServer = { getClientVersion: () => "test-version" };
+    const result = await getFailuresInLastRun('test-build', 'test-project', mockServer);
+    expect(result.content).toBeDefined();
+    expect(result.content![0].text).toContain('No overview available');
+    expect(result.content![0].text).toContain('No error details available');
   });
-}); 
+});

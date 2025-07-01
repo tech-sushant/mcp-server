@@ -35,7 +35,7 @@ type UpdateTestRunArgs = z.infer<typeof UpdateTestRunSchema>;
  */
 export async function updateTestRun(
   args: UpdateTestRunArgs,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   try {
     const body = { test_run: args.test_run };

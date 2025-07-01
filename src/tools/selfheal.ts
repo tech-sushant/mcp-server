@@ -8,7 +8,7 @@ import { trackMCP } from "../lib/instrumentation.js";
 // Tool function that fetches self-healing selectors
 export async function fetchSelfHealSelectorTool(
   args: { sessionId: string },
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   try {
     const selectors = await getSelfHealSelectors(args.sessionId, server);

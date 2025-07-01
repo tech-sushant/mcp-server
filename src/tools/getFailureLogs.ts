@@ -33,7 +33,7 @@ export async function getFailureLogs(
     logTypes: LogType[];
     sessionType: SessionTypeValues;
   },
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   const results: CallToolResult["content"] = [];
   const errors: string[] = [];
@@ -118,19 +118,31 @@ export async function getFailureLogs(
         }
 
         case AppAutomateLogType.DeviceLogs: {
-          response = await retrieveDeviceLogs(args.sessionId, args.buildId!, server);
+          response = await retrieveDeviceLogs(
+            args.sessionId,
+            args.buildId!,
+            server,
+          );
           results.push({ type: "text", text: response });
           break;
         }
 
         case AppAutomateLogType.AppiumLogs: {
-          response = await retrieveAppiumLogs(args.sessionId, args.buildId!, server);
+          response = await retrieveAppiumLogs(
+            args.sessionId,
+            args.buildId!,
+            server,
+          );
           results.push({ type: "text", text: response });
           break;
         }
 
         case AppAutomateLogType.CrashLogs: {
-          response = await retrieveCrashLogs(args.sessionId, args.buildId!, server);
+          response = await retrieveCrashLogs(
+            args.sessionId,
+            args.buildId!,
+            server,
+          );
           results.push({ type: "text", text: response });
           break;
         }

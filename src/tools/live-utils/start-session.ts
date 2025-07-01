@@ -19,7 +19,11 @@ import { getBrowserStackAuth } from "../../lib/get-auth.js";
 /**
  * Prepares local tunnel setup based on URL type
  */
-async function prepareLocalTunnel(url: string, username: string, password: string): Promise<boolean> {
+async function prepareLocalTunnel(
+  url: string,
+  username: string,
+  password: string,
+): Promise<boolean> {
   const isLocal = isLocalURL(url);
   if (isLocal) {
     await ensureLocalBinarySetup(username, password);
@@ -34,7 +38,7 @@ async function prepareLocalTunnel(url: string, username: string, password: strin
  */
 export async function startBrowserSession(
   args: DesktopSearchArgs | MobileSearchArgs,
-  server: any
+  server: any,
 ): Promise<string> {
   const entry =
     args.platformType === PlatformType.DESKTOP

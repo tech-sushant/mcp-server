@@ -25,7 +25,10 @@ interface StartSessionOptions {
 /**
  * Start an App Live session: filter, select, upload, and open.
  */
-export async function startSession(args: StartSessionArgs, options: StartSessionOptions): Promise<string> {
+export async function startSession(
+  args: StartSessionArgs,
+  options: StartSessionOptions,
+): Promise<string> {
   const { appPath, desiredPlatform, desiredPhone, desiredPlatformVersion } =
     args;
   const { server } = options;

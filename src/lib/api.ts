@@ -1,5 +1,3 @@
-
-
 import { getBrowserStackAuth } from "./get-auth.js";
 
 export async function getLatestO11YBuildInfo(

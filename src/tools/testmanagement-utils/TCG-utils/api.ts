@@ -19,7 +19,7 @@ import { getBrowserStackAuth } from "../../../lib/get-auth.js";
  */
 export async function fetchFormFields(
   projectId: string,
-  server: any
+  server: any,
 ): Promise<{ default_fields: any; custom_fields: any }> {
   const res = await axios.get(FORM_FIELDS_URL(projectId), {
     headers: {
@@ -38,7 +38,7 @@ export async function triggerTestCaseGeneration(
   folderId: string,
   projectId: string,
   source: string,
-  server: any
+  server: any,
 ): Promise<string> {
   const res = await axios.post(
     TCG_TRIGGER_URL,
@@ -349,7 +349,7 @@ export async function bulkCreateTestCases(
 
 export async function projectIdentifierToId(
   projectId: string,
-  server: any
+  server: any,
 ): Promise<string> {
   const url = `https://test-management.browserstack.com/api/v1/projects/?q=${projectId}`;
 

@@ -7,7 +7,10 @@ export interface RAGChunk {
 
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 
-export async function queryAccessibilityRAG(userQuery: string, server: any): Promise<any> {
+export async function queryAccessibilityRAG(
+  userQuery: string,
+  server: any,
+): Promise<any> {
   const url = "https://accessibility.browserstack.com/api/tcg-proxy/search";
 
   const authString = getBrowserStackAuth(server);

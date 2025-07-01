@@ -14,7 +14,6 @@ import {
   CreateTestCaseSchema,
 } from "./testmanagement-utils/create-testcase.js";
 
-
 import {
   listTestCases,
   ListTestCasesSchema,
@@ -60,21 +59,14 @@ import {
  */
 export async function createProjectOrFolderTool(
   args: z.infer<typeof CreateProjFoldSchema>,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
-    trackMCP(
-      "createProjectOrFolder",
-      server.server.getClientVersion()!,
-    );
-    return await createProjectOrFolder(args,server);
+    trackMCP("createProjectOrFolder", server.server.getClientVersion()!);
+    return await createProjectOrFolder(args, server);
   } catch (err) {
     logger.error("Failed to create project/folder: %s", err);
-    trackMCP(
-      "createProjectOrFolder",
-      server.server.getClientVersion()!,
-      err,
-    );
+    trackMCP("createProjectOrFolder", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -95,7 +87,7 @@ export async function createProjectOrFolderTool(
  */
 export async function createTestCaseTool(
   args: TestCaseCreateRequest,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   // Sanitize input arguments
   const cleanedArgs = sanitizeArgs(args);
@@ -126,7 +118,7 @@ export async function createTestCaseTool(
 
 export async function listTestCasesTool(
   args: z.infer<typeof ListTestCasesSchema>,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
     trackMCP("listTestCases", server.server.getClientVersion()!);
@@ -153,7 +145,7 @@ export async function listTestCasesTool(
  */
 export async function createTestRunTool(
   args: z.infer<typeof CreateTestRunSchema>,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
     trackMCP("createTestRun", server.server.getClientVersion()!);
@@ -180,7 +172,7 @@ export async function createTestRunTool(
  */
 export async function listTestRunsTool(
   args: z.infer<typeof ListTestRunsSchema>,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
     trackMCP("listTestRuns", server.server.getClientVersion()!);
@@ -209,7 +201,7 @@ export async function listTestRunsTool(
  */
 export async function updateTestRunTool(
   args: z.infer<typeof UpdateTestRunSchema>,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
     trackMCP("updateTestRun", server.server.getClientVersion()!);
@@ -236,7 +228,7 @@ export async function updateTestRunTool(
  */
 export async function addTestResultTool(
   args: z.infer<typeof AddTestResultSchema>,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
     trackMCP("addTestResult", server.server.getClientVersion()!);
@@ -263,13 +255,10 @@ export async function addTestResultTool(
  */
 export async function uploadProductRequirementFileTool(
   args: z.infer<typeof UploadFileSchema>,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
-    trackMCP(
-      "uploadProductRequirementFile",
-      server.server.getClientVersion()!,
-    );
+    trackMCP("uploadProductRequirementFile", server.server.getClientVersion()!);
     return await uploadFile(args, server);
   } catch (err) {
     trackMCP(
@@ -298,20 +287,13 @@ export async function uploadProductRequirementFileTool(
 export async function createTestCasesFromFileTool(
   args: z.infer<typeof CreateTestCasesFromFileSchema>,
   context: any,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
-    trackMCP(
-      "createTestCasesFromFile",
-      server.server.getClientVersion()!,
-    );
-    return await createTestCasesFromFile(args, context,server);
+    trackMCP("createTestCasesFromFile", server.server.getClientVersion()!);
+    return await createTestCasesFromFile(args, context, server);
   } catch (err) {
-    trackMCP(
-      "createTestCasesFromFile",
-      server.server.getClientVersion()!,
-      err,
-    );
+    trackMCP("createTestCasesFromFile", server.server.getClientVersion()!, err);
     return {
       content: [
         {
@@ -333,7 +315,7 @@ export async function createTestCasesFromFileTool(
 export async function createLCAStepsTool(
   args: z.infer<typeof CreateLCAStepsSchema>,
   context: any,
-  server: McpServer
+  server: McpServer,
 ): Promise<CallToolResult> {
   try {
     trackMCP("createLCASteps", server.server.getClientVersion()!);

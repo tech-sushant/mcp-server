@@ -42,7 +42,10 @@ export type ConfigMapping = Record<
     Record<
       SDKSupportedBrowserAutomationFrameworkEnum,
       Partial<
-        Record<SDKSupportedTestingFrameworkEnum, { instructions: string }>
+        Record<
+          SDKSupportedTestingFrameworkEnum,
+          { instructions: (username: string, accessKey: string) => string }
+        >
       >
     >
   >

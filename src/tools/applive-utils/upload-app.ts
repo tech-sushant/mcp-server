@@ -6,7 +6,11 @@ interface UploadResponse {
   app_url: string;
 }
 
-export async function uploadApp(filePath: string, username: string, password: string): Promise<UploadResponse> {
+export async function uploadApp(
+  filePath: string,
+  username: string,
+  password: string,
+): Promise<UploadResponse> {
   if (!fs.existsSync(filePath)) {
     throw new Error(`File not found at path: ${filePath}`);
   }

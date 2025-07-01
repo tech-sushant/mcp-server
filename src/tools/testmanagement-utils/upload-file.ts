@@ -28,7 +28,7 @@ export const UploadFileSchema = z.object({
  */
 export async function uploadFile(
   args: z.infer<typeof UploadFileSchema>,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   const { project_identifier, file_path } = args;
 
@@ -47,7 +47,10 @@ export async function uploadFile(
       };
     }
     // Get the project ID
-    const projectIdResponse = await projectIdentifierToId(project_identifier,server);
+    const projectIdResponse = await projectIdentifierToId(
+      project_identifier,
+      server,
+    );
 
     const formData = new FormData();
     formData.append("attachments[]", fs.createReadStream(file_path));

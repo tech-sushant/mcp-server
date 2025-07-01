@@ -19,6 +19,7 @@ import {
   getPercyInstructions,
 } from "./sdk-utils/percy/instructions.js";
 import { getSDKPrefixCommand } from "./sdk-utils/commands.js";
+import { getBrowserStackAuth } from "../lib/get-auth.js";
 
 /**
  * BrowserStack SDK hooks into your test framework to seamlessly run tests on BrowserStack.
@@ -30,13 +31,19 @@ export async function bootstrapProjectWithSDK({
   detectedLanguage,
   desiredPlatforms,
   enablePercy,
+  server,
 }: {
   detectedBrowserAutomationFramework: SDKSupportedBrowserAutomationFramework;
   detectedTestingFramework: SDKSupportedTestingFramework;
   detectedLanguage: SDKSupportedLanguage;
   desiredPlatforms: string[];
   enablePercy: boolean;
+  server: any;
 }): Promise<CallToolResult> {
+  // Get credentials from server
+  const authString = getBrowserStackAuth(server);
+  const [username, accessKey] = authString.split(":");
+
   // Handle frameworks with unique setup instructions that don't use browserstack.yml
   if (
     detectedBrowserAutomationFramework === "cypress" ||
@@ -46,6 +53,8 @@ export async function bootstrapProjectWithSDK({
       detectedBrowserAutomationFramework,
       detectedTestingFramework,
       detectedLanguage,
+      username,
+      accessKey,
     );
     if (enablePercy) {
       const percyInstructions = getPercyInstructions(
@@ -84,6 +93,8 @@ export async function bootstrapProjectWithSDK({
       detectedBrowserAutomationFramework,
       detectedTestingFramework,
       detectedLanguage,
+      username,
+      accessKey,
     );
 
   if (enablePercy) {
@@ -159,6 +170,7 @@ export default function addSDKTools(server: McpServer) {
           detectedLanguage: args.detectedLanguage as SDKSupportedLanguage,
           desiredPlatforms: args.desiredPlatforms,
           enablePercy: args.enablePercy,
+          server,
         });
       } catch (error) {
         trackMCP(

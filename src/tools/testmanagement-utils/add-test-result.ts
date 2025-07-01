@@ -33,7 +33,7 @@ export type AddTestResultArgs = z.infer<typeof AddTestResultSchema>;
  */
 export async function addTestResult(
   rawArgs: AddTestResultArgs,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   try {
     const args = AddTestResultSchema.parse(rawArgs);

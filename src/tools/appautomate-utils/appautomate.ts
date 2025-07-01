@@ -123,7 +123,11 @@ export function validateArgs(args: {
 /**
  * Uploads an application file to AppAutomate and returns the app URL
  */
-export async function uploadApp(appPath: string,username: string, password:string): Promise<string> {
+export async function uploadApp(
+  appPath: string,
+  username: string,
+  password: string,
+): Promise<string> {
   const filePath = appPath;
 
   if (!fs.existsSync(filePath)) {
@@ -132,7 +136,7 @@ export async function uploadApp(appPath: string,username: string, password:strin
 
   const formData = new FormData();
   formData.append("file", fs.createReadStream(filePath));
-  
+
   const response = await axios.post<UploadResponse>(
     "https://api-cloud.browserstack.com/app-automate/upload",
     formData,
@@ -142,7 +146,7 @@ export async function uploadApp(appPath: string,username: string, password:strin
       },
       auth: {
         username,
-        password
+        password,
       },
     },
   );

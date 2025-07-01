@@ -37,7 +37,7 @@ type CreateProjFoldArgs = z.infer<typeof CreateProjFoldSchema>;
  */
 export async function createProjectOrFolder(
   args: CreateProjFoldArgs,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   const {
     project_name,

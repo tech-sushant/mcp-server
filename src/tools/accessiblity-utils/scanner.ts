@@ -30,7 +30,9 @@ export class AccessibilityScanner {
     urlList: string[],
   ): Promise<AccessibilityScanResponse> {
     if (!this.auth?.username || !this.auth?.password) {
-      throw new Error("BrowserStack credentials are not set for AccessibilityScanner.");
+      throw new Error(
+        "BrowserStack credentials are not set for AccessibilityScanner.",
+      );
     }
     // Check if any URL is local
     const hasLocal = urlList.some(isLocalURL);
@@ -39,7 +41,11 @@ export class AccessibilityScanner {
     const BS_LOCAL_DOMAIN = "bs-local.com";
 
     if (hasLocal) {
-      await ensureLocalBinarySetup(this.auth?.username, this.auth?.password, localIdentifier);
+      await ensureLocalBinarySetup(
+        this.auth?.username,
+        this.auth?.password,
+        localIdentifier,
+      );
     } else {
       await killExistingBrowserStackLocalProcesses();
     }

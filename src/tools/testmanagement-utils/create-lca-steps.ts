@@ -69,7 +69,10 @@ export async function createLCASteps(
 ): Promise<CallToolResult> {
   try {
     // Get the project ID from identifier
-    const projectId = await projectIdentifierToId(args.project_identifier,server);
+    const projectId = await projectIdentifierToId(
+      args.project_identifier,
+      server,
+    );
 
     // Get the test case ID and folder ID from identifier
     const { testCaseId, folderId } = await testCaseIdentifierToDetails(
@@ -127,7 +130,7 @@ export async function createLCASteps(
           maxWaitMs, // max wait time
           2 * 60 * 1000, // 2 minutes initial wait
           10 * 1000, // 10 seconds interval
-          server
+          server,
         );
 
         if (lcaResult && lcaResult.status === "done") {

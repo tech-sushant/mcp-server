@@ -10,6 +10,8 @@ export const getInstructionsForProjectConfiguration = (
   detectedBrowserAutomationFramework: SDKSupportedBrowserAutomationFramework,
   detectedTestingFramework: SDKSupportedTestingFramework,
   detectedLanguage: SDKSupportedLanguage,
+  username: string,
+  accessKey: string,
 ) => {
   const configuration = SUPPORTED_CONFIGURATIONS[detectedLanguage];
 
@@ -33,9 +35,11 @@ export const getInstructionsForProjectConfiguration = (
     );
   }
 
-  return configuration[detectedBrowserAutomationFramework][
-    detectedTestingFramework
-  ].instructions;
+  const instructionFunction =
+    configuration[detectedBrowserAutomationFramework][detectedTestingFramework]
+      .instructions;
+
+  return instructionFunction(username, accessKey);
 };
 
 export function generateBrowserStackYMLInstructions(

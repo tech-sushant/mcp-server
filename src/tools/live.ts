@@ -41,21 +41,24 @@ const LiveArgsSchema = z.object(LiveArgsShape);
  */
 async function launchDesktopSession(
   args: z.infer<typeof LiveArgsSchema>,
-  server: any
+  server: any,
 ): Promise<string> {
   if (!args.desiredBrowser)
     throw new Error("You must provide a desiredBrowser");
   if (!args.desiredBrowserVersion)
     throw new Error("You must provide a desiredBrowserVersion");
 
-  return startBrowserSession({
-    platformType: PlatformType.DESKTOP,
-    url: args.desiredURL,
-    os: args.desiredOS,
-    osVersion: args.desiredOSVersion,
-    browser: args.desiredBrowser,
-    browserVersion: args.desiredBrowserVersion,
-  }, server);
+  return startBrowserSession(
+    {
+      platformType: PlatformType.DESKTOP,
+      url: args.desiredURL,
+      os: args.desiredOS,
+      osVersion: args.desiredOSVersion,
+      browser: args.desiredBrowser,
+      browserVersion: args.desiredBrowserVersion,
+    },
+    server,
+  );
 }
 
 /**
@@ -63,18 +66,21 @@ async function launchDesktopSession(
  */
 async function launchMobileSession(
   args: z.infer<typeof LiveArgsSchema>,
-  server: any
+  server: any,
 ): Promise<string> {
   if (!args.desiredDevice) throw new Error("You must provide a desiredDevice");
 
-  return startBrowserSession({
-    platformType: PlatformType.MOBILE,
-    browser: args.desiredBrowser,
-    url: args.desiredURL,
-    os: args.desiredOS,
-    osVersion: args.desiredOSVersion,
-    device: args.desiredDevice,
-  }, server);
+  return startBrowserSession(
+    {
+      platformType: PlatformType.MOBILE,
+      browser: args.desiredBrowser,
+      url: args.desiredURL,
+      os: args.desiredOS,
+      osVersion: args.desiredOSVersion,
+      device: args.desiredDevice,
+    },
+    server,
+  );
 }
 
 /**

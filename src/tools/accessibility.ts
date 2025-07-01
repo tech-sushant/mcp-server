@@ -12,7 +12,7 @@ async function runAccessibilityScan(
   name: string,
   pageURL: string,
   context: any,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   // Create scanner and set auth on the go
   const scanner = new AccessibilityScanner();
@@ -125,7 +125,12 @@ export default function addAccessibilityTools(server: McpServer) {
     async (args, context) => {
       try {
         trackMCP("startAccessibilityScan", server.server.getClientVersion()!);
-        return await runAccessibilityScan(args.name, args.pageURL, context, server);
+        return await runAccessibilityScan(
+          args.name,
+          args.pageURL,
+          context,
+          server,
+        );
       } catch (error) {
         trackMCP(
           "startAccessibilityScan",

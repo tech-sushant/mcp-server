@@ -53,7 +53,7 @@ export type CreateTestRunArgs = z.infer<typeof CreateTestRunSchema>;
  */
 export async function createTestRun(
   rawArgs: CreateTestRunArgs,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   try {
     const inputArgs = {

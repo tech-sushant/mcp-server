@@ -141,7 +141,7 @@ import { getBrowserStackAuth } from "../../lib/get-auth.js";
 
 export async function createTestCase(
   params: TestCaseCreateRequest,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   const body = { test_case: params };
   const authString = getBrowserStackAuth(server);
@@ -179,7 +179,10 @@ export async function createTestCase(
     }
 
     const tc = data.test_case;
-    const projectId = await projectIdentifierToId(params.project_identifier, server);
+    const projectId = await projectIdentifierToId(
+      params.project_identifier,
+      server,
+    );
 
     return {
       content: [

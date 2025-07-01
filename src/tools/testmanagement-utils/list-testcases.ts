@@ -38,7 +38,7 @@ export type ListTestCasesArgs = z.infer<typeof ListTestCasesSchema>;
  */
 export async function listTestCases(
   args: ListTestCasesArgs,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   try {
     // Build query string

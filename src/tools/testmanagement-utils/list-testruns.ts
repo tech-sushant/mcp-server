@@ -26,7 +26,7 @@ type ListTestRunsArgs = z.infer<typeof ListTestRunsSchema>;
  */
 export async function listTestRuns(
   args: ListTestRunsArgs,
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   try {
     const params = new URLSearchParams();

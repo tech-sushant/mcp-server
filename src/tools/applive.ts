@@ -16,7 +16,7 @@ export async function startAppLiveSession(
     appPath: string;
     desiredPhone: string;
   },
-  server: any
+  server: any,
 ): Promise<CallToolResult> {
   if (!args.desiredPlatform) {
     throw new Error("You must provide a desiredPlatform.");
@@ -56,7 +56,7 @@ export async function startAppLiveSession(
       desiredPhone: args.desiredPhone,
       desiredPlatformVersion: args.desiredPlatformVersion,
     },
-    { server }
+    { server },
   );
 
   return {
