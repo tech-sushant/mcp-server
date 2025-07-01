@@ -23,7 +23,6 @@ import {
   formatPercyInstructions,
   getPercyInstructions,
 } from "./sdk-utils/percy/instructions.js";
-import { getSDKPrefixCommand } from "./sdk-utils/commands.js";
 import { getBrowserStackAuth } from "../lib/get-auth.js";
 
 /**

@@ -2,6 +2,7 @@ import axios from "axios";
 import { randomUUID } from "node:crypto";
 import logger from "../../logger.js";
 import { isLocalURL } from "../../lib/local.js";
+import config from "../../config.js";
 
 export interface AccessibilityScanResponse {
   success: boolean;

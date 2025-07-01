@@ -131,7 +131,7 @@ dotnet build
 
 Set up BrowserStack SDK with your credentials:
 \`\`\`bash
-dotnet browserstack-sdk setup --userName ${config.browserstackUsername} --accessKey ${config.browserstackAccessKey}
+dotnet browserstack-sdk setup --userName ${username} --accessKey ${accessKey}
 \`\`\`
 
 ---STEP---
@@ -174,7 +174,7 @@ Run the tests:
   \`\`\`
 `;
 
-const csharpPlaywrightCommonInstructions = `
+const csharpPlaywrightCommonInstructions  = (username: string, accessKey: string) => `
 ---STEP---
 
 Install BrowserStack TestAdapter NuGet package:
@@ -193,7 +193,7 @@ dotnet build
 
 Set up BrowserStack SDK with your credentials:
 \`\`\`bash
-dotnet browserstack-sdk setup --userName ${config.browserstackUsername} --accessKey ${config.browserstackAccessKey}
+dotnet browserstack-sdk setup --userName ${username} --accessKey ${accessKey}
 \`\`\`
 
 ---STEP---
@@ -254,7 +254,6 @@ Run the tests:
  */
 
 const nodejsInstructions = (username: string, accessKey: string) => `
-const nodejsInstructions = `
 ---STEP---
 
 Ensure \`browserstack-node-sdk\` is present in package.json with the latest version:
@@ -275,6 +274,10 @@ Add new scripts to package.json for running tests on BrowserStack:
 
 Export BrowserStack credentials as environment variables:
 Set the following environment variables before running tests.
+\`\`\`bash
+export BROWSERSTACK_USERNAME=${username}
+export BROWSERSTACK_ACCESS_KEY=${accessKey}
+\`\`\`
 `;
 
 /**
