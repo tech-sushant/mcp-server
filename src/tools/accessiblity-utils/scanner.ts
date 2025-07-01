@@ -1,11 +1,7 @@
 import axios from "axios";
 import { randomUUID } from "node:crypto";
 import logger from "../../logger.js";
-import {
-  isLocalURL,
-  ensureLocalBinarySetup,
-  killExistingBrowserStackLocalProcesses,
-} from "../../lib/local.js";
+import { isLocalURL } from "../../lib/local.js";
 
 export interface AccessibilityScanResponse {
   success: boolean;
