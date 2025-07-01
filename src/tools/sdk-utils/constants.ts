@@ -63,7 +63,6 @@ const pytestInstructions = generatePythonFrameworkInstructions("pytest");
 const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
-
 const javaInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
@@ -110,7 +109,6 @@ gradle clean test
 /**
  * ---------- CSharp INSTRUCTIONS ----------
  */
-
 
 const csharpCommonInstructions = (username: string, accessKey: string) => `
 ---STEP---
@@ -174,7 +172,10 @@ Run the tests:
   \`\`\`
 `;
 
-const csharpPlaywrightCommonInstructions  = (username: string, accessKey: string) => `
+const csharpPlaywrightCommonInstructions = (
+  username: string,
+  accessKey: string,
+) => `
 ---STEP---
 
 Install BrowserStack TestAdapter NuGet package:
@@ -389,7 +390,6 @@ exports.config.capabilities.forEach(function (caps) {
 Run your tests:
 You can now run your tests on BrowserStack using your standard WebdriverIO command.
 `;
-
 
 const cypressInstructions = (username: string, accessKey: string) => `
 ---STEP---
