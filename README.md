@@ -21,7 +21,7 @@
 </div>
 
 <div>
-    <a href="https://www.youtube.com/watch?v=sLA7K9v7qZc">
+    <a href="https://www.youtube.com/watch?v=sLA7K9v7qZc&list=PL1vH6dHT3H7oy8w9CY6L_nxGxCc89VXMX&index=5">
       <img src="assets/thumbnail.webp">
     </a>
   </div>
