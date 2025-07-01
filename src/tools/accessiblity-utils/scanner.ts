@@ -42,13 +42,9 @@ export class AccessibilityScanner {
     const BS_LOCAL_DOMAIN = "bs-local.com";
 
     if (hasLocal) {
-      await ensureLocalBinarySetup(
-        this.auth?.username,
-        this.auth?.password,
-        localIdentifier,
+      throw new Error(
+        "Local URLs are not supported for Browserstack Remote MCP For accessibility scan.",
       );
-    } else {
-      await killExistingBrowserStackLocalProcesses();
     }
 
     const transformedUrlList = urlList.map((url) => {
