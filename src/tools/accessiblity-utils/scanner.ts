@@ -1,7 +1,11 @@
 import axios from "axios";
 import { randomUUID } from "node:crypto";
 import logger from "../../logger.js";
-import { isLocalURL } from "../../lib/local.js";
+import {
+  isLocalURL,
+  ensureLocalBinarySetup,
+  killExistingBrowserStackLocalProcesses,
+} from "../../lib/local.js";
 import config from "../../config.js";
 
 export interface AccessibilityScanResponse {
@@ -45,9 +49,9 @@ export class AccessibilityScanner {
     }
 
     if (hasLocal) {
-      throw new Error(
-        "Local URLs are not supported for Browserstack Remote MCP For accessibility scan.",
-      );
+      await ensureLocalBinarySetup(this.auth.username,this.auth.password,localIdentifier);
+    } else {
+      await killExistingBrowserStackLocalProcesses();
     }
 
     const transformedUrlList = urlList.map((url) => {
