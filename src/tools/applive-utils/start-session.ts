@@ -10,6 +10,8 @@ import { findDeviceByName } from "./device-search.js";
 import { pickVersion } from "./version-utils.js";
 import { DeviceEntry } from "./types.js";
 import childProcess from "child_process";
+import { BrowserStackConfig } from "../../lib/types.js";
+
 
 interface StartSessionArgs {
   appPath: string;
@@ -19,7 +21,7 @@ interface StartSessionArgs {
 }
 
 interface StartSessionOptions {
-  config: any;
+  config: BrowserStackConfig;
 }
 
 /**

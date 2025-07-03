@@ -1,9 +1,10 @@
 import { getBrowserStackAuth } from "./get-auth.js";
+import { BrowserStackConfig } from "../lib/types.js";
 
 export async function getLatestO11YBuildInfo(
   buildName: string,
   projectName: string,
-  config: any,
+  config: BrowserStackConfig,
 ) {
   const buildsUrl = `https://api-observability.browserstack.com/ext/v1/builds/latest?build_name=${encodeURIComponent(
     buildName,

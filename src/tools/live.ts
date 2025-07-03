@@ -5,6 +5,8 @@ import logger from "../logger.js";
 import { startBrowserSession } from "./live-utils/start-session.js";
 import { PlatformType } from "./live-utils/types.js";
 import { trackMCP } from "../lib/instrumentation.js";
+import { BrowserStackConfig } from "../lib/types.js";
+
 
 // Define the schema shape
 const LiveArgsShape = {
@@ -41,7 +43,7 @@ const LiveArgsSchema = z.object(LiveArgsShape);
  */
 async function launchDesktopSession(
   args: z.infer<typeof LiveArgsSchema>,
-  config: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   if (!args.desiredBrowser)
     throw new Error("You must provide a desiredBrowser");
@@ -66,7 +68,7 @@ async function launchDesktopSession(
  */
 async function launchMobileSession(
   args: z.infer<typeof LiveArgsSchema>,
-  config: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   if (!args.desiredDevice) throw new Error("You must provide a desiredDevice");
 
@@ -86,7 +88,7 @@ async function launchMobileSession(
 /**
  * Handles the core logic for running a browser session
  */
-async function runBrowserSession(rawArgs: any, config: any) {
+async function runBrowserSession(rawArgs: any, config: BrowserStackConfig) {
   // Validate and narrow
   const args = LiveArgsSchema.parse(rawArgs);
 
@@ -106,7 +108,7 @@ async function runBrowserSession(rawArgs: any, config: any) {
   };
 }
 
-export default function addBrowserLiveTools(server: McpServer, config: any) {
+export default function addBrowserLiveTools(server: McpServer, config: BrowserStackConfig) {
   server.tool(
     "runBrowserLiveSession",
     "Launch a BrowserStack Live session (desktop or mobile).",

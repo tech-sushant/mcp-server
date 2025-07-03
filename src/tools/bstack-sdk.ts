@@ -24,6 +24,7 @@ import {
   getPercyInstructions,
 } from "./sdk-utils/percy/instructions.js";
 import { getBrowserStackAuth } from "../lib/get-auth.js";
+import { BrowserStackConfig } from "../lib/types.js";
 
 /**
  * BrowserStack SDK hooks into your test framework to seamlessly run tests on BrowserStack.
@@ -42,7 +43,7 @@ export async function bootstrapProjectWithSDK({
   detectedLanguage: SDKSupportedLanguage;
   desiredPlatforms: string[];
   enablePercy: boolean;
-  config: any;
+  config: BrowserStackConfig;
 }): Promise<CallToolResult> {
   // Get credentials from config
   const authString = getBrowserStackAuth(config);
@@ -160,7 +161,7 @@ function formatFinalInstructions(combinedInstructions: string): CallToolResult {
   };
 }
 
-export default function addSDKTools(server: McpServer, config: any) {
+export default function addSDKTools(server: McpServer, config: BrowserStackConfig) {
   server.tool(
     "runTestsOnBrowserStack",
     "Use this tool to get instructions for running tests on BrowserStack and browserstack percy",

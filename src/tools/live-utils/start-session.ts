@@ -10,6 +10,8 @@ import {
 import { isLocalURL } from "../../lib/local.js";
 
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
+
 /**
  * Prepares local tunnel setup based on URL type
  */
@@ -28,7 +30,7 @@ async function prepareLocalTunnel(url: string): Promise<boolean> {
  */
 export async function startBrowserSession(
   args: DesktopSearchArgs | MobileSearchArgs,
-  config: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const entry =
     args.platformType === PlatformType.DESKTOP

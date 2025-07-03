@@ -51,6 +51,8 @@ import {
   createLCASteps,
   CreateLCAStepsSchema,
 } from "./testmanagement-utils/create-lca-steps.js";
+import { BrowserStackConfig } from "../lib/types.js";
+
 
 //TODO: Moving the traceMCP and catch block to the parent(server) function
 
@@ -59,7 +61,7 @@ import {
  */
 export async function createProjectOrFolderTool(
   args: z.infer<typeof CreateProjFoldSchema>,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -98,7 +100,7 @@ export async function createProjectOrFolderTool(
  */
 export async function createTestCaseTool(
   args: TestCaseCreateRequest,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   // Sanitize input arguments
@@ -135,7 +137,7 @@ export async function createTestCaseTool(
 
 export async function listTestCasesTool(
   args: z.infer<typeof ListTestCasesSchema>,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -168,7 +170,7 @@ export async function listTestCasesTool(
  */
 export async function createTestRunTool(
   args: z.infer<typeof CreateTestRunSchema>,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -201,7 +203,7 @@ export async function createTestRunTool(
  */
 export async function listTestRunsTool(
   args: z.infer<typeof ListTestRunsSchema>,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -236,7 +238,7 @@ export async function listTestRunsTool(
  */
 export async function updateTestRunTool(
   args: z.infer<typeof UpdateTestRunSchema>,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -269,7 +271,7 @@ export async function updateTestRunTool(
  */
 export async function addTestResultTool(
   args: z.infer<typeof AddTestResultSchema>,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -302,7 +304,7 @@ export async function addTestResultTool(
  */
 export async function uploadProductRequirementFileTool(
   args: z.infer<typeof UploadFileSchema>,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -341,7 +343,7 @@ export async function uploadProductRequirementFileTool(
 export async function createTestCasesFromFileTool(
   args: z.infer<typeof CreateTestCasesFromFileSchema>,
   context: any,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -374,7 +376,7 @@ export async function createTestCasesFromFileTool(
 export async function createLCAStepsTool(
   args: z.infer<typeof CreateLCAStepsSchema>,
   context: any,
-  config: any,
+  config: BrowserStackConfig,
   server: McpServer,
 ): Promise<CallToolResult> {
   try {
@@ -405,7 +407,7 @@ export async function createLCAStepsTool(
 /**
  * Registers both project/folder and test-case tools.
  */
-export default function addTestManagementTools(server: McpServer, config: any) {
+export default function addTestManagementTools(server: McpServer, config: BrowserStackConfig) {
   server.tool(
     "createProjectOrFolder",
     "Create a project and/or folder in BrowserStack Test Management.",

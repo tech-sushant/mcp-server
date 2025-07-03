@@ -13,7 +13,7 @@ async function runAccessibilityScan(
   name: string,
   pageURL: string,
   context: any,
-  config: any,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   // Create scanner and set auth on the go
   const scanner = new AccessibilityScanner();
