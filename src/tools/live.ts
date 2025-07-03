@@ -7,7 +7,6 @@ import { PlatformType } from "./live-utils/types.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { BrowserStackConfig } from "../lib/types.js";
 
-
 // Define the schema shape
 const LiveArgsShape = {
   platformType: z
@@ -108,7 +107,10 @@ async function runBrowserSession(rawArgs: any, config: BrowserStackConfig) {
   };
 }
 
-export default function addBrowserLiveTools(server: McpServer, config: BrowserStackConfig) {
+export default function addBrowserLiveTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "runBrowserLiveSession",
     "Launch a BrowserStack Live session (desktop or mobile).",

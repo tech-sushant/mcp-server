@@ -7,7 +7,6 @@ import logger from "../logger.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { BrowserStackConfig } from "../lib/types.js";
 
-
 /**
  * Launches an App Live Session on BrowserStack.
  */
@@ -71,7 +70,10 @@ export async function startAppLiveSession(
   };
 }
 
-export default function addAppLiveTools(server: McpServer, config: BrowserStackConfig) {
+export default function addAppLiveTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "runAppLiveSession",
     "Use this tool when user wants to manually check their app on a particular mobile device using BrowserStack's cloud infrastructure. Can be used to debug crashes, slow performance, etc.",

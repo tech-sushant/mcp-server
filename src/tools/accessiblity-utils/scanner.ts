@@ -49,7 +49,11 @@ export class AccessibilityScanner {
     }
 
     if (hasLocal) {
-      await ensureLocalBinarySetup(this.auth.username,this.auth.password,localIdentifier);
+      await ensureLocalBinarySetup(
+        this.auth.username,
+        this.auth.password,
+        localIdentifier,
+      );
     } else {
       await killExistingBrowserStackLocalProcesses();
     }

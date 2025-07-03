@@ -52,8 +52,13 @@ describe('startAppLiveSession', () => {
     desiredPhone: 'iPhone 12 Pro'
   };
 
+  const mockConfig = { 
+    getClientVersion: () => "test-version",
+    "browserstack-username": "test-username",
+    "browserstack-access-key": "test-access-key"
+  };
+
   it('should successfully start an Android app live session', async () => {
-    const mockConfig = { getClientVersion: () => "test-version" };
     const result = await startAppLiveSession(validAndroidArgs, mockConfig);
 
     expect(startSession).toHaveBeenCalledWith({
@@ -66,7 +71,6 @@ describe('startAppLiveSession', () => {
   });
 
   it('should successfully start an iOS app live session', async () => {
-    const mockConfig = { getClientVersion: () => "test-version" };
     const result = await startAppLiveSession(validiOSArgs, mockConfig);
 
     expect(startSession).toHaveBeenCalledWith({
@@ -80,37 +84,31 @@ describe('startAppLiveSession', () => {
 
   it('should fail if platform is not provided', async () => {
     const args = { ...validAndroidArgs, desiredPlatform: '' };
-    const mockConfig = { getClientVersion: () => "test-version" };
     await expect(startAppLiveSession(args, mockConfig)).rejects.toThrow('You must provide a desiredPlatform');
   });
 
   it('should fail if app path is not provided', async () => {
     const args = { ...validAndroidArgs, appPath: '' };
-    const mockConfig = { getClientVersion: () => "test-version" };
     await expect(startAppLiveSession(args, mockConfig)).rejects.toThrow('You must provide a appPath');
   });
 
   it('should fail if phone is not provided', async () => {
     const args = { ...validAndroidArgs, desiredPhone: '' };
-    const mockConfig = { getClientVersion: () => "test-version" };
     await expect(startAppLiveSession(args, mockConfig)).rejects.toThrow('You must provide a desiredPhone');
   });
 
   it('should fail if Android app path does not end with .apk', async () => {
     const args = { ...validAndroidArgs, appPath: '/path/to/app.ipa' };
-    const mockConfig = { getClientVersion: () => "test-version" };
     await expect(startAppLiveSession(args, mockConfig)).rejects.toThrow('You must provide a valid Android app path');
   });
 
   it('should fail if iOS app path does not end with .ipa', async () => {
     const args = { ...validiOSArgs, appPath: '/path/to/app.apk' };
-    const mockConfig = { getClientVersion: () => "test-version" };
     await expect(startAppLiveSession(args, mockConfig)).rejects.toThrow('You must provide a valid iOS app path');
   });
 
   it('should fail if app file does not exist', async () => {
     (fs.existsSync as Mock).mockReturnValue(false);
-    const mockConfig = { getClientVersion: () => "test-version" };
     await expect(startAppLiveSession(validAndroidArgs, mockConfig)).rejects.toThrow('The app path does not exist');
     expect(logger.error).toHaveBeenCalled();
   });
@@ -119,14 +117,12 @@ describe('startAppLiveSession', () => {
     (fs.accessSync as Mock).mockImplementation(() => {
       throw new Error('EACCES: permission denied');
     });
-    const mockConfig = { getClientVersion: () => "test-version" };
     await expect(startAppLiveSession(validAndroidArgs, mockConfig)).rejects.toThrow('The app path does not exist or is not readable');
     expect(logger.error).toHaveBeenCalled();
   });
 
   it('should handle session start failure', async () => {
     (startSession as Mock).mockRejectedValue(new Error('Session start failed'));
-    const mockConfig = { getClientVersion: () => "test-version" };
     await expect(startAppLiveSession(validAndroidArgs, mockConfig)).rejects.toThrow('Session start failed');
   });
 });

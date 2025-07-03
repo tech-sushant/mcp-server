@@ -15,14 +15,17 @@ import {
   killExistingBrowserStackLocalProcesses,
 } from "../../lib/local.js";
 
-
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 
 /**
  * Prepares local tunnel setup based on URL type
  */
-async function prepareLocalTunnel(url: string,username: string, password: string): Promise<boolean> {
+async function prepareLocalTunnel(
+  url: string,
+  username: string,
+  password: string,
+): Promise<boolean> {
   const isLocal = isLocalURL(url);
   if (isLocal) {
     await ensureLocalBinarySetup(username, password);

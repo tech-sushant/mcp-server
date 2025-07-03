@@ -161,7 +161,10 @@ function formatFinalInstructions(combinedInstructions: string): CallToolResult {
   };
 }
 
-export default function addSDKTools(server: McpServer, config: BrowserStackConfig) {
+export default function addSDKTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "runTestsOnBrowserStack",
     "Use this tool to get instructions for running tests on BrowserStack and browserstack percy",

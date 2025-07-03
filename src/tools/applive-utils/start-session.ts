@@ -12,7 +12,6 @@ import { DeviceEntry } from "./types.js";
 import childProcess from "child_process";
 import { BrowserStackConfig } from "../../lib/types.js";
 
-
 interface StartSessionArgs {
   appPath: string;
   desiredPlatform: "android" | "ios";

@@ -53,7 +53,6 @@ import {
 } from "./testmanagement-utils/create-lca-steps.js";
 import { BrowserStackConfig } from "../lib/types.js";
 
-
 //TODO: Moving the traceMCP and catch block to the parent(server) function
 
 /**
@@ -407,7 +406,10 @@ export async function createLCAStepsTool(
 /**
  * Registers both project/folder and test-case tools.
  */
-export default function addTestManagementTools(server: McpServer, config: BrowserStackConfig) {
+export default function addTestManagementTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "createProjectOrFolder",
     "Create a project and/or folder in BrowserStack Test Management.",
