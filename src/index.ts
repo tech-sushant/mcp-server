@@ -8,9 +8,6 @@ import "dotenv/config";
 import logger from "./logger.js";
 import { createMcpServer } from "./server-factory.js";
 
-
-
-
 async function main() {
   logger.info(
     "Launching BrowserStack MCP server, version %s",
@@ -18,7 +15,7 @@ async function main() {
   );
 
   const username = process.env.BROWSERSTACK_USERNAME;
-  const accessKey = process.env.BROWSERSTACK_AUTH_KEY;
+  const accessKey = process.env.BROWSERSTACK_ACCESS_KEY;
 
   if (!username) {
     throw new Error("BROWSERSTACK_USERNAME environment variable is required");
@@ -29,12 +26,12 @@ async function main() {
   }
 
   const transport = new StdioServerTransport();
-  
+
   const server = createMcpServer({
     "browserstack-username": username,
     "browserstack-access-key": accessKey,
   });
-  
+
   await server.connect(transport);
 }
 
