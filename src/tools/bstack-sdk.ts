@@ -35,17 +35,17 @@ export async function bootstrapProjectWithSDK({
   detectedLanguage,
   desiredPlatforms,
   enablePercy,
-  server,
+  config,
 }: {
   detectedBrowserAutomationFramework: SDKSupportedBrowserAutomationFramework;
   detectedTestingFramework: SDKSupportedTestingFramework;
   detectedLanguage: SDKSupportedLanguage;
   desiredPlatforms: string[];
   enablePercy: boolean;
-  server: any;
+  config: any;
 }): Promise<CallToolResult> {
-  // Get credentials from server
-  const authString = getBrowserStackAuth(server);
+  // Get credentials from config
+  const authString = getBrowserStackAuth(config);
   const [username, accessKey] = authString.split(":");
 
   // Handle frameworks with unique setup instructions that don't use browserstack.yml
@@ -160,7 +160,7 @@ function formatFinalInstructions(combinedInstructions: string): CallToolResult {
   };
 }
 
-export default function addSDKTools(server: McpServer) {
+export default function addSDKTools(server: McpServer, config: any) {
   server.tool(
     "runTestsOnBrowserStack",
     "Use this tool to get instructions for running tests on BrowserStack and browserstack percy",
@@ -200,7 +200,12 @@ export default function addSDKTools(server: McpServer) {
 
     async (args) => {
       try {
-        trackMCP("runTestsOnBrowserStack", server.server.getClientVersion()!);
+        trackMCP(
+          "runTestsOnBrowserStack",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
 
         return await bootstrapProjectWithSDK({
           detectedBrowserAutomationFramework:
@@ -213,13 +218,14 @@ export default function addSDKTools(server: McpServer) {
 
           desiredPlatforms: args.desiredPlatforms,
           enablePercy: args.enablePercy,
-          server,
+          config,
         });
       } catch (error) {
         trackMCP(
           "runTestsOnBrowserStack",
           server.server.getClientVersion()!,
           error,
+          config,
         );
 
         return {

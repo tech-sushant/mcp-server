@@ -1,14 +1,15 @@
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { filterLinesByKeywords, validateLogResponse } from "./utils.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 // DEVICE LOGS
 export async function retrieveDeviceLogs(
   sessionId: string,
   buildId: string,
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/deviceLogs`;
-  const authString = getBrowserStackAuth(server);
+  const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
   const response = await fetch(url, {
@@ -32,10 +33,10 @@ export async function retrieveDeviceLogs(
 export async function retrieveAppiumLogs(
   sessionId: string,
   buildId: string,
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/appiumlogs`;
-  const authString = getBrowserStackAuth(server);
+  const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
   const response = await fetch(url, {
@@ -59,10 +60,10 @@ export async function retrieveAppiumLogs(
 export async function retrieveCrashLogs(
   sessionId: string,
   buildId: string,
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const url = `https://api.browserstack.com/app-automate/builds/${buildId}/sessions/${sessionId}/crashlogs`;
-  const authString = getBrowserStackAuth(server);
+  const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
   const response = await fetch(url, {

@@ -16,7 +16,7 @@ export async function startAppLiveSession(
     appPath: string;
     desiredPhone: string;
   },
-  server: any,
+  config: any,
 ): Promise<CallToolResult> {
   if (!args.desiredPlatform) {
     throw new Error("You must provide a desiredPlatform.");
@@ -56,7 +56,7 @@ export async function startAppLiveSession(
       desiredPhone: args.desiredPhone,
       desiredPlatformVersion: args.desiredPlatformVersion,
     },
-    { server },
+    { config },
   );
 
   return {
@@ -69,7 +69,7 @@ export async function startAppLiveSession(
   };
 }
 
-export default function addAppLiveTools(server: McpServer) {
+export default function addAppLiveTools(server: McpServer, config: any) {
   server.tool(
     "runAppLiveSession",
     "Use this tool when user wants to manually check their app on a particular mobile device using BrowserStack's cloud infrastructure. Can be used to debug crashes, slow performance, etc.",
@@ -97,11 +97,21 @@ export default function addAppLiveTools(server: McpServer) {
     },
     async (args) => {
       try {
-        trackMCP("runAppLiveSession", server.server.getClientVersion()!);
-        return await startAppLiveSession(args, server);
+        trackMCP(
+          "runAppLiveSession",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await startAppLiveSession(args, config);
       } catch (error) {
         logger.error("App live session failed: %s", error);
-        trackMCP("runAppLiveSession", server.server.getClientVersion()!, error);
+        trackMCP(
+          "runAppLiveSession",
+          server.server.getClientVersion()!,
+          error,
+          config,
+        );
         return {
           content: [
             {

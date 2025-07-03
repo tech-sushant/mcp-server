@@ -1,7 +1,7 @@
 import { trackMCP } from "./lib/instrumentation.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
-export function setupOnInitialized(server: McpServer) {
+export function setupOnInitialized(server: McpServer, config?: any) {
   const nodeVersion = process.versions.node;
 
   // Check for Node.js version
@@ -12,6 +12,6 @@ export function setupOnInitialized(server: McpServer) {
   }
 
   server.server.oninitialized = () => {
-    trackMCP("started", server.server.getClientVersion()!);
+    trackMCP("started", server.server.getClientVersion()!, undefined, config);
   };
 }

@@ -41,7 +41,7 @@ const LiveArgsSchema = z.object(LiveArgsShape);
  */
 async function launchDesktopSession(
   args: z.infer<typeof LiveArgsSchema>,
-  server: any,
+  config: any,
 ): Promise<string> {
   if (!args.desiredBrowser)
     throw new Error("You must provide a desiredBrowser");
@@ -57,7 +57,7 @@ async function launchDesktopSession(
       browser: args.desiredBrowser,
       browserVersion: args.desiredBrowserVersion,
     },
-    server,
+    config,
   );
 }
 
@@ -66,7 +66,7 @@ async function launchDesktopSession(
  */
 async function launchMobileSession(
   args: z.infer<typeof LiveArgsSchema>,
-  server: any,
+  config: any,
 ): Promise<string> {
   if (!args.desiredDevice) throw new Error("You must provide a desiredDevice");
 
@@ -79,22 +79,22 @@ async function launchMobileSession(
       osVersion: args.desiredOSVersion,
       device: args.desiredDevice,
     },
-    server,
+    config,
   );
 }
 
 /**
  * Handles the core logic for running a browser session
  */
-async function runBrowserSession(rawArgs: any, server: any) {
+async function runBrowserSession(rawArgs: any, config: any) {
   // Validate and narrow
   const args = LiveArgsSchema.parse(rawArgs);
 
   // Branch desktop vs mobile and delegate
   const launchUrl =
     args.platformType === PlatformType.DESKTOP
-      ? await launchDesktopSession(args, server)
-      : await launchMobileSession(args, server);
+      ? await launchDesktopSession(args, config)
+      : await launchMobileSession(args, config);
 
   return {
     content: [
@@ -106,21 +106,27 @@ async function runBrowserSession(rawArgs: any, server: any) {
   };
 }
 
-export default function addBrowserLiveTools(server: McpServer) {
+export default function addBrowserLiveTools(server: McpServer, config: any) {
   server.tool(
     "runBrowserLiveSession",
     "Launch a BrowserStack Live session (desktop or mobile).",
     LiveArgsShape,
     async (args) => {
       try {
-        trackMCP("runBrowserLiveSession", server.server.getClientVersion()!);
-        return await runBrowserSession(args, server);
+        trackMCP(
+          "runBrowserLiveSession",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await runBrowserSession(args, config);
       } catch (error) {
         logger.error("Live session failed: %s", error);
         trackMCP(
           "runBrowserLiveSession",
           server.server.getClientVersion()!,
           error,
+          config,
         );
         return {
           content: [

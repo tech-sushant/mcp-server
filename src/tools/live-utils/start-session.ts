@@ -28,15 +28,15 @@ async function prepareLocalTunnel(url: string): Promise<boolean> {
  */
 export async function startBrowserSession(
   args: DesktopSearchArgs | MobileSearchArgs,
-  server: any,
+  config: any,
 ): Promise<string> {
   const entry =
     args.platformType === PlatformType.DESKTOP
       ? await filterDesktop(args as DesktopSearchArgs)
       : await filterMobile(args as MobileSearchArgs);
 
-  // Get credentials from server
-  const authString = getBrowserStackAuth(server);
+  // Get credentials from config
+  const authString = getBrowserStackAuth(config);
   const [username, password] = authString.split(":");
 
   if (!username || !password) {

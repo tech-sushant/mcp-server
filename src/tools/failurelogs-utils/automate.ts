@@ -5,14 +5,15 @@ import {
   filterLinesByKeywords,
   validateLogResponse,
 } from "./utils.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 // NETWORK LOGS
 export async function retrieveNetworkFailures(
   sessionId: string,
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/networklogs`;
-  const authString = getBrowserStackAuth(server);
+  const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
   const response = await fetch(url, {
@@ -60,10 +61,10 @@ export async function retrieveNetworkFailures(
 // SESSION LOGS
 export async function retrieveSessionFailures(
   sessionId: string,
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/logs`;
-  const authString = getBrowserStackAuth(server);
+  const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
   const response = await fetch(url, {
@@ -86,10 +87,10 @@ export async function retrieveSessionFailures(
 // CONSOLE LOGS
 export async function retrieveConsoleFailures(
   sessionId: string,
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/consolelogs`;
-  const authString = getBrowserStackAuth(server);
+  const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
   const response = await fetch(url, {

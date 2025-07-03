@@ -4,6 +4,7 @@ import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js"; // or correct path
 import { projectIdentifierToId } from "../testmanagement-utils/TCG-utils/api.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 // Schema for combined project/folder creation
 export const CreateProjFoldSchema = z.object({
@@ -37,7 +38,7 @@ type CreateProjFoldArgs = z.infer<typeof CreateProjFoldSchema>;
  */
 export async function createProjectOrFolder(
   args: CreateProjFoldArgs,
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   const {
     project_name,
@@ -54,7 +55,7 @@ export async function createProjectOrFolder(
     );
   }
 
-  const authString = getBrowserStackAuth(server);
+  const authString = getBrowserStackAuth(config);
   const [username, password] = authString.split(":");
 
   let projId = project_identifier;
@@ -62,7 +63,7 @@ export async function createProjectOrFolder(
   // Step 1: Create project if project_name provided
   if (project_name) {
     try {
-      const authString = getBrowserStackAuth(server);
+      const authString = getBrowserStackAuth(config);
       const [username, password] = authString.split(":");
       const res = await axios.post(
         "https://test-management.browserstack.com/api/v2/projects",
@@ -119,7 +120,7 @@ export async function createProjectOrFolder(
       // Folder created successfully
 
       const folder = res.data.folder;
-      const projectId = await projectIdentifierToId(projId, server);
+      const projectId = await projectIdentifierToId(projId, config);
 
       return {
         content: [

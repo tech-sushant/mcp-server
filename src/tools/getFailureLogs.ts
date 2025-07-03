@@ -3,6 +3,7 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
 import { trackMCP } from "../lib/instrumentation.js";
+import { BrowserStackConfig } from "../lib/types.js";
 
 import {
   retrieveNetworkFailures,
@@ -33,7 +34,7 @@ export async function getFailureLogs(
     logTypes: LogType[];
     sessionType: SessionTypeValues;
   },
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   const results: CallToolResult["content"] = [];
   const errors: string[] = [];
@@ -100,19 +101,19 @@ export async function getFailureLogs(
     for (const logType of validLogTypes) {
       switch (logType) {
         case AutomateLogType.NetworkLogs: {
-          response = await retrieveNetworkFailures(args.sessionId, server);
+          response = await retrieveNetworkFailures(args.sessionId, config);
           results.push({ type: "text", text: response });
           break;
         }
 
         case AutomateLogType.SessionLogs: {
-          response = await retrieveSessionFailures(args.sessionId, server);
+          response = await retrieveSessionFailures(args.sessionId, config);
           results.push({ type: "text", text: response });
           break;
         }
 
         case AutomateLogType.ConsoleLogs: {
-          response = await retrieveConsoleFailures(args.sessionId, server);
+          response = await retrieveConsoleFailures(args.sessionId, config);
           results.push({ type: "text", text: response });
           break;
         }
@@ -121,7 +122,7 @@ export async function getFailureLogs(
           response = await retrieveDeviceLogs(
             args.sessionId,
             args.buildId!,
-            server,
+            config,
           );
           results.push({ type: "text", text: response });
           break;
@@ -131,7 +132,7 @@ export async function getFailureLogs(
           response = await retrieveAppiumLogs(
             args.sessionId,
             args.buildId!,
-            server,
+            config,
           );
           results.push({ type: "text", text: response });
           break;
@@ -141,7 +142,7 @@ export async function getFailureLogs(
           response = await retrieveCrashLogs(
             args.sessionId,
             args.buildId!,
-            server,
+            config,
           );
           results.push({ type: "text", text: response });
           break;
@@ -164,7 +165,10 @@ export async function getFailureLogs(
 }
 
 // Register tool with the MCP server
-export default function registerGetFailureLogs(server: McpServer) {
+export default function registerGetFailureLogs(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "getFailureLogs",
     "Fetch various types of logs from a BrowserStack session. Supports both automate and app-automate sessions.",
@@ -200,11 +204,21 @@ export default function registerGetFailureLogs(server: McpServer) {
     },
     async (args) => {
       try {
-        trackMCP("getFailureLogs", server.server.getClientVersion()!);
-        return await getFailureLogs(args, server);
+        trackMCP(
+          "getFailureLogs",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await getFailureLogs(args, config);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        trackMCP("getFailureLogs", server.server.getClientVersion()!, error);
+        trackMCP(
+          "getFailureLogs",
+          server.server.getClientVersion()!,
+          error,
+          config,
+        );
         logger.error("Failed to fetch logs: %s", message);
         return {
           content: [

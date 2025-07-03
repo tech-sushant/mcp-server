@@ -8,6 +8,7 @@ import {
 } from "./TCG-utils/api.js";
 import { pollLCAStatus } from "./poll-lca-status.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 /**
  * Schema for creating LCA steps for a test case
@@ -65,20 +66,20 @@ export type CreateLCAStepsArgs = z.infer<typeof CreateLCAStepsSchema>;
 export async function createLCASteps(
   args: CreateLCAStepsArgs,
   context: any,
-  server: any,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
     // Get the project ID from identifier
     const projectId = await projectIdentifierToId(
       args.project_identifier,
-      server,
+      config,
     );
 
     // Get the test case ID and folder ID from identifier
     const { testCaseId, folderId } = await testCaseIdentifierToDetails(
       projectId,
       args.test_case_identifier,
-      server,
+      config,
     );
 
     const url = `https://test-management.browserstack.com/api/v1/projects/${projectId}/test-cases/${testCaseId}/lcnc`;
@@ -95,7 +96,7 @@ export async function createLCASteps(
 
     const response = await axios.post(url, payload, {
       headers: {
-        "API-TOKEN": getBrowserStackAuth(server),
+        "API-TOKEN": getBrowserStackAuth(config),
         accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
       },
@@ -130,7 +131,7 @@ export async function createLCASteps(
           maxWaitMs, // max wait time
           2 * 60 * 1000, // 2 minutes initial wait
           10 * 1000, // 10 seconds interval
-          server,
+          config,
         );
 
         if (lcaResult && lcaResult.status === "done") {

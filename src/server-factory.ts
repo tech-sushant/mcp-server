@@ -11,21 +11,23 @@ import addAppAutomationTools from "./tools/appautomate.js";
 import addFailureLogsTools from "./tools/getFailureLogs.js";
 import addAutomateTools from "./tools/automate.js";
 import addSelfHealTools from "./tools/selfheal.js";
+import addAppLiveTools from "./tools/applive.js";
 import { setupOnInitialized } from "./oninitialized.js";
+import { BrowserStackConfig } from "./lib/types.js";
 
-function registerTools(server: McpServer) {
-  addAccessibilityTools(server); //done
-  addSDKTools(server);
-  //   addAppLiveTools(server); //done
-  addBrowserLiveTools(server); //done
-  addTestManagementTools(server); //done
-  addAppAutomationTools(server); //done
-  addFailureLogsTools(server); //done
-  addAutomateTools(server); //done
-  addSelfHealTools(server); //done
+function registerTools(server: McpServer, config: BrowserStackConfig) {
+  addAccessibilityTools(server, config);
+  addSDKTools(server, config);
+  addAppLiveTools(server, config);
+  addBrowserLiveTools(server, config);
+  addTestManagementTools(server, config);
+  addAppAutomationTools(server, config);
+  addFailureLogsTools(server, config);
+  addAutomateTools(server, config);
+  addSelfHealTools(server, config);
 }
 
-export function createMcpServer(): McpServer {
+export function createMcpServer(config: BrowserStackConfig): McpServer {
   logger.info(
     "Creating BrowserStack MCP Server, version %s",
     packageJson.version,
@@ -37,8 +39,8 @@ export function createMcpServer(): McpServer {
     version: packageJson.version,
   });
 
-  setupOnInitialized(server);
-  registerTools(server);
+  setupOnInitialized(server, config);
+  registerTools(server, config);
 
   return server;
 }

@@ -105,13 +105,11 @@ app.post("/mcp", async (req, res) => {
       };
 
       // Create and connect MCP server
-      const server = createMcpServer() as McpServer & {
-        authHeaders?: Record<string, string>;
-      };
-      server.authHeaders = {
+      const server = createMcpServer({
         "browserstack-username": browserstackUsername,
         "browserstack-access-key": browserstackAccessKey,
-      };
+      }) as McpServer;
+
       await server.connect(transport);
 
       logger.info("MCP server connected to transport");

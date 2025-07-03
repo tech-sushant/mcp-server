@@ -3,6 +3,7 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
 import { getBrowserStackAuth } from "../lib/get-auth.js";
+import { BrowserStackConfig } from "../lib/types.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { maybeCompressBase64 } from "../lib/utils.js";
 import { remote } from "webdriverio";
@@ -47,12 +48,12 @@ async function takeAppScreenshot(args: {
   desiredPlatformVersion: string;
   appPath: string;
   desiredPhone: string;
-  server: any;
+  config: BrowserStackConfig;
 }): Promise<CallToolResult> {
   let driver;
   try {
     validateArgs(args);
-    const { desiredPlatform, desiredPhone, appPath, server } = args;
+    const { desiredPlatform, desiredPhone, appPath, config } = args;
     let { desiredPlatformVersion } = args;
 
     const platforms = (
@@ -87,7 +88,7 @@ async function takeAppScreenshot(args: {
         `Device "${desiredPhone}" with version ${desiredPlatformVersion} not found.`,
       );
     }
-    const authString = getBrowserStackAuth(server);
+    const authString = getBrowserStackAuth(config);
     const [username, password] = authString.split(":");
 
     const app_url = await uploadApp(appPath, username, password);
@@ -149,7 +150,10 @@ async function takeAppScreenshot(args: {
 /**
  * Registers the `takeAppScreenshot` tool with the MCP server.
  */
-export default function addAppAutomationTools(server: McpServer) {
+export default function addAppAutomationTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "takeAppScreenshot",
     "Use this tool to take a screenshot of an app running on a BrowserStack device. This is useful for visual testing and debugging.",
@@ -175,10 +179,20 @@ export default function addAppAutomationTools(server: McpServer) {
     },
     async (args) => {
       try {
-        trackMCP("takeAppScreenshot", server.server.getClientVersion()!);
-        return await takeAppScreenshot({ ...args, server });
+        trackMCP(
+          "takeAppScreenshot",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await takeAppScreenshot({ ...args, config });
       } catch (error) {
-        trackMCP("takeAppScreenshot", server.server.getClientVersion()!, error);
+        trackMCP(
+          "takeAppScreenshot",
+          server.server.getClientVersion()!,
+          error,
+          config,
+        );
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";
         return {

@@ -18,7 +18,7 @@ interface StartSessionArgs {
 }
 
 interface StartSessionOptions {
-  server: any;
+  config: any;
 }
 
 /**
@@ -30,7 +30,7 @@ export async function startSession(
 ): Promise<string> {
   const { appPath, desiredPlatform, desiredPhone, desiredPlatformVersion } =
     args;
-  const { server } = options;
+  const { config } = options;
 
   // 1) Fetch devices for APP_LIVE
   const data = await getDevicesAndBrowsers(BrowserStackProducts.APP_LIVE);
@@ -69,7 +69,7 @@ export async function startSession(
   }
 
   // 6) Upload app
-  const authString = getBrowserStackAuth(server);
+  const authString = getBrowserStackAuth(config);
   const [username, password] = authString.split(":");
   const { app_url } = await uploadApp(appPath, username, password);
   logger.info(`App uploaded: ${app_url}`);

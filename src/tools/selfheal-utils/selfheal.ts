@@ -10,9 +10,13 @@ interface SelectorMapping {
 }
 
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
-export async function getSelfHealSelectors(sessionId: string, server: any) {
-  const authString = getBrowserStackAuth(server);
+export async function getSelfHealSelectors(
+  sessionId: string,
+  config: BrowserStackConfig,
+) {
+  const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/logs`;
 
