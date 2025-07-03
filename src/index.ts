@@ -22,7 +22,7 @@ async function main() {
   }
 
   if (!accessKey) {
-    throw new Error("BROWSERSTACK_AUTH_KEY environment variable is required");
+    throw new Error("BROWSERSTACK_ACCESS_KEY environment variable is required");
   }
 
   const transport = new StdioServerTransport();
