@@ -9,6 +9,7 @@ import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { findDeviceByName } from "./device-search.js";
 import { pickVersion } from "./version-utils.js";
 import { DeviceEntry } from "./types.js";
+import childProcess from "child_process";
 
 interface StartSessionArgs {
   appPath: string;
