@@ -94,11 +94,11 @@ export async function startSession(
     start: "true",
   });
   const launchUrl = `https://app-live.browserstack.com/dashboard#${params.toString()}&device=${deviceParam}`;
-  
+
   if (!envConfig.REMOTE_MCP) {
     openBrowser(launchUrl);
   }
-  
+
   return launchUrl + note;
 }
 

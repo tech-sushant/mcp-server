@@ -48,7 +48,6 @@ const config = new Config(
   browserstackLocalOptions,
   process.env.USE_OWN_LOCAL_BINARY_PROCESS === "true",
   process.env.REMOTE_MCP === "true",
-
 );
 
 export default config;
