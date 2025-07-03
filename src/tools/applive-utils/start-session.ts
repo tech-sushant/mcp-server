@@ -11,6 +11,7 @@ import { pickVersion } from "./version-utils.js";
 import { DeviceEntry } from "./types.js";
 import childProcess from "child_process";
 import { BrowserStackConfig } from "../../lib/types.js";
+import envConfig from "../../config.js";
 
 interface StartSessionArgs {
   appPath: string;
@@ -93,8 +94,11 @@ export async function startSession(
     start: "true",
   });
   const launchUrl = `https://app-live.browserstack.com/dashboard#${params.toString()}&device=${deviceParam}`;
-
-  openBrowser(launchUrl);
+  
+  if (!envConfig.REMOTE_MCP) {
+    openBrowser(launchUrl);
+  }
+  
   return launchUrl + note;
 }
 

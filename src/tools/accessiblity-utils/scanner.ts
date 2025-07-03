@@ -48,6 +48,12 @@ export class AccessibilityScanner {
       );
     }
 
+    if (config.REMOTE_MCP && hasLocal) {
+      throw new Error(
+        "Local URLs are not supported in this remote mcp. Please use a public URL.",
+      );
+    }
+
     if (hasLocal) {
       await ensureLocalBinarySetup(
         this.auth.username,

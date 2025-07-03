@@ -17,6 +17,7 @@ import {
 
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
+import envConfig from "../../config.js";
 
 /**
  * Prepares local tunnel setup based on URL type
@@ -27,6 +28,11 @@ async function prepareLocalTunnel(
   password: string,
 ): Promise<boolean> {
   const isLocal = isLocalURL(url);
+  if (isLocal && envConfig.REMOTE_MCP) {
+    throw new Error(
+      "Local URLs are not supported in this remote mcp. Please use a public URL.",
+    );
+  }
   if (isLocal) {
     await ensureLocalBinarySetup(username, password);
   } else {
@@ -67,8 +73,9 @@ export async function startBrowserSession(
           isLocal,
         )
       : buildMobileUrl(args as MobileSearchArgs, entry as MobileEntry, isLocal);
-
-  openBrowser(url);
+  if (!envConfig.REMOTE_MCP) {
+    openBrowser(url);
+  }
   return entry.notes ? `${url}, ${entry.notes}` : url;
 }
 

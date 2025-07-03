@@ -39,6 +39,7 @@ export class Config {
     public readonly DEV_MODE: boolean,
     public readonly browserstackLocalOptions: Record<string, any>,
     public readonly USE_OWN_LOCAL_BINARY_PROCESS: boolean,
+    public readonly REMOTE_MCP: boolean,
   ) {}
 }
 
@@ -46,6 +47,8 @@ const config = new Config(
   process.env.DEV_MODE === "true",
   browserstackLocalOptions,
   process.env.USE_OWN_LOCAL_BINARY_PROCESS === "true",
+  process.env.REMOTE_MCP === "true",
+
 );
 
 export default config;
