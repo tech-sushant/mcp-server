@@ -35,12 +35,16 @@ async function main() {
   await server.connect(transport);
 }
 
-main().catch(console.error);
+// Check if this module is being run directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}` || 
+    process.argv[1]?.endsWith('browserstack-mcp-server')) {
+  main().catch(console.error);
 
-// Ensure logs are flushed before exit
-process.on("exit", () => {
-  logger.flush();
-});
+  // Ensure logs are flushed before exit
+  process.on("exit", () => {
+    logger.flush();
+  });
+}
 
 export { default as logger } from "./logger.js";
 export { createMcpServer } from "./server-factory.js";
