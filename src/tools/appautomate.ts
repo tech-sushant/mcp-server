@@ -268,25 +268,25 @@ export default function addAppAutomationTools(server: McpServer) {
         .string()
         .describe(
           "Path to your application file:\n" +
-          "If in development IDE directory:\n" +
-          "• For Android: 'gradle assembleDebug'\n" +
-          "• For iOS:\n" +
-          "  xcodebuild clean -scheme YOUR_SCHEME && \\\n" +
-          "  xcodebuild archive -scheme YOUR_SCHEME -configuration Release -archivePath build/app.xcarchive && \\\n" +
-          "  xcodebuild -exportArchive -archivePath build/app.xcarchive -exportPath build/ipa -exportOptionsPlist exportOptions.plist\n\n" +
-          "If in other directory, provide existing app path"
+            "If in development IDE directory:\n" +
+            "• For Android: 'gradle assembleDebug'\n" +
+            "• For iOS:\n" +
+            "  xcodebuild clean -scheme YOUR_SCHEME && \\\n" +
+            "  xcodebuild archive -scheme YOUR_SCHEME -configuration Release -archivePath build/app.xcarchive && \\\n" +
+            "  xcodebuild -exportArchive -archivePath build/app.xcarchive -exportPath build/ipa -exportOptionsPlist exportOptions.plist\n\n" +
+            "If in other directory, provide existing app path",
         ),
       testSuitePath: z
         .string()
         .describe(
           "Path to your test suite file:\n" +
-          "If in development IDE directory:\n" +
-          "• For Android: 'gradle assembleAndroidTest'\n" +
-          "• For iOS:\n" +
-          "  xcodebuild test-without-building -scheme YOUR_SCHEME -destination 'generic/platform=iOS' && \\\n" +
-          "  cd ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Debug-iphonesimulator/ && \\\n" +
-          "  zip -r Tests.zip *.xctestrun *-Runner.app\n\n" +
-          "If in other directory, provide existing test file path"
+            "If in development IDE directory:\n" +
+            "• For Android: 'gradle assembleAndroidTest'\n" +
+            "• For iOS:\n" +
+            "  xcodebuild test-without-building -scheme YOUR_SCHEME -destination 'generic/platform=iOS' && \\\n" +
+            "  cd ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Debug-iphonesimulator/ && \\\n" +
+            "  zip -r Tests.zip *.xctestrun *-Runner.app\n\n" +
+            "If in other directory, provide existing test file path",
         ),
       devices: z
         .array(z.string())

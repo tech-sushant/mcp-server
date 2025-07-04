@@ -492,6 +492,7 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
       nunit: { instructions: csharpCommonInstructions },
       mstest: { instructions: csharpCommonInstructions },
       specflow: { instructions: csharpCommonInstructions },
+      reqnroll: { instructions: csharpCommonInstructions },
     },
   },
   nodejs: {
