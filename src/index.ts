@@ -14,6 +14,12 @@ async function main() {
     packageJson.version,
   );
 
+  const remoteMCP = process.env.REMOTE_MCP === "true";
+  if (remoteMCP) {
+    logger.info("Running in remote MCP mode");
+    return;
+  }
+
   const username = process.env.BROWSERSTACK_USERNAME;
   const accessKey = process.env.BROWSERSTACK_ACCESS_KEY;
 
