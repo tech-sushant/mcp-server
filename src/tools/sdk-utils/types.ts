@@ -33,6 +33,7 @@ export enum SDKSupportedTestingFrameworkEnum {
   mstest = "mstest",
   xunit = "xunit",
   specflow = "specflow",
+  reqnroll = "reqnroll"
 }
 export type SDKSupportedTestingFramework =
   keyof typeof SDKSupportedTestingFrameworkEnum;
