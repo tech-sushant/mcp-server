@@ -315,8 +315,8 @@ Here is an example configuration:
 \`\`\`javascript
 exports.config = {
   // Set your BrowserStack credentials
-  user: process.env.BROWSERSTACK_USERNAME,
-  key: process.env.BROWSERSTACK_ACCESS_KEY,
+  user: ${config.browserstackUsername},
+  key: ${config.browserstackAccessKey},
 
   // Set BrowserStack hostname
   hostname: 'hub.browserstack.com',
