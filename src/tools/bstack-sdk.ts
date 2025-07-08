@@ -87,6 +87,8 @@ export async function bootstrapProjectWithSDK({
   const sdkSetupCommand = getSDKPrefixCommand(
     detectedLanguage,
     detectedTestingFramework,
+    username,
+    accessKey,
   );
 
   const ymlInstructions = generateBrowserStackYMLInstructions(

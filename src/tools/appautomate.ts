@@ -155,19 +155,23 @@ async function takeAppScreenshot(args: {
 }
 
 //Runs AppAutomate tests on BrowserStack by uploading app and test suite, then triggering a test run.
-async function runAppTestsOnBrowserStack(args: {
-  appPath: string;
-  testSuitePath: string;
-  devices: string[];
-  project: string;
-  detectedAutomationFramework: string;
-}): Promise<CallToolResult> {
+async function runAppTestsOnBrowserStack(
+  args: {
+    appPath: string;
+    testSuitePath: string;
+    devices: string[];
+    project: string;
+    detectedAutomationFramework: string;
+  },
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
   switch (args.detectedAutomationFramework) {
     case AppTestPlatform.ESPRESSO: {
       try {
-        const app_url = await uploadEspressoApp(args.appPath);
+        const app_url = await uploadEspressoApp(args.appPath, config);
         const test_suite_url = await uploadEspressoTestSuite(
           args.testSuitePath,
+          config,
         );
         const build_id = await triggerEspressoBuild(
           app_url,
@@ -191,13 +195,17 @@ async function runAppTestsOnBrowserStack(args: {
     }
     case AppTestPlatform.XCUITEST: {
       try {
-        const app_url = await uploadXcuiApp(args.appPath);
-        const test_suite_url = await uploadXcuiTestSuite(args.testSuitePath);
+        const app_url = await uploadXcuiApp(args.appPath, config);
+        const test_suite_url = await uploadXcuiTestSuite(
+          args.testSuitePath,
+          config,
+        );
         const build_id = await triggerXcuiBuild(
           app_url,
           test_suite_url,
           args.devices,
           args.project,
+          config,
         );
         return {
           content: [
@@ -218,7 +226,6 @@ async function runAppTestsOnBrowserStack(args: {
       );
   }
 }
-
 
 export default function addAppAutomationTools(
   server: McpServer,
@@ -326,13 +333,16 @@ export default function addAppAutomationTools(
         trackMCP(
           "runAppTestsOnBrowserStack",
           server.server.getClientVersion()!,
+          undefined,
+          config,
         );
-        return await runAppTestsOnBrowserStack(args);
+        return await runAppTestsOnBrowserStack(args, config);
       } catch (error) {
         trackMCP(
           "runAppTestsOnBrowserStack",
           server.server.getClientVersion()!,
           error,
+          config,
         );
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";

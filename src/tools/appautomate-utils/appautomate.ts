@@ -2,11 +2,7 @@ import fs from "fs";
 import axios from "axios";
 import FormData from "form-data";
 import { customFuzzySearch } from "../../lib/fuzzy.js";
-
-const auth = {
-  username: config.browserstackUsername,
-  password: config.browserstackAccessKey,
-};
+import { BrowserStackConfig } from "../../lib/types.js";
 
 interface Device {
   device: string;
@@ -168,6 +164,7 @@ async function uploadFileToBrowserStack(
   filePath: string,
   endpoint: string,
   responseKey: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
   if (!fs.existsSync(filePath)) {
     throw new Error(`File not found at path: ${filePath}`);
@@ -175,6 +172,11 @@ async function uploadFileToBrowserStack(
 
   const formData = new FormData();
   formData.append("file", fs.createReadStream(filePath));
+
+  const auth = {
+    username: config["browserstack-username"],
+    password: config["browserstack-access-key"],
+  };
 
   const response = await axios.post(endpoint, formData, {
     headers: formData.getHeaders(),
@@ -189,42 +191,54 @@ async function uploadFileToBrowserStack(
 }
 
 //Uploads an Android app (.apk or .aab) to BrowserStack Espresso endpoint and returns the app_url
-export async function uploadEspressoApp(appPath: string): Promise<string> {
+export async function uploadEspressoApp(
+  appPath: string,
+  config: BrowserStackConfig,
+): Promise<string> {
   return uploadFileToBrowserStack(
     appPath,
     "https://api-cloud.browserstack.com/app-automate/espresso/v2/app",
     "app_url",
+    config,
   );
 }
 
 //Uploads an Espresso test suite (.apk) to BrowserStack and returns the test_suite_url
 export async function uploadEspressoTestSuite(
   testSuitePath: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
   return uploadFileToBrowserStack(
     testSuitePath,
     "https://api-cloud.browserstack.com/app-automate/espresso/v2/test-suite",
     "test_suite_url",
+    config,
   );
 }
 
 //Uploads an iOS app (.ipa) to BrowserStack XCUITest endpoint and returns the app_url
-export async function uploadXcuiApp(appPath: string): Promise<string> {
+export async function uploadXcuiApp(
+  appPath: string,
+  config: BrowserStackConfig,
+): Promise<string> {
   return uploadFileToBrowserStack(
     appPath,
     "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/app",
     "app_url",
+    config,
   );
 }
 
 //Uploads an XCUITest test suite (.zip) to BrowserStack and returns the test_suite_url
 export async function uploadXcuiTestSuite(
   testSuitePath: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
   return uploadFileToBrowserStack(
     testSuitePath,
     "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/test-suite",
     "test_suite_url",
+    config,
   );
 }
 
@@ -235,6 +249,11 @@ export async function triggerEspressoBuild(
   devices: string[],
   project: string,
 ): Promise<string> {
+  const auth = {
+    username: process.env.BROWSERSTACK_USERNAME || "",
+    password: process.env.BROWSERSTACK_ACCESS_KEY || "",
+  };
+
   const response = await axios.post(
     "https://api-cloud.browserstack.com/app-automate/espresso/v2/build",
     {
@@ -263,7 +282,13 @@ export async function triggerXcuiBuild(
   test_suite_url: string,
   devices: string[],
   project: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
+  const auth = {
+    username: config["browserstack-username"],
+    password: config["browserstack-access-key"],
+  };
+
   const response = await axios.post(
     "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/build",
     {
