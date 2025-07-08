@@ -17,7 +17,12 @@ export async function getFailuresInLastRun(
     config,
   );
 
-  const observabilityUrl = buildsData.observability_url;
+  if (!buildsData.data) {
+    throw new Error(
+      "No observability URL found in build data, this is likely because the build is not yet available on BrowserStack Observability.",
+    );
+  }
+  const observabilityUrl = buildsData.data.observability_url;
   if (!observabilityUrl) {
     throw new Error(
       "No observability URL found in build data, this is likely because the build is not yet available on BrowserStack Observability.",
@@ -25,13 +30,13 @@ export async function getFailuresInLastRun(
   }
 
   let overview = "No overview available";
-  if (buildsData.unique_errors?.overview?.insight) {
-    overview = buildsData.unique_errors.overview.insight;
+  if (buildsData.data.unique_errors?.overview?.insight) {
+    overview = buildsData.data.unique_errors.overview.insight;
   }
 
   let details = "No error details available";
-  if (buildsData.unique_errors?.top_unique_errors?.length > 0) {
-    details = buildsData.unique_errors.top_unique_errors
+  if (buildsData.data.unique_errors?.top_unique_errors?.length > 0) {
+    details = buildsData.data.unique_errors.top_unique_errors
       .map((error: any) => error.error)
       .filter(Boolean)
       .join("\n");

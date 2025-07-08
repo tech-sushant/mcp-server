@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
@@ -72,17 +72,15 @@ export async function createTestRun(
 
     const authString = getBrowserStackAuth(config);
     const [username, password] = authString.split(":");
-    const response = await axios.post(
+    const response = await apiClient.post({
       url,
-      { test_run: args.test_run },
-      {
-        auth: {
-          username,
-          password,
-        },
-        headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
       },
-    );
+      body: { test_run: args.test_run },
+    });
 
     const data = response.data;
     if (!data.success) {

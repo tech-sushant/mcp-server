@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 
@@ -94,20 +94,23 @@ export async function pollLCAStatus(
     const intervalId = setInterval(async () => {
       try {
         const authString = getBrowserStackAuth(config);
-        const response = await axios.get<TestCaseResponse>(url, {
+        const response = await apiClient.get({
+          url,
           headers: {
             "API-TOKEN": authString,
             accept: "application/json, text/plain, */*",
           },
         });
 
-        if (response.data.data.success && response.data.data.test_case) {
-          const testCase = response.data.data.test_case;
+        const responseData: TestCaseResponse = response.data;
+
+        if (responseData.data.success && responseData.data.test_case) {
+          const testCase = responseData.data.test_case;
 
           // Check lcnc_build_map in both possible locations
           const lcncBuildMap =
             testCase.lcnc_build_map ||
-            response.data.data.metadata?.lcnc_build_map;
+            responseData.data.metadata?.lcnc_build_map;
 
           if (lcncBuildMap) {
             if (lcncBuildMap.status === "done") {

@@ -1,6 +1,7 @@
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { filterLinesByKeywords, validateLogResponse } from "./utils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
+import { apiClient } from "../../lib/apiClient.js";
 
 // DEVICE LOGS
 export async function retrieveDeviceLogs(
@@ -12,7 +13,8 @@ export async function retrieveDeviceLogs(
   const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
-  const response = await fetch(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
@@ -22,7 +24,10 @@ export async function retrieveDeviceLogs(
   const validationError = validateLogResponse(response, "device logs");
   if (validationError) return validationError.message!;
 
-  const logText = await response.text();
+  const logText =
+    typeof response.data === "string"
+      ? response.data
+      : JSON.stringify(response.data);
   const logs = filterDeviceFailures(logText);
   return logs.length > 0
     ? `Device Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
@@ -39,7 +44,8 @@ export async function retrieveAppiumLogs(
   const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
-  const response = await fetch(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
@@ -49,7 +55,10 @@ export async function retrieveAppiumLogs(
   const validationError = validateLogResponse(response, "Appium logs");
   if (validationError) return validationError.message!;
 
-  const logText = await response.text();
+  const logText =
+    typeof response.data === "string"
+      ? response.data
+      : JSON.stringify(response.data);
   const logs = filterAppiumFailures(logText);
   return logs.length > 0
     ? `Appium Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
@@ -66,7 +75,8 @@ export async function retrieveCrashLogs(
   const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
-  const response = await fetch(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
@@ -76,7 +86,10 @@ export async function retrieveCrashLogs(
   const validationError = validateLogResponse(response, "crash logs");
   if (validationError) return validationError.message!;
 
-  const logText = await response.text();
+  const logText =
+    typeof response.data === "string"
+      ? response.data
+      : JSON.stringify(response.data);
   const logs = filterCrashFailures(logText);
   return logs.length > 0
     ? `Crash Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`

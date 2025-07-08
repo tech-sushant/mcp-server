@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import { apiClient } from "../../lib/apiClient.js";
 
 export interface RAGChunk {
   url: string;
@@ -7,6 +7,13 @@ export interface RAGChunk {
 
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
+
+export interface AccessibilityRAGResponse {
+  content: Array<{
+    type: "text";
+    text: string;
+  }>;
+}
 
 export async function queryAccessibilityRAG(
   userQuery: string,
@@ -17,23 +24,26 @@ export async function queryAccessibilityRAG(
   const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
-  const response = await fetch(url, {
-    method: "POST",
+  const response = await apiClient.post({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
     },
-    body: JSON.stringify({
+    body: {
       query: userQuery,
-    }),
+    },
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
+    const errorText =
+      typeof response.data === "string"
+        ? response.data
+        : JSON.stringify(response.data);
     throw new Error(`RAG endpoint error: ${response.status} ${errorText}`);
   }
 
-  const responseData = (await response.json()) as any;
+  const responseData = response.data as any;
 
   if (!responseData.success) {
     throw new Error("Something went wrong: " + responseData.message);
@@ -43,8 +53,21 @@ export async function queryAccessibilityRAG(
   let parsedData;
   try {
     parsedData = JSON.parse(responseData.data);
-  } catch {
-    throw new Error("Failed to parse RAG response data as JSON");
+  } catch (err) {
+    throw new Error(
+      "Failed to parse RAG response data as JSON: " +
+        (err instanceof Error ? err.message : String(err)),
+    );
+  }
+
+  if (
+    !parsedData ||
+    !parsedData.data ||
+    !Array.isArray(parsedData.data.chunks)
+  ) {
+    throw new Error(
+      "RAG response data is missing expected 'data.chunks' array",
+    );
   }
 
   const chunks: RAGChunk[] = parsedData.data.chunks;

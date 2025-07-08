@@ -1,6 +1,6 @@
 import fs from "fs";
-import axios from "axios";
 import FormData from "form-data";
+import { apiClient } from "../../lib/apiClient.js";
 import { customFuzzySearch } from "../../lib/fuzzy.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 
@@ -138,24 +138,20 @@ export async function uploadApp(
   const formData = new FormData();
   formData.append("file", fs.createReadStream(filePath));
 
-  const response = await axios.post<UploadResponse>(
-    "https://api-cloud.browserstack.com/app-automate/upload",
-    formData,
-    {
-      headers: {
-        ...formData.getHeaders(),
-      },
-      auth: {
-        username,
-        password,
-      },
+  const response = await apiClient.post<UploadResponse>({
+    url: "https://api-cloud.browserstack.com/app-automate/upload",
+    headers: {
+      ...formData.getHeaders(),
+      Authorization:
+        "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
     },
-  );
+    body: formData,
+  });
 
   if (response.data.app_url) {
     return response.data.app_url;
   } else {
-    throw new Error(`Failed to upload app: ${response.data}`);
+    throw new Error(`Failed to upload app: ${JSON.stringify(response.data)}`);
   }
 }
 
@@ -173,14 +169,19 @@ async function uploadFileToBrowserStack(
   const formData = new FormData();
   formData.append("file", fs.createReadStream(filePath));
 
-  const auth = {
-    username: config["browserstack-username"],
-    password: config["browserstack-access-key"],
-  };
+  const authHeader =
+    "Basic " +
+    Buffer.from(
+      `${config["browserstack-username"]}:${config["browserstack-access-key"]}`,
+    ).toString("base64");
 
-  const response = await axios.post(endpoint, formData, {
-    headers: formData.getHeaders(),
-    auth,
+  const response = await apiClient.post({
+    url: endpoint,
+    headers: {
+      ...formData.getHeaders(),
+      Authorization: authHeader,
+    },
+    body: formData,
   });
 
   if (response.data[responseKey]) {
@@ -254,18 +255,21 @@ export async function triggerEspressoBuild(
     password: process.env.BROWSERSTACK_ACCESS_KEY || "",
   };
 
-  const response = await axios.post(
-    "https://api-cloud.browserstack.com/app-automate/espresso/v2/build",
-    {
+  const response = await apiClient.post({
+    url: "https://api-cloud.browserstack.com/app-automate/espresso/v2/build",
+    headers: {
+      Authorization:
+        "Basic " +
+        Buffer.from(`${auth.username}:${auth.password}`).toString("base64"),
+      "Content-Type": "application/json",
+    },
+    body: {
       app: app_url,
       testSuite: test_suite_url,
       devices,
       project,
     },
-    {
-      auth,
-    },
-  );
+  });
 
   if (response.data.build_id) {
     return response.data.build_id;
@@ -289,18 +293,21 @@ export async function triggerXcuiBuild(
     password: config["browserstack-access-key"],
   };
 
-  const response = await axios.post(
-    "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/build",
-    {
+  const response = await apiClient.post({
+    url: "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/build",
+    headers: {
+      Authorization:
+        "Basic " +
+        Buffer.from(`${auth.username}:${auth.password}`).toString("base64"),
+      "Content-Type": "application/json",
+    },
+    body: {
       app: app_url,
       testSuite: test_suite_url,
       devices,
       project,
     },
-    {
-      auth,
-    },
-  );
+  });
 
   if (response.data.build_id) {
     return response.data.build_id;

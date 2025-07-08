@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -47,11 +47,14 @@ export async function updateTestRun(
     const authString = getBrowserStackAuth(config);
     const [username, password] = authString.split(":");
 
-    const resp = await axios.patch(url, body, {
-      auth: {
-        username,
-        password,
+    const resp = await apiClient.patch({
+      url,
+      headers: {
+        Authorization:
+          "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
+        "Content-Type": "application/json",
       },
+      body,
     });
 
     const data = resp.data;

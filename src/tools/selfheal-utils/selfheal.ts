@@ -11,6 +11,7 @@ interface SelectorMapping {
 
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
+import { apiClient } from "../../lib/apiClient.js";
 
 export async function getSelfHealSelectors(
   sessionId: string,
@@ -20,7 +21,8 @@ export async function getSelfHealSelectors(
   const auth = Buffer.from(authString).toString("base64");
   const url = `https://api.browserstack.com/automate/sessions/${sessionId}/logs`;
 
-  const response = await fetch(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
@@ -28,7 +30,10 @@ export async function getSelfHealSelectors(
   });
 
   await assertOkResponse(response, "session logs");
-  const logText = await response.text();
+  const logText =
+    typeof response.data === "string"
+      ? response.data
+      : JSON.stringify(response.data);
   return extractHealedSelectors(logText);
 }
 

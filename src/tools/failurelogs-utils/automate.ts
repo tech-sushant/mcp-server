@@ -6,6 +6,7 @@ import {
   validateLogResponse,
 } from "./utils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
+import { apiClient } from "../../lib/apiClient.js";
 
 // NETWORK LOGS
 export async function retrieveNetworkFailures(
@@ -16,8 +17,8 @@ export async function retrieveNetworkFailures(
   const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
-  const response = await fetch(url, {
-    method: "GET",
+  const response = await apiClient.get({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
@@ -27,7 +28,7 @@ export async function retrieveNetworkFailures(
   const validationError = validateLogResponse(response, "network logs");
   if (validationError) return validationError.message!;
 
-  const networklogs: HarFile = await response.json();
+  const networklogs: HarFile = response.data;
   const failureEntries: HarEntry[] = networklogs.log.entries.filter(
     (entry: HarEntry) =>
       entry.response.status === 0 ||
@@ -67,7 +68,8 @@ export async function retrieveSessionFailures(
   const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
-  const response = await fetch(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
@@ -77,7 +79,10 @@ export async function retrieveSessionFailures(
   const validationError = validateLogResponse(response, "session logs");
   if (validationError) return validationError.message!;
 
-  const logText = await response.text();
+  const logText =
+    typeof response.data === "string"
+      ? response.data
+      : JSON.stringify(response.data);
   const logs = filterSessionFailures(logText);
   return logs.length > 0
     ? `Session Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`
@@ -93,7 +98,8 @@ export async function retrieveConsoleFailures(
   const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
-  const response = await fetch(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
@@ -103,7 +109,10 @@ export async function retrieveConsoleFailures(
   const validationError = validateLogResponse(response, "console logs");
   if (validationError) return validationError.message!;
 
-  const logText = await response.text();
+  const logText =
+    typeof response.data === "string"
+      ? response.data
+      : JSON.stringify(response.data);
   const logs = filterConsoleFailures(logText);
   return logs.length > 0
     ? `Console Failures (${logs.length} found):\n${JSON.stringify(logs, null, 2)}`

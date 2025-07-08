@@ -17,25 +17,32 @@ describe('getFailuresInLastRun', () => {
   });
 
   const validBuildData = {
-    observability_url: 'https://observability.browserstack.com/123',
-    unique_errors: {
-      overview: {
-        insight: 'Test insight message'
-      },
-      top_unique_errors: [
-        { error: 'Error 1' },
-        { error: 'Error 2' }
-      ]
+    data: {
+      observability_url: 'https://observability.browserstack.com/123',
+      unique_errors: {
+        overview: {
+          insight: 'Test insight message'
+        },
+        top_unique_errors: [
+          { error: 'Error 1' },
+          { error: 'Error 2' }
+        ]
+      }
     }
+  };
+
+  const mockConfig = {
+    "browserstack-username": "fakeuser",
+    "browserstack-access-key": "fakekey",
+    getClientVersion: () => "test-version"
   };
 
   it('should successfully retrieve failures for a valid build', async () => {
     (getLatestO11YBuildInfo as Mock).mockResolvedValue(validBuildData);
 
-    const mockServer = { getClientVersion: () => "test-version" };
-    const result = await getFailuresInLastRun('test-build', 'test-project', mockServer);
+    const result = await getFailuresInLastRun('test-build', 'test-project', mockConfig);
 
-    expect(getLatestO11YBuildInfo).toHaveBeenCalledWith('test-build', 'test-project', mockServer);
+    expect(getLatestO11YBuildInfo).toHaveBeenCalledWith('test-build', 'test-project', mockConfig);
     expect(result.content).toBeDefined();
     expect(result.content![0].text).toContain('https://observability.browserstack.com/123');
     expect(result.content![0].text).toContain('Test insight message');
@@ -45,41 +52,44 @@ describe('getFailuresInLastRun', () => {
 
   it('should handle missing observability URL', async () => {
     (getLatestO11YBuildInfo as Mock).mockResolvedValue({
-      ...validBuildData,
-      observability_url: null
+      data: {
+        ...validBuildData.data,
+        observability_url: null
+      }
     });
 
-    const mockServer = { getClientVersion: () => "test-version" };
-    await expect(getFailuresInLastRun('test-build', 'test-project', mockServer))
+    await expect(getFailuresInLastRun('test-build', 'test-project', mockConfig))
       .rejects.toThrow('No observability URL found in build data');
   });
 
   it('should handle missing overview insight', async () => {
     (getLatestO11YBuildInfo as Mock).mockResolvedValue({
-      ...validBuildData,
-      unique_errors: {
-        ...validBuildData.unique_errors,
-        overview: {}
+      data: {
+        ...validBuildData.data,
+        unique_errors: {
+          ...validBuildData.data.unique_errors,
+          overview: {}
+        }
       }
     });
 
-    const mockServer = { getClientVersion: () => "test-version" };
-    const result = await getFailuresInLastRun('test-build', 'test-project', mockServer);
+    const result = await getFailuresInLastRun('test-build', 'test-project', mockConfig);
     expect(result.content).toBeDefined();
     expect(result.content![0].text).toContain('No overview available');
   });
 
   it('should handle missing error details', async () => {
     (getLatestO11YBuildInfo as Mock).mockResolvedValue({
-      ...validBuildData,
-      unique_errors: {
-        ...validBuildData.unique_errors,
-        top_unique_errors: []
+      data: {
+        ...validBuildData.data,
+        unique_errors: {
+          ...validBuildData.data.unique_errors,
+          top_unique_errors: []
+        }
       }
     });
 
-    const mockServer = { getClientVersion: () => "test-version" };
-    const result = await getFailuresInLastRun('test-build', 'test-project', mockServer);
+    const result = await getFailuresInLastRun('test-build', 'test-project', mockConfig);
     expect(result.content).toBeDefined();
     expect(result.content![0].text).toContain('No error details available');
   });
@@ -87,27 +97,26 @@ describe('getFailuresInLastRun', () => {
   it('should handle API errors', async () => {
     (getLatestO11YBuildInfo as Mock).mockRejectedValue(new Error('API Error'));
 
-    const mockServer = { getClientVersion: () => "test-version" };
-    await expect(getFailuresInLastRun('test-build', 'test-project', mockServer))
+    await expect(getFailuresInLastRun('test-build', 'test-project', mockConfig))
       .rejects.toThrow('API Error');
   });
 
   it('should handle empty build data', async () => {
     (getLatestO11YBuildInfo as Mock).mockResolvedValue({});
 
-    const mockServer = { getClientVersion: () => "test-version" };
-    await expect(getFailuresInLastRun('test-build', 'test-project', mockServer))
+    await expect(getFailuresInLastRun('test-build', 'test-project', mockConfig))
       .rejects.toThrow('No observability URL found in build data');
   });
 
   it('should handle partial build data', async () => {
     (getLatestO11YBuildInfo as Mock).mockResolvedValue({
-      observability_url: 'https://observability.browserstack.com/123',
-      unique_errors: {}
+      data: {
+        observability_url: 'https://observability.browserstack.com/123',
+        unique_errors: {}
+      }
     });
 
-    const mockServer = { getClientVersion: () => "test-version" };
-    const result = await getFailuresInLastRun('test-build', 'test-project', mockServer);
+    const result = await getFailuresInLastRun('test-build', 'test-project', mockConfig);
     expect(result.content).toBeDefined();
     expect(result.content![0].text).toContain('No overview available');
     expect(result.content![0].text).toContain('No error details available');

@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import FormData from "form-data";
 import fs from "fs";
 
@@ -19,27 +19,20 @@ export async function uploadApp(
   formData.append("file", fs.createReadStream(filePath));
 
   try {
-    const response = await axios.post<UploadResponse>(
-      "https://api-cloud.browserstack.com/app-live/upload",
-      formData,
-      {
-        headers: {
-          ...formData.getHeaders(),
-        },
-        auth: {
-          username,
-          password,
-        },
+    const response = await apiClient.post<UploadResponse>({
+      url: "https://api-cloud.browserstack.com/app-live/upload",
+      headers: {
+        ...formData.getHeaders(),
+        Authorization:
+          "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
       },
-    );
+      body: formData,
+    });
 
     return response.data;
-  } catch (error: unknown) {
-    if (error instanceof AxiosError) {
-      throw new Error(
-        `Failed to upload app: ${error.response?.data?.message || error.message}`,
-      );
-    }
-    throw error;
+  } catch (error: any) {
+    const msg =
+      error?.response?.data?.message || error?.message || String(error);
+    throw new Error(`Failed to upload app: ${msg}`);
   }
 }

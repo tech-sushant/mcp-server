@@ -1,5 +1,6 @@
 import { getBrowserStackAuth } from "./get-auth.js";
 import { BrowserStackConfig } from "../lib/types.js";
+import { apiClient } from "./apiClient.js";
 
 export async function getLatestO11YBuildInfo(
   buildName: string,
@@ -13,7 +14,8 @@ export async function getLatestO11YBuildInfo(
   const authString = getBrowserStackAuth(config);
   const auth = Buffer.from(authString).toString("base64");
 
-  const buildsResponse = await fetch(buildsUrl, {
+  const buildsResponse = await apiClient.get({
+    url: buildsUrl,
     headers: {
       Authorization: `Basic ${auth}`,
     },
@@ -28,5 +30,5 @@ export async function getLatestO11YBuildInfo(
     throw new Error(`Failed to fetch builds: ${buildsResponse.statusText}`);
   }
 
-  return buildsResponse.json();
+  return buildsResponse;
 }

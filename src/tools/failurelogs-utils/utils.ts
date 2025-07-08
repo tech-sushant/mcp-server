@@ -25,8 +25,9 @@ export interface HarEntry {
   time?: number;
 }
 
+import type { ApiResponse } from "../../lib/apiClient.js";
 export function validateLogResponse(
-  response: Response,
+  response: Response | ApiResponse,
   logType: string,
 ): LogResponse | null {
   if (!response.ok) {

@@ -1,7 +1,7 @@
-import axios from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { formatAxiosError } from "../../lib/error.js"; // or correct
+import { formatAxiosError } from "../../lib/error.js";
 import { projectIdentifierToId } from "./TCG-utils/api.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 
@@ -149,19 +149,17 @@ export async function createTestCase(
   const [username, password] = authString.split(":");
 
   try {
-    const response = await axios.post<TestCaseResponse>(
-      `https://test-management.browserstack.com/api/v2/projects/${encodeURIComponent(
+    const response = await apiClient.post({
+      url: `https://test-management.browserstack.com/api/v2/projects/${encodeURIComponent(
         params.project_identifier,
       )}/folders/${encodeURIComponent(params.folder_id)}/test-cases`,
-      body,
-      {
-        auth: {
-          username,
-          password,
-        },
-        headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
       },
-    );
+      body,
+    });
 
     const { data } = response.data;
     if (!data.success) {

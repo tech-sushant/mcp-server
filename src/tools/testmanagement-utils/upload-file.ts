@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import axios from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import FormData from "form-data";
 import fs from "fs";
 import path from "path";
@@ -58,12 +58,14 @@ export async function uploadFile(
 
     const uploadUrl = `https://test-management.browserstack.com/api/v1/projects/${projectIdResponse}/generic/attachments/ai_uploads`;
 
-    const response = await axios.post(uploadUrl, formData, {
+    const response = await apiClient.post({
+      url: uploadUrl,
       headers: {
         ...formData.getHeaders(),
         "API-TOKEN": getBrowserStackAuth(config),
         accept: "application/json, text/plain, */*",
       },
+      body: formData,
     });
 
     if (

@@ -1,7 +1,7 @@
-import axios from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { formatAxiosError } from "../../lib/error.js"; // or correct path
+import { formatAxiosError } from "../../lib/error.js";
 import { projectIdentifierToId } from "../testmanagement-utils/TCG-utils/api.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
@@ -65,17 +65,18 @@ export async function createProjectOrFolder(
     try {
       const authString = getBrowserStackAuth(config);
       const [username, password] = authString.split(":");
-      const res = await axios.post(
-        "https://test-management.browserstack.com/api/v2/projects",
-        { project: { name: project_name, description: project_description } },
-        {
-          auth: {
-            username,
-            password,
-          },
-          headers: { "Content-Type": "application/json" },
+      const res = await apiClient.post({
+        url: "https://test-management.browserstack.com/api/v2/projects",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Basic " +
+            Buffer.from(`${username}:${password}`).toString("base64"),
         },
-      );
+        body: {
+          project: { name: project_name, description: project_description },
+        },
+      });
 
       if (!res.data.success) {
         throw new Error(
@@ -85,8 +86,8 @@ export async function createProjectOrFolder(
       // Project created successfully
 
       projId = res.data.project.identifier;
-    } catch (err) {
-      return formatAxiosError(err, "Failed to create project..");
+    } catch (err: any) {
+      return formatAxiosError(err, "Failed to create project.");
     }
   }
   // Step 2: Create folder if folder_name provided
@@ -94,25 +95,24 @@ export async function createProjectOrFolder(
     if (!projId)
       throw new Error("Cannot create folder without project_identifier.");
     try {
-      const res = await axios.post(
-        `https://test-management.browserstack.com/api/v2/projects/${encodeURIComponent(
+      const res = await apiClient.post({
+        url: `https://test-management.browserstack.com/api/v2/projects/${encodeURIComponent(
           projId,
         )}/folders`,
-        {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Basic " +
+            Buffer.from(`${username}:${password}`).toString("base64"),
+        },
+        body: {
           folder: {
             name: folder_name,
             description: folder_description,
             parent_id,
           },
         },
-        {
-          auth: {
-            username,
-            password,
-          },
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      });
 
       if (!res.data.success) {
         throw new Error(`Failed to create folder: ${JSON.stringify(res.data)}`);
@@ -134,7 +134,7 @@ export async function createProjectOrFolder(
           },
         ],
       };
-    } catch (err) {
+    } catch (err: any) {
       return formatAxiosError(err, "Failed to create folder.");
     }
   }

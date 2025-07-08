@@ -1,6 +1,7 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
+import { apiClient } from "./apiClient.js";
 
 const CACHE_DIR = path.join(os.homedir(), ".browserstack", "combined_cache");
 const CACHE_FILE = path.join(CACHE_DIR, "data.json");
@@ -48,7 +49,7 @@ export async function getDevicesAndBrowsers(
     }
   }
 
-  const liveRes = await fetch(URLS[type]);
+  const liveRes = await apiClient.get({ url: URLS[type] });
 
   if (!liveRes.ok) {
     throw new Error(
@@ -56,10 +57,8 @@ export async function getDevicesAndBrowsers(
     );
   }
 
-  const data = await liveRes.json();
-
   cache = {
-    [type]: data,
+    [type]: liveRes,
   };
   fs.writeFileSync(CACHE_FILE, JSON.stringify(cache), "utf8");
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
@@ -55,10 +55,11 @@ export async function listTestCases(
 
     const authString = getBrowserStackAuth(config);
     const [username, password] = authString.split(":");
-    const resp = await axios.get(url, {
-      auth: {
-        username,
-        password,
+    const resp = await apiClient.get({
+      url,
+      headers: {
+        Authorization:
+          "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
       },
     });
 

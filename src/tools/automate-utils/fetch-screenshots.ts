@@ -2,6 +2,7 @@ import { assertOkResponse, maybeCompressBase64 } from "../../lib/utils.js";
 import { SessionType } from "../../lib/constants.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
+import { apiClient } from "../../lib/apiClient.js";
 
 async function extractScreenshotUrls(
   sessionId: string,
@@ -14,7 +15,8 @@ async function extractScreenshotUrls(
   const baseUrl = `https://api.browserstack.com/${sessionType === SessionType.Automate ? "automate" : "app-automate"}`;
 
   const url = `${baseUrl}/sessions/${sessionId}/logs`;
-  const response = await fetch(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
@@ -23,7 +25,10 @@ async function extractScreenshotUrls(
 
   await assertOkResponse(response, "Session");
 
-  const text = await response.text();
+  const text =
+    typeof response.data === "string"
+      ? response.data
+      : JSON.stringify(response.data);
 
   const urls: string[] = [];
   const SCREENSHOT_PATTERN = /REQUEST.*GET.*\/screenshot/;
@@ -53,9 +58,9 @@ async function convertUrlsToBase64(
 ): Promise<Array<{ url: string; base64: string }>> {
   const screenshots = await Promise.all(
     urls.map(async (url) => {
-      const response = await fetch(url);
-      const arrayBuffer = await response.arrayBuffer();
-      const base64 = Buffer.from(arrayBuffer).toString("base64");
+      const response = await apiClient.get({ url });
+      // Axios returns response.data as a Buffer for binary data
+      const base64 = Buffer.from(response.data).toString("base64");
 
       // Compress the base64 image if needed
       const compressedBase64 = await maybeCompressBase64(base64);

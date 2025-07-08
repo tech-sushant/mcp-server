@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "../../lib/apiClient.js";
 import { randomUUID } from "node:crypto";
 import logger from "../../logger.js";
 import {
@@ -96,28 +96,35 @@ export class AccessibilityScanner {
     }
 
     try {
-      const { data } = await axios.post<AccessibilityScanResponse>(
-        "https://api-accessibility.browserstack.com/api/website-scanner/v1/scans",
-        requestBody,
-        { auth: this.auth },
-      );
+      const response = await apiClient.post<AccessibilityScanResponse>({
+        url: "https://api-accessibility.browserstack.com/api/website-scanner/v1/scans",
+        headers: {
+          Authorization:
+            "Basic " +
+            Buffer.from(`${this.auth.username}:${this.auth.password}`).toString(
+              "base64",
+            ),
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      });
+      const data = response.data;
       if (!data.success)
         throw new Error(`Unable to start scan: ${data.errors?.join(", ")}`);
       return data;
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.data) {
-        if (err.response.status === 422) {
-          throw new Error(
-            "A scan with this name already exists. please update the name and run again.",
-          );
-        }
-        const msg =
-          (err.response.data as any).error ||
-          (err.response.data as any).message ||
-          err.message;
-        throw new Error(`Failed to start scan: ${msg}`);
+    } catch (err: any) {
+      // apiClient throws generic errors, try to extract message
+      if (err?.response?.status === 422) {
+        throw new Error(
+          "A scan with this name already exists. please update the name and run again.",
+        );
       }
-      throw err;
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.message ||
+        String(err);
+      throw new Error(`Failed to start scan: ${msg}`);
     }
   }
 
@@ -126,19 +133,23 @@ export class AccessibilityScanner {
     scanRunId: string,
   ): Promise<AccessibilityScanStatus> {
     try {
-      const { data } = await axios.get<AccessibilityScanStatus>(
-        `https://api-accessibility.browserstack.com/api/website-scanner/v1/scans/${scanId}/scan_runs/${scanRunId}/status`,
-        { auth: this.auth },
-      );
+      const response = await apiClient.get<AccessibilityScanStatus>({
+        url: `https://api-accessibility.browserstack.com/api/website-scanner/v1/scans/${scanId}/scan_runs/${scanRunId}/status`,
+        headers: {
+          Authorization:
+            "Basic " +
+            Buffer.from(
+              `${this.auth?.username}:${this.auth?.password}`,
+            ).toString("base64"),
+        },
+      });
+      const data = response.data;
       if (!data.success)
         throw new Error(`Failed to get status: ${data.errors?.join(", ")}`);
       return data;
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.data) {
-        const msg = (err.response.data as any).message || err.message;
-        throw new Error(`Failed to get scan status: ${msg}`);
-      }
-      throw err;
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || String(err);
+      throw new Error(`Failed to get scan status: ${msg}`);
     }
   }
 
