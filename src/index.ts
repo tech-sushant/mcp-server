@@ -1,44 +1,12 @@
 #!/usr/bin/env node
 
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const packageJson = require("../package.json");
 import "dotenv/config";
 import logger from "./logger.js";
-import addSDKTools from "./tools/bstack-sdk.js";
-import addAppLiveTools from "./tools/applive.js";
-import addBrowserLiveTools from "./tools/live.js";
-import addAccessibilityTools from "./tools/accessibility.js";
-import addTestManagementTools from "./tools/testmanagement.js";
-import addAppAutomationTools from "./tools/appautomate.js";
-import addFailureLogsTools from "./tools/getFailureLogs.js";
-import addAutomateTools from "./tools/automate.js";
-import addSelfHealTools from "./tools/selfheal.js";
-import { setupOnInitialized } from "./oninitialized.js";
-
-function registerTools(server: McpServer) {
-  addAccessibilityTools(server);
-  addSDKTools(server);
-  addAppLiveTools(server);
-  addBrowserLiveTools(server);
-  addTestManagementTools(server);
-  addAppAutomationTools(server);
-  addFailureLogsTools(server);
-  addAutomateTools(server);
-  addSelfHealTools(server);
-}
-
-// Create an MCP server
-const server: McpServer = new McpServer({
-  name: "BrowserStack MCP Server",
-  version: packageJson.version,
-});
-
-setupOnInitialized(server);
-
-registerTools(server);
+import { createMcpServer } from "./server-factory.js";
 
 async function main() {
   logger.info(
@@ -46,8 +14,30 @@ async function main() {
     packageJson.version,
   );
 
-  // Start receiving messages on stdin and sending messages on stdout
+  const remoteMCP = process.env.REMOTE_MCP === "true";
+  if (remoteMCP) {
+    logger.info("Running in remote MCP mode");
+    return;
+  }
+
+  const username = process.env.BROWSERSTACK_USERNAME;
+  const accessKey = process.env.BROWSERSTACK_ACCESS_KEY;
+
+  if (!username) {
+    throw new Error("BROWSERSTACK_USERNAME environment variable is required");
+  }
+
+  if (!accessKey) {
+    throw new Error("BROWSERSTACK_ACCESS_KEY environment variable is required");
+  }
+
   const transport = new StdioServerTransport();
+
+  const server = createMcpServer({
+    "browserstack-username": username,
+    "browserstack-access-key": accessKey,
+  });
+
   await server.connect(transport);
 }
 
@@ -57,3 +47,6 @@ main().catch(console.error);
 process.on("exit", () => {
   logger.flush();
 });
+
+export { default as logger } from "./logger.js";
+export { createMcpServer } from "./server-factory.js";

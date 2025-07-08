@@ -1,5 +1,6 @@
 import axios from "axios";
-import config from "../../config.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 /**
  * Interface for the test case response structure
@@ -36,6 +37,7 @@ export async function pollLCAStatus(
   maxWaitTimeMs: number = 10 * 60 * 1000, // 10 minutes default
   initialWaitMs: number = 2 * 60 * 1000, // 2 minutes initial wait
   pollIntervalMs: number = 10 * 1000, // 10 seconds interval
+  config: BrowserStackConfig,
 ): Promise<{ resource_path: string; status: string } | null> {
   const url = `https://test-management.browserstack.com/api/v1/projects/${projectId}/folder/${folderId}/test-cases/${testCaseId}`;
 
@@ -91,9 +93,10 @@ export async function pollLCAStatus(
     // Set up polling interval
     const intervalId = setInterval(async () => {
       try {
+        const authString = getBrowserStackAuth(config);
         const response = await axios.get<TestCaseResponse>(url, {
           headers: {
-            "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+            "API-TOKEN": authString,
             accept: "application/json, text/plain, */*",
           },
         });

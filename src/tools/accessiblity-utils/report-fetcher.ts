@@ -1,5 +1,4 @@
 import axios from "axios";
-import config from "../../config.js";
 
 interface ReportInitResponse {
   success: true;
@@ -14,10 +13,11 @@ interface ReportResponse {
 }
 
 export class AccessibilityReportFetcher {
-  private auth = {
-    username: config.browserstackUsername,
-    password: config.browserstackAccessKey,
-  };
+  private auth: { username: string; password: string } | undefined;
+
+  public setAuth(auth: { username: string; password: string }): void {
+    this.auth = auth;
+  }
 
   async getReportLink(scanId: string, scanRunId: string): Promise<string> {
     // Initiate CSV link generation

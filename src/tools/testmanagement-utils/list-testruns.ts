@@ -1,8 +1,9 @@
 import axios from "axios";
-import config from "../../config.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 /**
  * Schema for listing test runs with optional filters.
@@ -26,6 +27,7 @@ type ListTestRunsArgs = z.infer<typeof ListTestRunsSchema>;
  */
 export async function listTestRuns(
   args: ListTestRunsArgs,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
     const params = new URLSearchParams();
@@ -38,10 +40,12 @@ export async function listTestRuns(
         args.project_identifier,
       )}/test-runs?` + params.toString();
 
+    const authString = getBrowserStackAuth(config);
+    const [username, password] = authString.split(":");
     const resp = await axios.get(url, {
       auth: {
-        username: config.browserstackUsername,
-        password: config.browserstackAccessKey,
+        username,
+        password,
       },
     });
 

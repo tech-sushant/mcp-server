@@ -1,8 +1,9 @@
 import axios from "axios";
-import config from "../../config.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 /**
  * Schema for updating a test run with partial fields.
@@ -35,6 +36,7 @@ type UpdateTestRunArgs = z.infer<typeof UpdateTestRunSchema>;
  */
 export async function updateTestRun(
   args: UpdateTestRunArgs,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
     const body = { test_run: args.test_run };
@@ -42,10 +44,13 @@ export async function updateTestRun(
       args.project_identifier,
     )}/test-runs/${encodeURIComponent(args.test_run_id)}/update`;
 
+    const authString = getBrowserStackAuth(config);
+    const [username, password] = authString.split(":");
+
     const resp = await axios.patch(url, body, {
       auth: {
-        username: config.browserstackUsername,
-        password: config.browserstackAccessKey,
+        username,
+        password,
       },
     });
 

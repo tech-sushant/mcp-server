@@ -1,14 +1,15 @@
-import config from "../../config.js";
 import { assertOkResponse, maybeCompressBase64 } from "../../lib/utils.js";
 import { SessionType } from "../../lib/constants.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
-//Extracts screenshot URLs from BrowserStack session logs
 async function extractScreenshotUrls(
   sessionId: string,
   sessionType: SessionType,
+  config: BrowserStackConfig,
 ): Promise<string[]> {
-  const credentials = `${config.browserstackUsername}:${config.browserstackAccessKey}`;
-  const auth = Buffer.from(credentials).toString("base64");
+  const authString = getBrowserStackAuth(config);
+  const auth = Buffer.from(authString).toString("base64");
 
   const baseUrl = `https://api.browserstack.com/${sessionType === SessionType.Automate ? "automate" : "app-automate"}`;
 
@@ -73,8 +74,9 @@ async function convertUrlsToBase64(
 export async function fetchAutomationScreenshots(
   sessionId: string,
   sessionType: SessionType = SessionType.Automate,
+  config: BrowserStackConfig,
 ) {
-  const urls = await extractScreenshotUrls(sessionId, sessionType);
+  const urls = await extractScreenshotUrls(sessionId, sessionType, config);
   if (urls.length === 0) {
     return [];
   }

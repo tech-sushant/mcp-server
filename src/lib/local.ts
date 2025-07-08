@@ -74,6 +74,8 @@ export async function killExistingBrowserStackLocalProcesses() {
 }
 
 export async function ensureLocalBinarySetup(
+  username: string,
+  password: string,
   localIdentifier?: string,
 ): Promise<void> {
   logger.info(
@@ -104,8 +106,8 @@ export async function ensureLocalBinarySetup(
   // Use a single options object from config and extend with required fields
   const bsLocalArgs: Record<string, any> = {
     ...(config.browserstackLocalOptions || {}),
-    key: config.browserstackAccessKey,
-    username: config.browserstackUsername,
+    key: password,
+    username,
   };
 
   if (localIdentifier) {

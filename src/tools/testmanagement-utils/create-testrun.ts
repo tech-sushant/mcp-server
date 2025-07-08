@@ -1,8 +1,9 @@
 import axios from "axios";
-import config from "../../config.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 /**
  * Schema for creating a test run.
@@ -53,6 +54,7 @@ export type CreateTestRunArgs = z.infer<typeof CreateTestRunSchema>;
  */
 export async function createTestRun(
   rawArgs: CreateTestRunArgs,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
     const inputArgs = {
@@ -68,13 +70,15 @@ export async function createTestRun(
       args.project_identifier,
     )}/test-runs`;
 
+    const authString = getBrowserStackAuth(config);
+    const [username, password] = authString.split(":");
     const response = await axios.post(
       url,
       { test_run: args.test_run },
       {
         auth: {
-          username: config.browserstackUsername,
-          password: config.browserstackAccessKey,
+          username,
+          password,
         },
         headers: { "Content-Type": "application/json" },
       },

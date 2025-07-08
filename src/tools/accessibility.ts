@@ -6,15 +6,21 @@ import { AccessibilityReportFetcher } from "./accessiblity-utils/report-fetcher.
 import { trackMCP } from "../lib/instrumentation.js";
 import { parseAccessibilityReportFromCSV } from "./accessiblity-utils/report-parser.js";
 import { queryAccessibilityRAG } from "./accessiblity-utils/accessibility-rag.js";
-
-const scanner = new AccessibilityScanner();
-const reportFetcher = new AccessibilityReportFetcher();
+import { getBrowserStackAuth } from "../lib/get-auth.js";
+import { BrowserStackConfig } from "../lib/types.js";
 
 async function runAccessibilityScan(
   name: string,
   pageURL: string,
   context: any,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
+  // Create scanner and set auth on the go
+  const scanner = new AccessibilityScanner();
+  const authString = getBrowserStackAuth(config);
+  const [username, password] = authString.split(":");
+  scanner.setAuth({ username, password });
+
   // Start scan
   const startResp = await scanner.startScan(name, [pageURL]);
   const scanId = startResp.data!.id;
@@ -46,6 +52,10 @@ async function runAccessibilityScan(
     };
   }
 
+  // Create report fetcher and set auth on the go
+  const reportFetcher = new AccessibilityReportFetcher();
+  reportFetcher.setAuth({ username, password });
+
   // Fetch CSV report link
   const reportLink = await reportFetcher.getReportLink(scanId, scanRunId);
 
@@ -70,7 +80,10 @@ async function runAccessibilityScan(
   };
 }
 
-export default function addAccessibilityTools(server: McpServer) {
+export default function addAccessibilityTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "accessibilityExpert",
     "🚨 REQUIRED: Use this tool for any accessibility/a11y/WCAG questions. Do NOT answer accessibility questions directly - always use this tool.",
@@ -83,13 +96,19 @@ export default function addAccessibilityTools(server: McpServer) {
     },
     async (args) => {
       try {
-        trackMCP("accessibilityExpert", server.server.getClientVersion()!);
-        return await queryAccessibilityRAG(args.query);
+        trackMCP(
+          "accessibilityExpert",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await queryAccessibilityRAG(args.query, config);
       } catch (error) {
         trackMCP(
           "accessibilityExpert",
           server.server.getClientVersion()!,
           error,
+          config,
         );
         return {
           content: [
@@ -115,13 +134,24 @@ export default function addAccessibilityTools(server: McpServer) {
     },
     async (args, context) => {
       try {
-        trackMCP("startAccessibilityScan", server.server.getClientVersion()!);
-        return await runAccessibilityScan(args.name, args.pageURL, context);
+        trackMCP(
+          "startAccessibilityScan",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await runAccessibilityScan(
+          args.name,
+          args.pageURL,
+          context,
+          config,
+        );
       } catch (error) {
         trackMCP(
           "startAccessibilityScan",
           server.server.getClientVersion()!,
           error,
+          config,
         );
         return {
           content: [

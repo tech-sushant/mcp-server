@@ -1,11 +1,12 @@
 import axios from "axios";
-import config from "../../config.js";
+import { randomUUID } from "node:crypto";
 import logger from "../../logger.js";
 import {
   isLocalURL,
   ensureLocalBinarySetup,
   killExistingBrowserStackLocalProcesses,
 } from "../../lib/local.js";
+import config from "../../config.js";
 
 export interface AccessibilityScanResponse {
   success: boolean;
@@ -20,18 +21,24 @@ export interface AccessibilityScanStatus {
 }
 
 export class AccessibilityScanner {
-  private auth = {
-    username: config.browserstackUsername,
-    password: config.browserstackAccessKey,
-  };
+  private auth: { username: string; password: string } | undefined;
+
+  public setAuth(auth: { username: string; password: string }): void {
+    this.auth = auth;
+  }
 
   async startScan(
     name: string,
     urlList: string[],
   ): Promise<AccessibilityScanResponse> {
+    if (!this.auth?.username || !this.auth?.password) {
+      throw new Error(
+        "BrowserStack credentials are not set for AccessibilityScanner.",
+      );
+    }
     // Check if any URL is local
     const hasLocal = urlList.some(isLocalURL);
-    const localIdentifier = crypto.randomUUID();
+    const localIdentifier = randomUUID();
     const localHosts = new Set(["127.0.0.1", "localhost", "0.0.0.0"]);
     const BS_LOCAL_DOMAIN = "bs-local.com";
 
@@ -41,8 +48,18 @@ export class AccessibilityScanner {
       );
     }
 
+    if (config.REMOTE_MCP && hasLocal) {
+      throw new Error(
+        "Local URLs are not supported in this remote mcp. Please use a public URL.",
+      );
+    }
+
     if (hasLocal) {
-      await ensureLocalBinarySetup(localIdentifier);
+      await ensureLocalBinarySetup(
+        this.auth.username,
+        this.auth.password,
+        localIdentifier,
+      );
     } else {
       await killExistingBrowserStackLocalProcesses();
     }

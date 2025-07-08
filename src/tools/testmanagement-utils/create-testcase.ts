@@ -1,9 +1,9 @@
 import axios from "axios";
-import config from "../../config.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js"; // or correct
 import { projectIdentifierToId } from "./TCG-utils/api.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 interface TestCaseStep {
   step: string;
@@ -138,10 +138,15 @@ export function sanitizeArgs(args: any) {
   return cleaned;
 }
 
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
+
 export async function createTestCase(
   params: TestCaseCreateRequest,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   const body = { test_case: params };
+  const authString = getBrowserStackAuth(config);
+  const [username, password] = authString.split(":");
 
   try {
     const response = await axios.post<TestCaseResponse>(
@@ -151,8 +156,8 @@ export async function createTestCase(
       body,
       {
         auth: {
-          username: config.browserstackUsername,
-          password: config.browserstackAccessKey,
+          username,
+          password,
         },
         headers: { "Content-Type": "application/json" },
       },
@@ -175,7 +180,10 @@ export async function createTestCase(
     }
 
     const tc = data.test_case;
-    const projectId = await projectIdentifierToId(params.project_identifier);
+    const projectId = await projectIdentifierToId(
+      params.project_identifier,
+      config,
+    );
 
     return {
       content: [

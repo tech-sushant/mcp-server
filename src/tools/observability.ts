@@ -4,12 +4,18 @@ import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { getLatestO11YBuildInfo } from "../lib/api.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import logger from "../logger.js";
+import { BrowserStackConfig } from "../lib/types.js";
 
 export async function getFailuresInLastRun(
   buildName: string,
   projectName: string,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
-  const buildsData = await getLatestO11YBuildInfo(buildName, projectName);
+  const buildsData = await getLatestO11YBuildInfo(
+    buildName,
+    projectName,
+    config,
+  );
 
   const observabilityUrl = buildsData.observability_url;
   if (!observabilityUrl) {
@@ -41,7 +47,10 @@ export async function getFailuresInLastRun(
   };
 }
 
-export default function addObservabilityTools(server: McpServer) {
+export default function addObservabilityTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "getFailuresInLastRun",
     "Use this tool to debug failures in the last run of the test suite on BrowserStack. Use only when browserstack.yml file is present in the project root.",
@@ -59,14 +68,24 @@ export default function addObservabilityTools(server: McpServer) {
     },
     async (args) => {
       try {
-        trackMCP("getFailuresInLastRun", server.server.getClientVersion()!);
-        return await getFailuresInLastRun(args.buildName, args.projectName);
+        trackMCP(
+          "getFailuresInLastRun",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await getFailuresInLastRun(
+          args.buildName,
+          args.projectName,
+          config,
+        );
       } catch (error) {
         logger.error("Failed to get failures in the last run: %s", error);
         trackMCP(
           "getFailuresInLastRun",
           server.server.getClientVersion()!,
           error,
+          config,
         );
         return {
           content: [

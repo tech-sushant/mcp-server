@@ -12,17 +12,19 @@ import {
   CreateTestCasesFromFileArgs,
 } from "./types.js";
 import { createTestCasePayload } from "./helpers.js";
-import config from "../../../config.js";
+import { getBrowserStackAuth } from "../../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../../lib/types.js";
 
 /**
  * Fetch default and custom form fields for a project.
  */
 export async function fetchFormFields(
   projectId: string,
+  config: BrowserStackConfig,
 ): Promise<{ default_fields: any; custom_fields: any }> {
   const res = await axios.get(FORM_FIELDS_URL(projectId), {
     headers: {
-      "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+      "API-TOKEN": getBrowserStackAuth(config),
     },
   });
   return res.data;
@@ -37,6 +39,7 @@ export async function triggerTestCaseGeneration(
   folderId: string,
   projectId: string,
   source: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const res = await axios.post(
     TCG_TRIGGER_URL,
@@ -50,7 +53,7 @@ export async function triggerTestCaseGeneration(
     },
     {
       headers: {
-        "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+        "API-TOKEN": getBrowserStackAuth(config),
         "Content-Type": "application/json",
         "request-source": source,
       },
@@ -71,6 +74,7 @@ export async function fetchTestCaseDetails(
   projectId: string,
   testCaseIds: string[],
   source: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
   if (testCaseIds.length === 0) {
     throw new Error("No testCaseIds provided to fetchTestCaseDetails");
@@ -85,7 +89,7 @@ export async function fetchTestCaseDetails(
     },
     {
       headers: {
-        "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+        "API-TOKEN": getBrowserStackAuth(config),
         "request-source": source,
         "Content-Type": "application/json",
       },
@@ -102,6 +106,7 @@ export async function fetchTestCaseDetails(
  */
 export async function pollTestCaseDetails(
   traceRequestId: string,
+  config: BrowserStackConfig,
 ): Promise<Record<string, any>> {
   const detailMap: Record<string, any> = {};
   let done = false;
@@ -117,7 +122,7 @@ export async function pollTestCaseDetails(
       {},
       {
         headers: {
-          "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+          "API-TOKEN": getBrowserStackAuth(config),
         },
       },
     );
@@ -153,6 +158,7 @@ export async function pollScenariosTestDetails(
   context: any,
   documentId: number,
   source: string,
+  config: BrowserStackConfig,
 ): Promise<Record<string, Scenario>> {
   const { folderId, projectReferenceId } = args;
   const scenariosMap: Record<string, Scenario> = {};
@@ -168,7 +174,7 @@ export async function pollScenariosTestDetails(
           {},
           {
             headers: {
-              "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+              "API-TOKEN": getBrowserStackAuth(config),
             },
           },
         );
@@ -212,8 +218,9 @@ export async function pollScenariosTestDetails(
                 projectReferenceId,
                 ids,
                 source,
+                config,
               );
-              detailPromises.push(pollTestCaseDetails(reqId));
+              detailPromises.push(pollTestCaseDetails(reqId, config));
 
               scenariosMap[sc.id] ||= {
                 id: sc.id,
@@ -275,6 +282,7 @@ export async function bulkCreateTestCases(
   traceId: string,
   context: any,
   documentId: number,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const results: Record<string, any> = {};
   const total = Object.keys(scenariosMap).length;
@@ -305,7 +313,7 @@ export async function bulkCreateTestCases(
         payload,
         {
           headers: {
-            "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+            "API-TOKEN": getBrowserStackAuth(config),
             "Content-Type": "application/json",
           },
         },
@@ -342,12 +350,13 @@ export async function bulkCreateTestCases(
 
 export async function projectIdentifierToId(
   projectId: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const url = `https://test-management.browserstack.com/api/v1/projects/?q=${projectId}`;
 
   const response = await axios.get(url, {
     headers: {
-      "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+      "API-TOKEN": getBrowserStackAuth(config),
       accept: "application/json, text/plain, */*",
     },
   });
@@ -365,12 +374,13 @@ export async function projectIdentifierToId(
 export async function testCaseIdentifierToDetails(
   projectId: string,
   testCaseIdentifier: string,
+  config: BrowserStackConfig,
 ): Promise<{ testCaseId: string; folderId: string }> {
   const url = `https://test-management.browserstack.com/api/v1/projects/${projectId}/test-cases/search?q[query]=${testCaseIdentifier}`;
 
   const response = await axios.get(url, {
     headers: {
-      "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+      "API-TOKEN": getBrowserStackAuth(config),
       accept: "application/json, text/plain, */*",
     },
   });

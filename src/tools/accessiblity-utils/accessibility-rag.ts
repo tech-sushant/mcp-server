@@ -1,17 +1,21 @@
 import fetch from "node-fetch";
-import config from "../../config.js";
 
 export interface RAGChunk {
   url: string;
   content: string;
 }
 
-export async function queryAccessibilityRAG(userQuery: string): Promise<any> {
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
+
+export async function queryAccessibilityRAG(
+  userQuery: string,
+  config: BrowserStackConfig,
+): Promise<any> {
   const url = "https://accessibility.browserstack.com/api/tcg-proxy/search";
 
-  const auth = Buffer.from(
-    `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-  ).toString("base64");
+  const authString = getBrowserStackAuth(config);
+  const auth = Buffer.from(authString).toString("base64");
 
   const response = await fetch(url, {
     method: "POST",
