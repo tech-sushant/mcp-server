@@ -58,7 +58,7 @@ export async function getDevicesAndBrowsers(
   }
 
   cache = {
-    [type]: liveRes,
+    [type]: liveRes.data,
   };
   fs.writeFileSync(CACHE_FILE, JSON.stringify(cache), "utf8");
 
