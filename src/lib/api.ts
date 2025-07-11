@@ -19,6 +19,7 @@ export async function getLatestO11YBuildInfo(
     headers: {
       Authorization: `Basic ${auth}`,
     },
+    raise_error: false,
   });
 
   if (!buildsResponse.ok) {

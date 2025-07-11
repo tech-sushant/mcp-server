@@ -5,6 +5,7 @@ type RequestOptions = {
   headers?: Record<string, string>;
   params?: Record<string, string | number>;
   body?: any;
+  raise_error?: boolean; // default: true
 };
 
 class ApiResponse<T = any> {
@@ -56,61 +57,79 @@ class ApiResponse<T = any> {
 class ApiClient {
   private instance = axios.create();
 
+  private async requestWrapper<T>(
+    fn: () => Promise<AxiosResponse<T>>,
+    raise_error: boolean = true,
+  ): Promise<ApiResponse<T>> {
+    try {
+      const res = await fn();
+      return new ApiResponse<T>(res);
+    } catch (error: any) {
+      if (error.response && !raise_error) {
+        return new ApiResponse<T>(error.response);
+      }
+      throw error;
+    }
+  }
+
   async get<T = any>({
     url,
     headers,
     params,
+    raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
-    const res = await this.instance.get<T>(url, {
-      headers,
-      params,
-    });
-    return new ApiResponse<T>(res);
+    return this.requestWrapper<T>(
+      () => this.instance.get<T>(url, { headers, params }),
+      raise_error,
+    );
   }
 
   async post<T = any>({
     url,
     headers,
     body,
+    raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
-    const res = await this.instance.post<T>(url, body, {
-      headers,
-    });
-    return new ApiResponse<T>(res);
+    return this.requestWrapper<T>(
+      () => this.instance.post<T>(url, body, { headers }),
+      raise_error,
+    );
   }
 
   async put<T = any>({
     url,
     headers,
     body,
+    raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
-    const res = await this.instance.put<T>(url, body, {
-      headers,
-    });
-    return new ApiResponse<T>(res);
+    return this.requestWrapper<T>(
+      () => this.instance.put<T>(url, body, { headers }),
+      raise_error,
+    );
   }
 
   async patch<T = any>({
     url,
     headers,
     body,
+    raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
-    const res = await this.instance.patch<T>(url, body, {
-      headers,
-    });
-    return new ApiResponse<T>(res);
+    return this.requestWrapper<T>(
+      () => this.instance.patch<T>(url, body, { headers }),
+      raise_error,
+    );
   }
 
   async delete<T = any>({
     url,
     headers,
     params,
+    raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
-    const res = await this.instance.delete<T>(url, {
-      headers,
-      params,
-    });
-    return new ApiResponse<T>(res);
+    return this.requestWrapper<T>(
+      () => this.instance.delete<T>(url, { headers, params }),
+      raise_error,
+    );
   }
 }
 

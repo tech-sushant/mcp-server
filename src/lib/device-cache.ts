@@ -49,7 +49,7 @@ export async function getDevicesAndBrowsers(
     }
   }
 
-  const liveRes = await apiClient.get({ url: URLS[type] });
+  const liveRes = await apiClient.get({ url: URLS[type], raise_error: false });
 
   if (!liveRes.ok) {
     throw new Error(

@@ -19,6 +19,7 @@ export async function retrieveDeviceLogs(
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
     },
+    raise_error: false,
   });
 
   const validationError = validateLogResponse(response, "device logs");
@@ -50,6 +51,7 @@ export async function retrieveAppiumLogs(
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
     },
+    raise_error: false,
   });
 
   const validationError = validateLogResponse(response, "Appium logs");
@@ -81,6 +83,7 @@ export async function retrieveCrashLogs(
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
     },
+    raise_error: false,
   });
 
   const validationError = validateLogResponse(response, "crash logs");

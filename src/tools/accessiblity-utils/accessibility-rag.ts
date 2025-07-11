@@ -33,6 +33,7 @@ export async function queryAccessibilityRAG(
     body: {
       query: userQuery,
     },
+    raise_error: false,
   });
 
   if (!response.ok) {

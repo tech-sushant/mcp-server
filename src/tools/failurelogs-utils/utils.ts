@@ -1,3 +1,5 @@
+import type { ApiResponse } from "../../lib/apiClient.js";
+
 export interface LogResponse {
   logs?: any[];
   message?: string;
@@ -25,7 +27,6 @@ export interface HarEntry {
   time?: number;
 }
 
-import type { ApiResponse } from "../../lib/apiClient.js";
 export function validateLogResponse(
   response: Response | ApiResponse,
   logType: string,

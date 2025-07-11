@@ -23,6 +23,7 @@ export async function retrieveNetworkFailures(
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
     },
+    raise_error: false,
   });
 
   const validationError = validateLogResponse(response, "network logs");
@@ -74,6 +75,7 @@ export async function retrieveSessionFailures(
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
     },
+    raise_error: false,
   });
 
   const validationError = validateLogResponse(response, "session logs");
@@ -104,6 +106,7 @@ export async function retrieveConsoleFailures(
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
     },
+    raise_error: false,
   });
 
   const validationError = validateLogResponse(response, "console logs");
