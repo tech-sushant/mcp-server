@@ -21,6 +21,7 @@ async function extractScreenshotUrls(
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
     },
+    raise_error: false,
   });
 
   await assertOkResponse(response, "Session");
