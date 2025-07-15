@@ -167,7 +167,9 @@ export default function addSDKTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.runTestsOnBrowserStack = server.tool(
     "runTestsOnBrowserStack",
     "Use this tool to get instructions for running tests on BrowserStack and BrowserStack Percy. It sets up the BrowserStack SDK and runs your test cases on BrowserStack.",
     {
@@ -247,4 +249,6 @@ export default function addSDKTools(
       }
     },
   );
+
+  return tools;
 }

@@ -6,7 +6,7 @@ const require = createRequire(import.meta.url);
 const packageJson = require("../package.json");
 import "dotenv/config";
 import logger from "./logger.js";
-import { createMcpServer } from "./server-factory.js";
+import { BrowserStackMcpServer } from "./server-factory.js";
 
 async function main() {
   logger.info(
@@ -33,12 +33,12 @@ async function main() {
 
   const transport = new StdioServerTransport();
 
-  const server = createMcpServer({
+  const mcpServer = new BrowserStackMcpServer({
     "browserstack-username": username,
     "browserstack-access-key": accessKey,
   });
 
-  await server.connect(transport);
+  await mcpServer.getInstance().connect(transport);
 }
 
 main().catch(console.error);
@@ -48,4 +48,4 @@ process.on("exit", () => {
   logger.flush();
 });
 
-export { createMcpServer } from "./server-factory.js";
+export { BrowserStackMcpServer } from "./server-factory.js";
