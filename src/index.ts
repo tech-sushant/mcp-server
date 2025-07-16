@@ -49,3 +49,4 @@ process.on("exit", () => {
 });
 
 export { createMcpServer } from "./server-factory.js";
+export { setLogger } from "./logger.js";

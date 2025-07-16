@@ -1,12 +1,8 @@
 import { pino } from "pino";
-import config from "./config.js";
-import chitraguptaLogger from "./lib/chitragupta-logger/logger.js";
 
 let logger: any;
 
-if (config.REMOTE_MCP) {
-  logger = chitraguptaLogger;
-} else if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development") {
   logger = pino({
     level: "debug",
     transport: {
@@ -37,6 +33,14 @@ if (config.REMOTE_MCP) {
       },
     },
   });
+}
+
+/**
+ * Set a custom logger instance
+ * @param customLogger - The pino logger instance to use
+ */
+export function setLogger(customLogger: any): void {
+  logger = customLogger;
 }
 
 export default logger;
