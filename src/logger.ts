@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === "development") {
 
 /**
  * Set a custom logger instance
- * @param customLogger - The pino logger instance to use
+ * @param customLogger - The logger instance to use
  */
 export function setLogger(customLogger: any): void {
   logger = customLogger;
