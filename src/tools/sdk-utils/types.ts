@@ -28,6 +28,7 @@ export enum SDKSupportedTestingFrameworkEnum {
   junit4 = "junit4",
   junit5 = "junit5",
   testng = "testng",
+  serenity = "serenity",
   cypress = "cypress",
   nunit = "nunit",
   mstest = "mstest",
