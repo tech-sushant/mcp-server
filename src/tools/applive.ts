@@ -5,16 +5,20 @@ import fs from "fs";
 import { startSession } from "./applive-utils/start-session.js";
 import logger from "../logger.js";
 import { trackMCP } from "../lib/instrumentation.js";
+import { BrowserStackConfig } from "../lib/types.js";
 
 /**
  * Launches an App Live Session on BrowserStack.
  */
-export async function startAppLiveSession(args: {
-  desiredPlatform: string;
-  desiredPlatformVersion: string;
-  appPath: string;
-  desiredPhone: string;
-}): Promise<CallToolResult> {
+export async function startAppLiveSession(
+  args: {
+    desiredPlatform: string;
+    desiredPlatformVersion: string;
+    appPath: string;
+    desiredPhone: string;
+  },
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
   if (!args.desiredPlatform) {
     throw new Error("You must provide a desiredPlatform.");
   }
@@ -46,12 +50,15 @@ export async function startAppLiveSession(args: {
     throw new Error("The app path does not exist or is not readable.");
   }
 
-  const launchUrl = await startSession({
-    appPath: args.appPath,
-    desiredPlatform: args.desiredPlatform as "android" | "ios",
-    desiredPhone: args.desiredPhone,
-    desiredPlatformVersion: args.desiredPlatformVersion,
-  });
+  const launchUrl = await startSession(
+    {
+      appPath: args.appPath,
+      desiredPlatform: args.desiredPlatform as "android" | "ios",
+      desiredPhone: args.desiredPhone,
+      desiredPlatformVersion: args.desiredPlatformVersion,
+    },
+    { config },
+  );
 
   return {
     content: [
@@ -63,7 +70,10 @@ export async function startAppLiveSession(args: {
   };
 }
 
-export default function addAppLiveTools(server: McpServer) {
+export default function addAppLiveTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "runAppLiveSession",
     "Use this tool when user wants to manually check their app on a particular mobile device using BrowserStack's cloud infrastructure. Can be used to debug crashes, slow performance, etc.",
@@ -91,11 +101,21 @@ export default function addAppLiveTools(server: McpServer) {
     },
     async (args) => {
       try {
-        trackMCP("runAppLiveSession", server.server.getClientVersion()!);
-        return await startAppLiveSession(args);
+        trackMCP(
+          "runAppLiveSession",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await startAppLiveSession(args, config);
       } catch (error) {
         logger.error("App live session failed: %s", error);
-        trackMCP("runAppLiveSession", server.server.getClientVersion()!, error);
+        trackMCP(
+          "runAppLiveSession",
+          server.server.getClientVersion()!,
+          error,
+          config,
+        );
         return {
           content: [
             {

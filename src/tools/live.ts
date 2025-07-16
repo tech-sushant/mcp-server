@@ -5,6 +5,7 @@ import logger from "../logger.js";
 import { startBrowserSession } from "./live-utils/start-session.js";
 import { PlatformType } from "./live-utils/types.js";
 import { trackMCP } from "../lib/instrumentation.js";
+import { BrowserStackConfig } from "../lib/types.js";
 
 // Define the schema shape
 const LiveArgsShape = {
@@ -41,20 +42,24 @@ const LiveArgsSchema = z.object(LiveArgsShape);
  */
 async function launchDesktopSession(
   args: z.infer<typeof LiveArgsSchema>,
+  config: BrowserStackConfig,
 ): Promise<string> {
   if (!args.desiredBrowser)
     throw new Error("You must provide a desiredBrowser");
   if (!args.desiredBrowserVersion)
     throw new Error("You must provide a desiredBrowserVersion");
 
-  return startBrowserSession({
-    platformType: PlatformType.DESKTOP,
-    url: args.desiredURL,
-    os: args.desiredOS,
-    osVersion: args.desiredOSVersion,
-    browser: args.desiredBrowser,
-    browserVersion: args.desiredBrowserVersion,
-  });
+  return startBrowserSession(
+    {
+      platformType: PlatformType.DESKTOP,
+      url: args.desiredURL,
+      os: args.desiredOS,
+      osVersion: args.desiredOSVersion,
+      browser: args.desiredBrowser,
+      browserVersion: args.desiredBrowserVersion,
+    },
+    config,
+  );
 }
 
 /**
@@ -62,31 +67,35 @@ async function launchDesktopSession(
  */
 async function launchMobileSession(
   args: z.infer<typeof LiveArgsSchema>,
+  config: BrowserStackConfig,
 ): Promise<string> {
   if (!args.desiredDevice) throw new Error("You must provide a desiredDevice");
 
-  return startBrowserSession({
-    platformType: PlatformType.MOBILE,
-    browser: args.desiredBrowser,
-    url: args.desiredURL,
-    os: args.desiredOS,
-    osVersion: args.desiredOSVersion,
-    device: args.desiredDevice,
-  });
+  return startBrowserSession(
+    {
+      platformType: PlatformType.MOBILE,
+      browser: args.desiredBrowser,
+      url: args.desiredURL,
+      os: args.desiredOS,
+      osVersion: args.desiredOSVersion,
+      device: args.desiredDevice,
+    },
+    config,
+  );
 }
 
 /**
  * Handles the core logic for running a browser session
  */
-async function runBrowserSession(rawArgs: any) {
+async function runBrowserSession(rawArgs: any, config: BrowserStackConfig) {
   // Validate and narrow
   const args = LiveArgsSchema.parse(rawArgs);
 
   // Branch desktop vs mobile and delegate
   const launchUrl =
     args.platformType === PlatformType.DESKTOP
-      ? await launchDesktopSession(args)
-      : await launchMobileSession(args);
+      ? await launchDesktopSession(args, config)
+      : await launchMobileSession(args, config);
 
   return {
     content: [
@@ -98,21 +107,30 @@ async function runBrowserSession(rawArgs: any) {
   };
 }
 
-export default function addBrowserLiveTools(server: McpServer) {
+export default function addBrowserLiveTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "runBrowserLiveSession",
     "Launch a BrowserStack Live session (desktop or mobile).",
     LiveArgsShape,
     async (args) => {
       try {
-        trackMCP("runBrowserLiveSession", server.server.getClientVersion()!);
-        return await runBrowserSession(args);
+        trackMCP(
+          "runBrowserLiveSession",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await runBrowserSession(args, config);
       } catch (error) {
         logger.error("Live session failed: %s", error);
         trackMCP(
           "runBrowserLiveSession",
           server.server.getClientVersion()!,
           error,
+          config,
         );
         return {
           content: [

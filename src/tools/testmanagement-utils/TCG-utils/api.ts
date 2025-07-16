@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "../../../lib/apiClient.js";
 import {
   TCG_TRIGGER_URL,
   TCG_POLL_URL,
@@ -12,17 +12,20 @@ import {
   CreateTestCasesFromFileArgs,
 } from "./types.js";
 import { createTestCasePayload } from "./helpers.js";
-import config from "../../../config.js";
+import { getBrowserStackAuth } from "../../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../../lib/types.js";
 
 /**
  * Fetch default and custom form fields for a project.
  */
 export async function fetchFormFields(
   projectId: string,
+  config: BrowserStackConfig,
 ): Promise<{ default_fields: any; custom_fields: any }> {
-  const res = await axios.get(FORM_FIELDS_URL(projectId), {
+  const res = await apiClient.get({
+    url: FORM_FIELDS_URL(projectId),
     headers: {
-      "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+      "API-TOKEN": getBrowserStackAuth(config),
     },
   });
   return res.data;
@@ -37,10 +40,16 @@ export async function triggerTestCaseGeneration(
   folderId: string,
   projectId: string,
   source: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
-  const res = await axios.post(
-    TCG_TRIGGER_URL,
-    {
+  const res = await apiClient.post({
+    url: TCG_TRIGGER_URL,
+    headers: {
+      "API-TOKEN": getBrowserStackAuth(config),
+      "Content-Type": "application/json",
+      "request-source": source,
+    },
+    body: {
       document,
       documentId,
       folderId,
@@ -48,16 +57,9 @@ export async function triggerTestCaseGeneration(
       source,
       webhookUrl: `https://test-management.browserstack.com/api/v1/projects/${projectId}/folder/${folderId}/webhooks/tcg`,
     },
-    {
-      headers: {
-        "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-        "Content-Type": "application/json",
-        "request-source": source,
-      },
-    },
-  );
+  });
   if (res.status !== 200) {
-    throw new Error(`Trigger failed: ${res.statusText}`);
+    throw new Error(`Trigger failed: ${res.statusText || res.status}`);
   }
   return res.data["x-bstack-traceRequestId"];
 }
@@ -71,26 +73,25 @@ export async function fetchTestCaseDetails(
   projectId: string,
   testCaseIds: string[],
   source: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
   if (testCaseIds.length === 0) {
     throw new Error("No testCaseIds provided to fetchTestCaseDetails");
   }
-  const res = await axios.post(
-    FETCH_DETAILS_URL,
-    {
+  const res = await apiClient.post({
+    url: FETCH_DETAILS_URL,
+    headers: {
+      "API-TOKEN": getBrowserStackAuth(config),
+      "request-source": source,
+      "Content-Type": "application/json",
+    },
+    body: {
       document_id: documentId,
       folder_id: folderId,
       project_id: projectId,
       test_case_ids: testCaseIds,
     },
-    {
-      headers: {
-        "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-        "request-source": source,
-        "Content-Type": "application/json",
-      },
-    },
-  );
+  });
   if (res.data.data.success !== true) {
     throw new Error(`Fetch details failed: ${res.data.data.message}`);
   }
@@ -102,6 +103,7 @@ export async function fetchTestCaseDetails(
  */
 export async function pollTestCaseDetails(
   traceRequestId: string,
+  config: BrowserStackConfig,
 ): Promise<Record<string, any>> {
   const detailMap: Record<string, any> = {};
   let done = false;
@@ -110,17 +112,13 @@ export async function pollTestCaseDetails(
     // add a bit of jitter to avoid synchronized polling storms
     await new Promise((r) => setTimeout(r, 10000 + Math.random() * 5000));
 
-    const poll = await axios.post(
-      `${TCG_POLL_URL}?x-bstack-traceRequestId=${encodeURIComponent(
-        traceRequestId,
-      )}`,
-      {},
-      {
-        headers: {
-          "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-        },
+    const poll = await apiClient.post({
+      url: `${TCG_POLL_URL}?x-bstack-traceRequestId=${encodeURIComponent(traceRequestId)}`,
+      headers: {
+        "API-TOKEN": getBrowserStackAuth(config),
       },
-    );
+      body: {},
+    });
 
     if (!poll.data.data.success) {
       throw new Error(`Polling failed: ${poll.data.data.message}`);
@@ -153,6 +151,7 @@ export async function pollScenariosTestDetails(
   context: any,
   documentId: number,
   source: string,
+  config: BrowserStackConfig,
 ): Promise<Record<string, Scenario>> {
   const { folderId, projectReferenceId } = args;
   const scenariosMap: Record<string, Scenario> = {};
@@ -163,19 +162,17 @@ export async function pollScenariosTestDetails(
   await new Promise<void>((resolve, reject) => {
     const intervalId = setInterval(async () => {
       try {
-        const poll = await axios.post(
-          `${TCG_POLL_URL}?x-bstack-traceRequestId=${encodeURIComponent(traceId)}`,
-          {},
-          {
-            headers: {
-              "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-            },
+        const poll = await apiClient.post({
+          url: `${TCG_POLL_URL}?x-bstack-traceRequestId=${encodeURIComponent(traceId)}`,
+          headers: {
+            "API-TOKEN": getBrowserStackAuth(config),
           },
-        );
+          body: {},
+        });
 
         if (poll.status !== 200) {
           clearInterval(intervalId);
-          reject(new Error(`Polling error: ${poll.statusText}`));
+          reject(new Error(`Polling error: ${poll.statusText || poll.status}`));
           return;
         }
 
@@ -212,8 +209,9 @@ export async function pollScenariosTestDetails(
                 projectReferenceId,
                 ids,
                 source,
+                config,
               );
-              detailPromises.push(pollTestCaseDetails(reqId));
+              detailPromises.push(pollTestCaseDetails(reqId, config));
 
               scenariosMap[sc.id] ||= {
                 id: sc.id,
@@ -275,6 +273,7 @@ export async function bulkCreateTestCases(
   traceId: string,
   context: any,
   documentId: number,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const results: Record<string, any> = {};
   const total = Object.keys(scenariosMap).length;
@@ -300,16 +299,14 @@ export async function bulkCreateTestCases(
     };
 
     try {
-      const resp = await axios.post(
-        BULK_CREATE_URL(projectId, folderId),
-        payload,
-        {
-          headers: {
-            "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-            "Content-Type": "application/json",
-          },
+      const resp = await apiClient.post({
+        url: BULK_CREATE_URL(projectId, folderId),
+        headers: {
+          "API-TOKEN": getBrowserStackAuth(config),
+          "Content-Type": "application/json",
         },
-      );
+        body: payload,
+      });
       results[id] = resp.data;
       await context.sendNotification({
         method: "notifications/progress",
@@ -342,17 +339,21 @@ export async function bulkCreateTestCases(
 
 export async function projectIdentifierToId(
   projectId: string,
+  config: BrowserStackConfig,
 ): Promise<string> {
   const url = `https://test-management.browserstack.com/api/v1/projects/?q=${projectId}`;
 
-  const response = await axios.get(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
-      "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+      "API-TOKEN": getBrowserStackAuth(config),
       accept: "application/json, text/plain, */*",
     },
   });
   if (response.data.success !== true) {
-    throw new Error(`Failed to fetch project ID: ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch project ID: ${response.statusText || response.status}`,
+    );
   }
   for (const project of response.data.projects) {
     if (project.identifier === projectId) {
@@ -365,19 +366,21 @@ export async function projectIdentifierToId(
 export async function testCaseIdentifierToDetails(
   projectId: string,
   testCaseIdentifier: string,
+  config: BrowserStackConfig,
 ): Promise<{ testCaseId: string; folderId: string }> {
   const url = `https://test-management.browserstack.com/api/v1/projects/${projectId}/test-cases/search?q[query]=${testCaseIdentifier}`;
 
-  const response = await axios.get(url, {
+  const response = await apiClient.get({
+    url,
     headers: {
-      "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+      "API-TOKEN": getBrowserStackAuth(config),
       accept: "application/json, text/plain, */*",
     },
   });
 
   if (response.data.success !== true) {
     throw new Error(
-      `Failed to fetch test case details: ${response.statusText}`,
+      `Failed to fetch test case details: ${response.statusText || response.status}`,
     );
   }
 

@@ -25,6 +25,8 @@ const GRADLE_SETUP_INSTRUCTIONS = `
 export function getSDKPrefixCommand(
   language: SDKSupportedLanguage,
   framework: string,
+  username: string,
+  accessKey: string,
 ): string {
   switch (language) {
     case "nodejs":
@@ -36,7 +38,7 @@ npm i -D browserstack-node-sdk@latest
 ---STEP---
 Run the following command to setup browserstack sdk:
 \`\`\`bash
-npx setup --username ${process.env.BROWSERSTACK_USERNAME} --key ${process.env.BROWSERSTACK_ACCESS_KEY}
+npx setup --username ${username} --key ${accessKey}
 \`\`\`
 ---STEP---
 Edit the browserstack.yml file that was created in the project root to add your desired platforms and browsers.`;
@@ -50,8 +52,8 @@ Edit the browserstack.yml file that was created in the project root to add your 
         : `mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
 -DarchetypeArtifactId=browserstack-sdk-archetype-integrate -DarchetypeVersion=1.0 \\
 -DgroupId=com.browserstack -DartifactId=browserstack-sdk-archetype-integrate -Dversion=1.0 \\
--DBROWSERSTACK_USERNAME="${process.env.BROWSERSTACK_USERNAME}" \\
--DBROWSERSTACK_ACCESS_KEY="${process.env.BROWSERSTACK_ACCESS_KEY}" \\
+-DBROWSERSTACK_USERNAME="${username}" \\
+-DBROWSERSTACK_ACCESS_KEY="${accessKey}" \\
 -DBROWSERSTACK_FRAMEWORK="${mavenFramework}"`;
 
       const platformLabel = isWindows ? "Windows" : "macOS/Linux";

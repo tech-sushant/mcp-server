@@ -1,11 +1,10 @@
 import { ConfigMapping } from "./types.js";
-import config from "../../config.js";
 
 /**
  * ---------- PYTHON INSTRUCTIONS ----------
  */
 
-const pythonInstructions = `
+const pythonInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Install the BrowserStack SDK:
@@ -17,7 +16,7 @@ python3 -m pip install browserstack-sdk
 
 Setup the BrowserStack SDK with your credentials:
 \`\`\`bash
-browserstack-sdk setup --username "${config.browserstackUsername}" --key "${config.browserstackAccessKey}"
+browserstack-sdk setup --username "${username}" --key "${accessKey}"
 \`\`\`
 
 ---STEP---
@@ -28,10 +27,12 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
-const generatePythonFrameworkInstructions = (framework: string) => `
+const generatePythonFrameworkInstructions =
+  (framework: string) => (username: string, accessKey: string) => `
 ---STEP---
 
 Install the BrowserStack SDK:
+
 \`\`\`bash
 python3 -m pip install browserstack-sdk
 \`\`\`
@@ -40,7 +41,7 @@ python3 -m pip install browserstack-sdk
 
 Setup the BrowserStack SDK with framework-specific configuration:
 \`\`\`bash
-browserstack-sdk setup --framework "${framework}" --username "${config.browserstackUsername}" --key "${config.browserstackAccessKey}"
+browserstack-sdk setup --framework "${framework}" --username "${username}" --key "${accessKey}"
 \`\`\`
 
 ---STEP---
@@ -62,7 +63,7 @@ const pytestInstructions = generatePythonFrameworkInstructions("pytest");
 const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
-const javaInstructions = `
+const javaInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Add the BrowserStack Java SDK dependency to your \`pom.xml\`:
@@ -88,8 +89,8 @@ dependencies {
 
 Export your BrowserStack credentials as environment variables:
 \`\`\`bash
-export BROWSERSTACK_USERNAME=${config.browserstackUsername}
-export BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey}
+export BROWSERSTACK_USERNAME=${username}
+export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\`
 
 ---STEP---
@@ -109,7 +110,7 @@ gradle clean test
  * ---------- CSharp INSTRUCTIONS ----------
  */
 
-const csharpCommonInstructions = `
+const csharpCommonInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Install BrowserStack TestAdapter NuGet package:
@@ -128,7 +129,7 @@ dotnet build
 
 Set up BrowserStack SDK with your credentials:
 \`\`\`bash
-dotnet browserstack-sdk setup --userName ${config.browserstackUsername} --accessKey ${config.browserstackAccessKey}
+dotnet browserstack-sdk setup --userName ${username} --accessKey ${accessKey}
 \`\`\`
 
 ---STEP---
@@ -172,7 +173,10 @@ Run the tests:
   \`\`\`
 `;
 
-const csharpPlaywrightCommonInstructions = `
+const csharpPlaywrightCommonInstructions = (
+  username: string,
+  accessKey: string,
+) => `
 ---STEP---
 
 Install BrowserStack TestAdapter NuGet package:
@@ -191,7 +195,7 @@ dotnet build
 
 Set up BrowserStack SDK with your credentials:
 \`\`\`bash
-dotnet browserstack-sdk setup --userName ${config.browserstackUsername} --accessKey ${config.browserstackAccessKey}
+dotnet browserstack-sdk setup --userName ${username} --accessKey ${accessKey}
 \`\`\`
 
 ---STEP---
@@ -252,7 +256,7 @@ Run the tests:
  * ---------- NODEJS INSTRUCTIONS ----------
  */
 
-const nodejsInstructions = `
+const nodejsInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Ensure \`browserstack-node-sdk\` is present in package.json with the latest version:
@@ -273,13 +277,17 @@ Add new scripts to package.json for running tests on BrowserStack:
 
 Export BrowserStack credentials as environment variables:
 Set the following environment variables before running tests.
+\`\`\`bash
+export BROWSERSTACK_USERNAME=${username}
+export BROWSERSTACK_ACCESS_KEY=${accessKey}
+\`\`\`
 `;
 
 /**
  * ---------- EXPORT CONFIG ----------
  */
 
-const webdriverioInstructions = `
+const webdriverioInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Set BrowserStack Credentials:
@@ -287,14 +295,14 @@ Export your BrowserStack username and access key as environment variables.
 
 For macOS/Linux:
 \`\`\`bash
-export BROWSERSTACK_USERNAME= ${config.browserstackUsername}
-export BROWSERSTACK_ACCESS_KEY= ${config.browserstackAccessKey}
+export BROWSERSTACK_USERNAME=${username}
+export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\`
 
 For Windows PowerShell:
 \`\`\`powershell
-$env:BROWSERSTACK_USERNAME=${config.browserstackUsername}
-$env:BROWSERSTACK_ACCESS_KEY=${config.browserstackAccessKey}
+$env:BROWSERSTACK_USERNAME=${username}
+$env:BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\`
 
 ---STEP---
@@ -385,7 +393,7 @@ Run your tests:
 You can now run your tests on BrowserStack using your standard WebdriverIO command.
 `;
 
-const cypressInstructions = `
+const cypressInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Install the BrowserStack Cypress CLI:
@@ -414,8 +422,8 @@ Open the generated \`browserstack.json\` file and update it with your BrowserSta
 \`\`\`json
 {
   "auth": {
-    "username": "${config.browserstackUsername}",
-    "access_key": "${config.browserstackAccessKey}"
+    "username": "${username}",
+    "access_key": "${accessKey}"
   },
   "browsers": [
     {

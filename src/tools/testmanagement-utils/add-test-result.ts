@@ -1,8 +1,8 @@
-import axios from "axios";
-import config from "../../config.js";
+import { apiClient } from "../../lib/apiClient.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { formatAxiosError } from "../../lib/error.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 /**
  * Schema for adding a test result to a test run.
@@ -33,6 +33,7 @@ export type AddTestResultArgs = z.infer<typeof AddTestResultSchema>;
  */
 export async function addTestResult(
   rawArgs: AddTestResultArgs,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
     const args = AddTestResultSchema.parse(rawArgs);
@@ -45,12 +46,17 @@ export async function addTestResult(
       test_case_id: args.test_case_id,
     } as any;
 
-    const response = await axios.post(url, body, {
-      auth: {
-        username: config.browserstackUsername,
-        password: config.browserstackAccessKey,
+    const authString = getBrowserStackAuth(config);
+    const [username, password] = authString.split(":");
+
+    const response = await apiClient.post({
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
       },
-      headers: { "Content-Type": "application/json" },
+      body,
     });
 
     const data = response.data;
@@ -70,6 +76,18 @@ export async function addTestResult(
       ],
     };
   } catch (err: any) {
-    return formatAxiosError(err, "Failed to add test result to test run");
+    const msg =
+      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+      err?.message ||
+      String(err);
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Failed to add test result to test run: ${msg}`,
+        },
+      ],
+    };
   }
 }

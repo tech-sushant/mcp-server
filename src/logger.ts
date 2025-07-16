@@ -1,6 +1,6 @@
 import { pino } from "pino";
 
-let logger: pino.Logger;
+let logger: any;
 
 if (process.env.NODE_ENV === "development") {
   logger = pino({
@@ -33,6 +33,14 @@ if (process.env.NODE_ENV === "development") {
       },
     },
   });
+}
+
+/**
+ * Set a custom logger instance
+ * @param customLogger - The logger instance to use
+ */
+export function setLogger(customLogger: any): void {
+  logger = customLogger;
 }
 
 export default logger;

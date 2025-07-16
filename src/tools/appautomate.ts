@@ -2,7 +2,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
-import config from "../config.js";
+import { getBrowserStackAuth } from "../lib/get-auth.js";
+import { BrowserStackConfig } from "../lib/types.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { maybeCompressBase64 } from "../lib/utils.js";
 import { remote } from "webdriverio";
@@ -54,11 +55,12 @@ async function takeAppScreenshot(args: {
   desiredPlatformVersion: string;
   appPath: string;
   desiredPhone: string;
+  config: BrowserStackConfig;
 }): Promise<CallToolResult> {
   let driver;
   try {
     validateArgs(args);
-    const { desiredPlatform, desiredPhone, appPath } = args;
+    const { desiredPlatform, desiredPhone, appPath, config } = args;
     let { desiredPlatformVersion } = args;
 
     const platforms = (
@@ -93,8 +95,10 @@ async function takeAppScreenshot(args: {
         `Device "${desiredPhone}" with version ${desiredPlatformVersion} not found.`,
       );
     }
+    const authString = getBrowserStackAuth(config);
+    const [username, password] = authString.split(":");
 
-    const app_url = await uploadApp(appPath);
+    const app_url = await uploadApp(appPath, username, password);
     logger.info(`App uploaded. URL: ${app_url}`);
 
     const capabilities = {
@@ -104,8 +108,8 @@ async function takeAppScreenshot(args: {
       "appium:app": app_url,
       "appium:autoGrantPermissions": true,
       "bstack:options": {
-        userName: config.browserstackUsername,
-        accessKey: config.browserstackAccessKey,
+        userName: username,
+        accessKey: password,
         appiumVersion: "2.0.1",
       },
     };
@@ -151,19 +155,23 @@ async function takeAppScreenshot(args: {
 }
 
 //Runs AppAutomate tests on BrowserStack by uploading app and test suite, then triggering a test run.
-async function runAppTestsOnBrowserStack(args: {
-  appPath: string;
-  testSuitePath: string;
-  devices: string[];
-  project: string;
-  detectedAutomationFramework: string;
-}): Promise<CallToolResult> {
+async function runAppTestsOnBrowserStack(
+  args: {
+    appPath: string;
+    testSuitePath: string;
+    devices: string[];
+    project: string;
+    detectedAutomationFramework: string;
+  },
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
   switch (args.detectedAutomationFramework) {
     case AppTestPlatform.ESPRESSO: {
       try {
-        const app_url = await uploadEspressoApp(args.appPath);
+        const app_url = await uploadEspressoApp(args.appPath, config);
         const test_suite_url = await uploadEspressoTestSuite(
           args.testSuitePath,
+          config,
         );
         const build_id = await triggerEspressoBuild(
           app_url,
@@ -187,13 +195,17 @@ async function runAppTestsOnBrowserStack(args: {
     }
     case AppTestPlatform.XCUITEST: {
       try {
-        const app_url = await uploadXcuiApp(args.appPath);
-        const test_suite_url = await uploadXcuiTestSuite(args.testSuitePath);
+        const app_url = await uploadXcuiApp(args.appPath, config);
+        const test_suite_url = await uploadXcuiTestSuite(
+          args.testSuitePath,
+          config,
+        );
         const build_id = await triggerXcuiBuild(
           app_url,
           test_suite_url,
           args.devices,
           args.project,
+          config,
         );
         return {
           content: [
@@ -215,8 +227,10 @@ async function runAppTestsOnBrowserStack(args: {
   }
 }
 
-// Registers automation tools with the MCP server.
-export default function addAppAutomationTools(server: McpServer) {
+export default function addAppAutomationTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
   server.tool(
     "takeAppScreenshot",
     "Use this tool to take a screenshot of an app running on a BrowserStack device. This is useful for visual testing and debugging.",
@@ -242,10 +256,20 @@ export default function addAppAutomationTools(server: McpServer) {
     },
     async (args) => {
       try {
-        trackMCP("takeAppScreenshot", server.server.getClientVersion()!);
-        return await takeAppScreenshot(args);
+        trackMCP(
+          "takeAppScreenshot",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await takeAppScreenshot({ ...args, config });
       } catch (error) {
-        trackMCP("takeAppScreenshot", server.server.getClientVersion()!, error);
+        trackMCP(
+          "takeAppScreenshot",
+          server.server.getClientVersion()!,
+          error,
+          config,
+        );
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";
         return {
@@ -309,13 +333,16 @@ export default function addAppAutomationTools(server: McpServer) {
         trackMCP(
           "runAppTestsOnBrowserStack",
           server.server.getClientVersion()!,
+          undefined,
+          config,
         );
-        return await runAppTestsOnBrowserStack(args);
+        return await runAppTestsOnBrowserStack(args, config);
       } catch (error) {
         trackMCP(
           "runAppTestsOnBrowserStack",
           server.server.getClientVersion()!,
           error,
+          config,
         );
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";

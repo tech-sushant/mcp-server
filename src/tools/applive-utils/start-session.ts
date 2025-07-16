@@ -1,14 +1,17 @@
 import logger from "../../logger.js";
-import childProcess from "child_process";
 import {
   getDevicesAndBrowsers,
   BrowserStackProducts,
 } from "../../lib/device-cache.js";
 import { sanitizeUrlParam } from "../../lib/utils.js";
 import { uploadApp } from "./upload-app.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { findDeviceByName } from "./device-search.js";
 import { pickVersion } from "./version-utils.js";
 import { DeviceEntry } from "./types.js";
+import childProcess from "child_process";
+import { BrowserStackConfig } from "../../lib/types.js";
+import envConfig from "../../config.js";
 
 interface StartSessionArgs {
   appPath: string;
@@ -17,12 +20,20 @@ interface StartSessionArgs {
   desiredPlatformVersion: string;
 }
 
+interface StartSessionOptions {
+  config: BrowserStackConfig;
+}
+
 /**
  * Start an App Live session: filter, select, upload, and open.
  */
-export async function startSession(args: StartSessionArgs): Promise<string> {
+export async function startSession(
+  args: StartSessionArgs,
+  options: StartSessionOptions,
+): Promise<string> {
   const { appPath, desiredPlatform, desiredPhone, desiredPlatformVersion } =
     args;
+  const { config } = options;
 
   // 1) Fetch devices for APP_LIVE
   const data = await getDevicesAndBrowsers(BrowserStackProducts.APP_LIVE);
@@ -61,7 +72,9 @@ export async function startSession(args: StartSessionArgs): Promise<string> {
   }
 
   // 6) Upload app
-  const { app_url } = await uploadApp(appPath);
+  const authString = getBrowserStackAuth(config);
+  const [username, password] = authString.split(":");
+  const { app_url } = await uploadApp(appPath, username, password);
   logger.info(`App uploaded: ${app_url}`);
 
   if (!app_url) {
@@ -82,7 +95,10 @@ export async function startSession(args: StartSessionArgs): Promise<string> {
   });
   const launchUrl = `https://app-live.browserstack.com/dashboard#${params.toString()}&device=${deviceParam}`;
 
-  openBrowser(launchUrl);
+  if (!envConfig.REMOTE_MCP) {
+    openBrowser(launchUrl);
+  }
+
   return launchUrl + note;
 }
 

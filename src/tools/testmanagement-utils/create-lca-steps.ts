@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import axios from "axios";
-import config from "../../config.js";
-import { formatAxiosError } from "../../lib/error.js";
+import { apiClient } from "../../lib/apiClient.js";
 import {
   projectIdentifierToId,
   testCaseIdentifierToDetails,
 } from "./TCG-utils/api.js";
 import { pollLCAStatus } from "./poll-lca-status.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 /**
  * Schema for creating LCA steps for a test case
@@ -65,15 +65,20 @@ export type CreateLCAStepsArgs = z.infer<typeof CreateLCAStepsSchema>;
 export async function createLCASteps(
   args: CreateLCAStepsArgs,
   context: any,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
     // Get the project ID from identifier
-    const projectId = await projectIdentifierToId(args.project_identifier);
+    const projectId = await projectIdentifierToId(
+      args.project_identifier,
+      config,
+    );
 
     // Get the test case ID and folder ID from identifier
     const { testCaseId, folderId } = await testCaseIdentifierToDetails(
       projectId,
       args.test_case_identifier,
+      config,
     );
 
     const url = `https://test-management.browserstack.com/api/v1/projects/${projectId}/test-cases/${testCaseId}/lcnc`;
@@ -88,91 +93,90 @@ export async function createLCASteps(
       webhook_path: `https://test-management.browserstack.com/api/v1/projects/${projectId}/test-cases/${testCaseId}/webhooks/lcnc`,
     };
 
-    const response = await axios.post(url, payload, {
+    await apiClient.post({
+      url,
       headers: {
-        "API-TOKEN": `${config.browserstackUsername}:${config.browserstackAccessKey}`,
+        "API-TOKEN": getBrowserStackAuth(config),
         accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
       },
+      body: payload,
     });
 
-    if (response.status >= 200 && response.status < 300) {
-      // Check if user wants to wait for completion
-      if (!args.wait_for_completion) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `LCA steps creation initiated for test case ${args.test_case_identifier} (ID: ${testCaseId})`,
-            },
-            {
-              type: "text",
-              text: "LCA build started. Check the BrowserStack Lowcode Automation UI for completion status.",
-            },
-          ],
-        };
-      }
-
-      // Start polling for LCA build completion
-      try {
-        const max_wait_minutes = 10; // Maximum wait time in minutes
-        const maxWaitMs = max_wait_minutes * 60 * 1000;
-        const lcaResult = await pollLCAStatus(
-          projectId,
-          folderId,
-          testCaseId,
-          context,
-          maxWaitMs, // max wait time
-          2 * 60 * 1000, // 2 minutes initial wait
-          10 * 1000, // 10 seconds interval
-        );
-
-        if (lcaResult && lcaResult.status === "done") {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `Successfully created LCA steps for test case ${args.test_case_identifier} (ID: ${testCaseId})`,
-              },
-              {
-                type: "text",
-                text: `LCA build completed! Resource URL: ${lcaResult.resource_path}`,
-              },
-            ],
-          };
-        } else {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `LCA steps creation initiated for test case ${args.test_case_identifier} (ID: ${testCaseId})`,
-              },
-              {
-                type: "text",
-                text: `Warning: LCA build did not complete within ${max_wait_minutes} minutes. You can check the status later in the BrowserStack Test Management UI.`,
-              },
-            ],
-          };
-        }
-      } catch (pollError) {
-        console.error("Error during LCA polling:", pollError);
-        return {
-          content: [
-            {
-              type: "text",
-              text: `LCA steps creation initiated for test case ${args.test_case_identifier} (ID: ${testCaseId})`,
-            },
-            {
-              type: "text",
-              text: "Warning: Error occurred while polling for LCA build completion. Check the BrowserStack Test Management UI for status.",
-            },
-          ],
-        };
-      }
-    } else {
-      throw new Error(`Unexpected response: ${JSON.stringify(response.data)}`);
+    // Check if user wants to wait for completion
+    if (!args.wait_for_completion) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `LCA steps creation initiated for test case ${args.test_case_identifier} (ID: ${testCaseId})`,
+          },
+          {
+            type: "text",
+            text: "LCA build started. Check the BrowserStack Lowcode Automation UI for completion status.",
+          },
+        ],
+      };
     }
-  } catch (error) {
+
+    // Start polling for LCA build completion
+    try {
+      const max_wait_minutes = 10; // Maximum wait time in minutes
+      const maxWaitMs = max_wait_minutes * 60 * 1000;
+      const lcaResult = await pollLCAStatus(
+        projectId,
+        folderId,
+        testCaseId,
+        context,
+        maxWaitMs, // max wait time
+        2 * 60 * 1000, // 2 minutes initial wait
+        10 * 1000, // 10 seconds interval
+        config,
+      );
+
+      if (lcaResult && lcaResult.status === "done") {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Successfully created LCA steps for test case ${args.test_case_identifier} (ID: ${testCaseId})`,
+            },
+            {
+              type: "text",
+              text: `LCA build completed! Resource URL: ${lcaResult.resource_path}`,
+            },
+          ],
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `LCA steps creation initiated for test case ${args.test_case_identifier} (ID: ${testCaseId})`,
+            },
+            {
+              type: "text",
+              text: `Warning: LCA build did not complete within ${max_wait_minutes} minutes. You can check the status later in the BrowserStack Test Management UI.`,
+            },
+          ],
+        };
+      }
+    } catch (pollError) {
+      console.error("Error during LCA polling:", pollError);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `LCA steps creation initiated for test case ${args.test_case_identifier} (ID: ${testCaseId})`,
+          },
+          {
+            type: "text",
+            text: "Warning: Error occurred while polling for LCA build completion. Check the BrowserStack Test Management UI for status.",
+          },
+        ],
+      };
+    }
+  } catch (error: any) {
     // Add more specific error handling
     if (error instanceof Error) {
       if (error.message.includes("not found")) {
@@ -188,6 +192,19 @@ export async function createLCASteps(
         };
       }
     }
-    return formatAxiosError(error, "Failed to create LCA steps");
+    const msg =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message ||
+      String(error);
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Failed to create LCA steps: ${msg}`,
+        },
+      ],
+      isError: true,
+    };
   }
 }
