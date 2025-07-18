@@ -50,10 +50,10 @@ export function generateBrowserStackYMLInstructions(
 # ======================
 # BrowserStack Reporting
 # ======================
-# A single name for your project to organize all your tests. This is required for Percy.
-projectName: BrowserStack SDK Tests
-# A name for the group of tests you are running
-buildName: mcp-run
+# Project and build names help organize your test runs in BrowserStack dashboard and Percy.
+# TODO: Replace these sample values with your actual project details
+projectName: Sample Project
+buildName: Sample Build
 
 # =======================================
 # Platforms (Browsers / Devices to test)
