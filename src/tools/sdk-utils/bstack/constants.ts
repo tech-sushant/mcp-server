@@ -1,10 +1,8 @@
-import { ConfigMapping } from "./types.js";
-
 /**
  * ---------- PYTHON INSTRUCTIONS ----------
  */
 
-const pythonInstructions = (username: string, accessKey: string) => `
+export const pythonInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Install the BrowserStack SDK:
@@ -27,7 +25,7 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
-const generatePythonFrameworkInstructions =
+export const generatePythonFrameworkInstructions =
   (framework: string) => (username: string, accessKey: string) => `
 ---STEP---
 
@@ -52,9 +50,9 @@ browserstack-sdk ${framework} <path-to-test-files>
 \`\`\`
 `;
 
-const robotInstructions = generatePythonFrameworkInstructions("robot");
-const behaveInstructions = generatePythonFrameworkInstructions("behave");
-const pytestInstructions = generatePythonFrameworkInstructions("pytest");
+export const robotInstructions = generatePythonFrameworkInstructions("robot");
+export const behaveInstructions = generatePythonFrameworkInstructions("behave");
+export const pytestInstructions = generatePythonFrameworkInstructions("pytest");
 
 /**
  * ---------- JAVA INSTRUCTIONS ----------
@@ -63,7 +61,7 @@ const pytestInstructions = generatePythonFrameworkInstructions("pytest");
 const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
-const javaInstructions = (username: string, accessKey: string) => `
+export const javaInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Add the BrowserStack Java SDK dependency to your \`pom.xml\`:
@@ -106,68 +104,14 @@ gradle clean test
 \`\`\`
 `;
 
-const serenityInstructions = (username: string, accessKey: string) => `
----STEP---
-
-Set BrowserStack credentials as environment variables:
-For macOS/Linux:
-\`\`\`bash
-export BROWSERSTACK_USERNAME=${username}
-export BROWSERSTACK_ACCESS_KEY=${accessKey}
-\`\`\`
-
-For Windows Command Prompt:
-\`\`\`cmd
-set BROWSERSTACK_USERNAME=${username}
-set BROWSERSTACK_ACCESS_KEY=${accessKey}
-\`\`\`
-
----STEP---
-
-Add serenity-browserstack dependency in pom.xml:
-Add the following dependency to your pom.xml file and save it:
-\`\`\`xml
-<dependency>
-  <groupId>net.serenity-bdd</groupId>
-  <artifactId>serenity-browserstack</artifactId>
-  <version>3.3.4</version>
-</dependency>
-\`\`\`
-
----STEP---
-
-Set up serenity.conf file:
-Create or update your serenity.conf file in the project root with the following configuration:
-\`\`\`
-webdriver {
-  driver = remote
-  remote.url = "https://hub.browserstack.com/wd/hub"
-}
-browserstack.user="${username}"
-browserstack.key="${accessKey}"
-\`\`\`
-
----STEP---
-
-Run your Serenity tests:
-You can continue running your tests as you normally would. For example:
-
-Using Maven:
-\`\`\`bash
-mvn clean verify
-\`\`\`
-
-Using Gradle:
-\`\`\`bash
-gradle clean test
-\`\`\`
-`;
-
 /**
  * ---------- CSharp INSTRUCTIONS ----------
  */
 
-const csharpCommonInstructions = (username: string, accessKey: string) => `
+export const csharpCommonInstructions = (
+  username: string,
+  accessKey: string,
+) => `
 ---STEP---
 
 Install BrowserStack TestAdapter NuGet package:
@@ -230,7 +174,7 @@ Run the tests:
   \`\`\`
 `;
 
-const csharpPlaywrightCommonInstructions = (
+export const csharpPlaywrightCommonInstructions = (
   username: string,
   accessKey: string,
 ) => `
@@ -313,7 +257,7 @@ Run the tests:
  * ---------- NODEJS INSTRUCTIONS ----------
  */
 
-const nodejsInstructions = (username: string, accessKey: string) => `
+export const nodejsInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Ensure \`browserstack-node-sdk\` is present in package.json with the latest version:
@@ -344,7 +288,10 @@ export BROWSERSTACK_ACCESS_KEY=${accessKey}
  * ---------- EXPORT CONFIG ----------
  */
 
-const webdriverioInstructions = (username: string, accessKey: string) => `
+export const webdriverioInstructions = (
+  username: string,
+  accessKey: string,
+) => `
 ---STEP---
 
 Set BrowserStack Credentials:
@@ -450,7 +397,7 @@ Run your tests:
 You can now run your tests on BrowserStack using your standard WebdriverIO command.
 `;
 
-const cypressInstructions = (username: string, accessKey: string) => `
+export const cypressInstructions = (username: string, accessKey: string) => `
 ---STEP---
 
 Install the BrowserStack Cypress CLI:
@@ -522,61 +469,3 @@ npx browserstack-cypress run --sync
 
 After the tests complete, you can view the results on your [BrowserStack Automate Dashboard](https://automate.browserstack.com/dashboard/).
 `;
-
-export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
-  python: {
-    playwright: {
-      pytest: { instructions: pythonInstructions },
-    },
-    selenium: {
-      pytest: { instructions: pytestInstructions },
-      robot: { instructions: robotInstructions },
-      behave: { instructions: behaveInstructions },
-    },
-  },
-  java: {
-    playwright: {
-      junit4: { instructions: javaInstructions },
-      junit5: { instructions: javaInstructions },
-      testng: { instructions: javaInstructions },
-    },
-    selenium: {
-      testng: { instructions: javaInstructions },
-      cucumber: { instructions: javaInstructions },
-      junit4: { instructions: javaInstructions },
-      junit5: { instructions: javaInstructions },
-      serenity: { instructions: serenityInstructions },
-    },
-  },
-  csharp: {
-    playwright: {
-      nunit: { instructions: csharpPlaywrightCommonInstructions },
-      mstest: { instructions: csharpPlaywrightCommonInstructions },
-    },
-    selenium: {
-      xunit: { instructions: csharpCommonInstructions },
-      nunit: { instructions: csharpCommonInstructions },
-      mstest: { instructions: csharpCommonInstructions },
-      specflow: { instructions: csharpCommonInstructions },
-      reqnroll: { instructions: csharpCommonInstructions },
-    },
-  },
-  nodejs: {
-    playwright: {
-      jest: { instructions: nodejsInstructions },
-      codeceptjs: { instructions: nodejsInstructions },
-      playwright: { instructions: nodejsInstructions },
-    },
-    selenium: {
-      jest: { instructions: nodejsInstructions },
-      webdriverio: { instructions: webdriverioInstructions },
-      mocha: { instructions: nodejsInstructions },
-      cucumber: { instructions: nodejsInstructions },
-      nightwatch: { instructions: nodejsInstructions },
-      codeceptjs: { instructions: nodejsInstructions },
-    },
-    cypress: {
-      cypress: { instructions: cypressInstructions },
-    },
-  },
-};
