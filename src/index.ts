@@ -48,4 +48,6 @@ process.on("exit", () => {
   logger.flush();
 });
 
+
+export { setLogger } from "./logger.js";
 export { BrowserStackMcpServer } from "./server-factory.js";

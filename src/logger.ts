@@ -1,13 +1,10 @@
 import { pino } from "pino";
-import config from "./config.js";
-import chitraguptaLogger from "./lib/chitragupta-logger/logger.js";
 
-let logger: any;
+// 1. The actual logger instance, swapped out as needed
+let currentLogger: any;
 
-if (config.REMOTE_MCP) {
-  logger = chitraguptaLogger;
-} else if (process.env.NODE_ENV === "development") {
-  logger = pino({
+if (process.env.NODE_ENV === "development") {
+  currentLogger = pino({
     level: "debug",
     transport: {
       targets: [
@@ -27,8 +24,8 @@ if (config.REMOTE_MCP) {
     },
   });
 } else {
-  // NULL logger
-  logger = pino({
+  // Null logger (logs go to /dev/null or NUL)
+  currentLogger = pino({
     level: "info",
     transport: {
       target: "pino/file",
@@ -37,6 +34,26 @@ if (config.REMOTE_MCP) {
       },
     },
   });
+}
+
+// 2. Proxy logger: always delegates to the currentLogger
+const logger: any = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      // Forward function calls to currentLogger
+      if (typeof currentLogger[prop] === "function") {
+        return (...args: any[]) => currentLogger[prop](...args);
+      }
+      // Forward property gets
+      return currentLogger[prop];
+    },
+  },
+);
+
+// 3. Setter to update the logger instance everywhere
+export function setLogger(customLogger: any): void {
+  currentLogger = customLogger;
 }
 
 export default logger;

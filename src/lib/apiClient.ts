@@ -1,4 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import httpsProxyAgentPkg from "https-proxy-agent";
+const { HttpsProxyAgent } = httpsProxyAgentPkg;
+import * as https from "https";
+import * as fs from "fs";
+import config from "../config.js";
 
 type RequestOptions = {
   url: string;
@@ -54,15 +59,52 @@ class ApiResponse<T = any> {
   }
 }
 
+// Utility to create HTTPS agent if needed (proxy/CA)
+function getAxiosAgent(): AxiosRequestConfig["httpsAgent"] | undefined {
+  const proxyHost = config.browserstackLocalOptions.proxyHost;
+  const proxyPort = config.browserstackLocalOptions.proxyPort;
+  const caCertPath = config.browserstackLocalOptions.useCaCertificate;
+
+  // If both proxy host and port are defined
+  if (proxyHost && proxyPort) {
+    const proxyUrl = `http://${proxyHost}:${proxyPort}`;
+    if (caCertPath && fs.existsSync(caCertPath)) {
+      // Proxy + CA cert
+      const ca = fs.readFileSync(caCertPath);
+      return new HttpsProxyAgent({
+        host: proxyHost,
+        port: Number(proxyPort),
+        ca,
+        rejectUnauthorized: false, // Set to true if you want strict SSL
+      });
+    } else {
+      // Proxy only
+      return new HttpsProxyAgent(proxyUrl);
+    }
+  } else if (caCertPath && fs.existsSync(caCertPath)) {
+    // CA only
+    return new https.Agent({
+      ca: fs.readFileSync(caCertPath),
+      rejectUnauthorized: false, // Set to true for strict SSL
+    });
+  }
+  // Default agent (no proxy, no CA)
+  return undefined;
+}
+
 class ApiClient {
   private instance = axios.create();
 
+  private get axiosAgent() {
+    return getAxiosAgent();
+  }
+
   private async requestWrapper<T>(
-    fn: () => Promise<AxiosResponse<T>>,
+    fn: (agent: AxiosRequestConfig["httpsAgent"]) => Promise<AxiosResponse<T>>,
     raise_error: boolean = true,
   ): Promise<ApiResponse<T>> {
     try {
-      const res = await fn();
+      const res = await fn(this.axiosAgent);
       return new ApiResponse<T>(res);
     } catch (error: any) {
       if (error.response && !raise_error) {
@@ -79,7 +121,8 @@ class ApiClient {
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
     return this.requestWrapper<T>(
-      () => this.instance.get<T>(url, { headers, params }),
+      (agent) =>
+        this.instance.get<T>(url, { headers, params, httpsAgent: agent }),
       raise_error,
     );
   }
@@ -91,7 +134,8 @@ class ApiClient {
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
     return this.requestWrapper<T>(
-      () => this.instance.post<T>(url, body, { headers }),
+      (agent) =>
+        this.instance.post<T>(url, body, { headers, httpsAgent: agent }),
       raise_error,
     );
   }
@@ -103,7 +147,8 @@ class ApiClient {
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
     return this.requestWrapper<T>(
-      () => this.instance.put<T>(url, body, { headers }),
+      (agent) =>
+        this.instance.put<T>(url, body, { headers, httpsAgent: agent }),
       raise_error,
     );
   }
@@ -115,7 +160,8 @@ class ApiClient {
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
     return this.requestWrapper<T>(
-      () => this.instance.patch<T>(url, body, { headers }),
+      (agent) =>
+        this.instance.patch<T>(url, body, { headers, httpsAgent: agent }),
       raise_error,
     );
   }
@@ -127,7 +173,8 @@ class ApiClient {
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
     return this.requestWrapper<T>(
-      () => this.instance.delete<T>(url, { headers, params }),
+      (agent) =>
+        this.instance.delete<T>(url, { headers, params, httpsAgent: agent }),
       raise_error,
     );
   }

@@ -106,6 +106,63 @@ gradle clean test
 \`\`\`
 `;
 
+const serenityInstructions = (username: string, accessKey: string) => `
+---STEP---
+
+Set BrowserStack credentials as environment variables:
+For macOS/Linux:
+\`\`\`bash
+export BROWSERSTACK_USERNAME=${username}
+export BROWSERSTACK_ACCESS_KEY=${accessKey}
+\`\`\`
+
+For Windows Command Prompt:
+\`\`\`cmd
+set BROWSERSTACK_USERNAME=${username}
+set BROWSERSTACK_ACCESS_KEY=${accessKey}
+\`\`\`
+
+---STEP---
+
+Add serenity-browserstack dependency in pom.xml:
+Add the following dependency to your pom.xml file and save it:
+\`\`\`xml
+<dependency>
+  <groupId>net.serenity-bdd</groupId>
+  <artifactId>serenity-browserstack</artifactId>
+  <version>3.3.4</version>
+</dependency>
+\`\`\`
+
+---STEP---
+
+Set up serenity.conf file:
+Create or update your serenity.conf file in the project root with the following configuration:
+\`\`\`
+webdriver {
+  driver = remote
+  remote.url = "https://hub.browserstack.com/wd/hub"
+}
+browserstack.user="${username}"
+browserstack.key="${accessKey}"
+\`\`\`
+
+---STEP---
+
+Run your Serenity tests:
+You can continue running your tests as you normally would. For example:
+
+Using Maven:
+\`\`\`bash
+mvn clean verify
+\`\`\`
+
+Using Gradle:
+\`\`\`bash
+gradle clean test
+\`\`\`
+`;
+
 /**
  * ---------- CSharp INSTRUCTIONS ----------
  */
@@ -488,6 +545,7 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
       cucumber: { instructions: javaInstructions },
       junit4: { instructions: javaInstructions },
       junit5: { instructions: javaInstructions },
+      serenity: { instructions: serenityInstructions },
     },
   },
   csharp: {

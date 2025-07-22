@@ -1,6 +1,6 @@
 {
   "name": "@browserstack/mcp-server",
-  "version": "1.1.9",
+  "version": "1.2.0",
   "description": "BrowserStack's Official MCP Server",
   "main": "dist/index.js",
   "repository": {
@@ -38,7 +38,6 @@
     "@types/form-data": "^2.5.2",
     "axios": "^1.8.4",
     "browserstack-local": "^1.5.6",
-    "chitragupta": "github:browserstack/chitragupta-node",
     "csv-parse": "^5.6.0",
     "dotenv": "^16.5.0",
     "form-data": "^4.0.2",
@@ -47,7 +46,6 @@
     "sharp": "^0.34.1",
     "uuid": "^11.1.0",
     "webdriverio": "^9.13.0",
-    "winston": "^3.17.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {
