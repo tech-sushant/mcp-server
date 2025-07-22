@@ -1,4 +1,7 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import {
+  McpServer,
+  RegisteredTool,
+} from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const packageJson = require("../package.json");
@@ -15,32 +18,70 @@ import addAppLiveTools from "./tools/applive.js";
 import { setupOnInitialized } from "./oninitialized.js";
 import { BrowserStackConfig } from "./lib/types.js";
 
-function registerTools(server: McpServer, config: BrowserStackConfig) {
-  addAccessibilityTools(server, config);
-  addSDKTools(server, config);
-  addAppLiveTools(server, config);
-  addBrowserLiveTools(server, config);
-  addTestManagementTools(server, config);
-  addAppAutomationTools(server, config);
-  addFailureLogsTools(server, config);
-  addAutomateTools(server, config);
-  addSelfHealTools(server, config);
-}
+/**
+ * Wrapper class for BrowserStack MCP Server
+ * Stores a map of registered tools by name
+ */
+export class BrowserStackMcpServer {
+  public server: McpServer;
+  public tools: Record<string, RegisteredTool> = {};
 
-export function createMcpServer(config: BrowserStackConfig): McpServer {
-  logger.info(
-    "Creating BrowserStack MCP Server, version %s",
-    packageJson.version,
-  );
+  constructor(private config: BrowserStackConfig) {
+    logger.info(
+      "Creating BrowserStack MCP Server, version %s",
+      packageJson.version,
+    );
 
-  // Create an MCP server
-  const server: McpServer = new McpServer({
-    name: "BrowserStack MCP Server",
-    version: packageJson.version,
-  });
+    this.server = new McpServer({
+      name: "BrowserStack MCP Server",
+      version: packageJson.version,
+    });
 
-  setupOnInitialized(server, config);
-  registerTools(server, config);
+    setupOnInitialized(this.server, this.config);
+    this.registerTools();
+  }
 
-  return server;
+  /**
+   * Calls each tool-adder function and collects their returned tools
+   */
+  private registerTools() {
+    const toolAdders = [
+      addAccessibilityTools,
+      addSDKTools,
+      addAppLiveTools,
+      addBrowserLiveTools,
+      addTestManagementTools,
+      addAppAutomationTools,
+      addFailureLogsTools,
+      addAutomateTools,
+      addSelfHealTools,
+    ];
+
+    toolAdders.forEach((adder) => {
+      // Each adder now returns a Record<string, Tool>
+      const added: Record<string, RegisteredTool> = adder(
+        this.server,
+        this.config,
+      );
+      Object.assign(this.tools, added);
+    });
+  }
+
+  /**
+   * Expose the underlying MCP server instance
+   */
+  public getInstance(): McpServer {
+    return this.server;
+  }
+
+  /**
+   * Get all registered tools
+   */
+  public getTools(): Record<string, RegisteredTool> {
+    return this.tools;
+  }
+  
+  public getTool(name: string): RegisteredTool | undefined {
+    return this.tools[name];
+  }
 }

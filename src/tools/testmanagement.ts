@@ -410,70 +410,78 @@ export default function addTestManagementTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.createProjectOrFolder = server.tool(
     "createProjectOrFolder",
     "Create a project and/or folder in BrowserStack Test Management.",
     CreateProjFoldSchema.shape,
     (args) => createProjectOrFolderTool(args, config, server),
   );
 
-  server.tool(
+  tools.createTestCase = server.tool(
     "createTestCase",
     "Use this tool to create a test case in BrowserStack Test Management.",
     CreateTestCaseSchema.shape,
     (args) => createTestCaseTool(args, config, server),
   );
 
-  server.tool(
+  tools.listTestCases = server.tool(
     "listTestCases",
     "List test cases in a project with optional filters (status, priority, custom fields, etc.)",
     ListTestCasesSchema.shape,
     (args) => listTestCasesTool(args, config, server),
   );
 
-  server.tool(
+  tools.createTestRun = server.tool(
     "createTestRun",
     "Create a test run in BrowserStack Test Management.",
     CreateTestRunSchema.shape,
     (args) => createTestRunTool(args, config, server),
   );
 
-  server.tool(
+  tools.listTestRuns = server.tool(
     "listTestRuns",
     "List test runs in a project with optional filters (date ranges, assignee, state, etc.)",
     ListTestRunsSchema.shape,
     (args) => listTestRunsTool(args, config, server),
   );
-  server.tool(
+
+  tools.updateTestRun = server.tool(
     "updateTestRun",
     "Update a test run in BrowserStack Test Management.",
     UpdateTestRunSchema.shape,
     (args) => updateTestRunTool(args, config, server),
   );
-  server.tool(
+
+  tools.addTestResult = server.tool(
     "addTestResult",
     "Add a test result to a specific test run via BrowserStack Test Management API.",
     AddTestResultSchema.shape,
     (args) => addTestResultTool(args, config, server),
   );
 
-  server.tool(
+  tools.uploadProductRequirementFile = server.tool(
     "uploadProductRequirementFile",
     "Upload files (e.g., PDRs, PDFs) to BrowserStack Test Management and retrieve a file mapping ID. This is utilized for generating test cases from files and is part of the Test Case Generator AI Agent in BrowserStack.",
     UploadFileSchema.shape,
     (args) => uploadProductRequirementFileTool(args, config, server),
   );
-  server.tool(
+
+  tools.createTestCasesFromFile = server.tool(
     "createTestCasesFromFile",
     "Generate test cases from a file in BrowserStack Test Management using the Test Case Generator AI Agent.",
     CreateTestCasesFromFileSchema.shape,
     (args, context) =>
       createTestCasesFromFileTool(args, context, config, server),
   );
-  server.tool(
+
+  tools.createLCASteps = server.tool(
     "createLCASteps",
     "Generate Low Code Automation (LCA) steps for a test case in BrowserStack Test Management using the Low Code Automation Agent.",
     CreateLCAStepsSchema.shape,
     (args, context) => createLCAStepsTool(args, context, config, server),
   );
+
+  return tools;
 }

@@ -1,7 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import logger from "../logger.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { BrowserStackConfig } from "../lib/types.js";
 
@@ -169,7 +168,9 @@ export default function registerGetFailureLogs(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.getFailureLogs = server.tool(
     "getFailureLogs",
     "Fetch various types of logs from a BrowserStack session. Supports both automate and app-automate sessions.",
     {
@@ -212,19 +213,19 @@ export default function registerGetFailureLogs(
         );
         return await getFailureLogs(args, config);
       } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
         trackMCP(
           "getFailureLogs",
           server.server.getClientVersion()!,
           error,
           config,
         );
-        logger.error("Failed to fetch logs: %s", message);
         return {
           content: [
             {
               type: "text",
-              text: `Failed to fetch logs: ${message}`,
+              text: `Failed to fetch failure logs: ${
+                error instanceof Error ? error.message : "Unknown error"
+              }`,
               isError: true,
             },
           ],
@@ -233,4 +234,6 @@ export default function registerGetFailureLogs(
       }
     },
   );
+
+  return tools;
 }
