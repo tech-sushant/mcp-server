@@ -30,6 +30,7 @@ export const RunTestsOnBrowserStackParamsShape = {
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
   detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
   desiredPlatforms: z.array(z.enum(["windows", "macos", "android", "ios"])),
+  projectName: z.string(),
   percyMode: PercyModeEnum.default(PercyMode.PercyDisabled).describe(
     "Percy mode: No 'Percy' in user input → percy-disabled. 'Percy' without 'BrowserStack'/'Automate' → percy-on-local-infra. 'Percy' with 'BrowserStack' or 'Automate' → percy-on-browserstack-infra. Always map user requests to the correct tool and mode per these rules.",
   ),

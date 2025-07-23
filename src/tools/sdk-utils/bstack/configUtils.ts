@@ -5,15 +5,16 @@
 export function generateBrowserStackYMLInstructions(
   desiredPlatforms: string[],
   enablePercy: boolean = false,
+  projectName: string,
 ) {
   let ymlContent = `
 # ======================
 # BrowserStack Reporting
 # ======================
 # A single name for your project to organize all your tests. This is required for Percy.
-projectName: BrowserStack SDK Tests
-# A name for the group of tests you are running
-buildName: mcp-run
+projectName: ${projectName}
+# TODO: Replace these sample values with your actual project details
+buildName: Sample-Build
 
 # =======================================
 # Platforms (Browsers / Devices to test)

@@ -14,7 +14,6 @@ import { RunTestsInstructionResult } from "./types.js";
 export async function buildRunTestsInstructions(
   input: RunTestsOnBrowserStackInput,
   config: BrowserStackConfig,
-  projectName: string,
 ): Promise<RunTestsInstructionResult> {
   switch (input.percyMode) {
     case PercyMode.PercyDisabled:
@@ -27,7 +26,7 @@ export async function buildRunTestsInstructions(
 
     case PercyMode.PercyWeb: {
       const authorization = getBrowserStackAuth(config);
-      const percyToken = await fetchPercyToken(projectName, authorization);
+      const percyToken = await fetchPercyToken(input.projectName, authorization);
       return runPercyWeb(input, percyToken || "YOUR_PERCY_TOKEN_HERE");
     }
 

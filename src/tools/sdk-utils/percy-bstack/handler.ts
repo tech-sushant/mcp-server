@@ -99,6 +99,7 @@ export function runPercyWithSDK(
   const ymlInstructions = generateBrowserStackYMLInstructions(
     input.desiredPlatforms as string[],
     true,
+    input.projectName,
   );
 
   if (ymlInstructions) {

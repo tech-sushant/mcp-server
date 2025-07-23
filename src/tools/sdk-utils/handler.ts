@@ -22,7 +22,7 @@ export async function runTestsOnBrowserStackHandler(
 
     // Build instructions and metadata
     const { steps, requiresPercy, missingDependencies, shouldSkipFormatting } =
-      await buildRunTestsInstructions(input, config, projectName);
+      await buildRunTestsInstructions(input, config);
 
     // If shouldSkipFormatting is true (for unsupported cases), return minimal response
     if (shouldSkipFormatting) {

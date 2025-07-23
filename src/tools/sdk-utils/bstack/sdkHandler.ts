@@ -65,6 +65,7 @@ export function runBstackSDKOnly(
   const ymlInstructions = generateBrowserStackYMLInstructions(
     input.desiredPlatforms as string[],
     false,
+    input.projectName,
   );
 
   if (ymlInstructions) {
