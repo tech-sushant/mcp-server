@@ -13,46 +13,13 @@ export function runPercyWeb(
 ): RunTestsInstructionResult {
   const steps: RunTestsStep[] = [];
 
-  // Check if this configuration is supported for Percy Web
+  // Assume configuration is supported due to guardrails at orchestration layer
   const languageConfig =
     SUPPORTED_CONFIGURATIONS[input.detectedLanguage as SDKSupportedLanguage];
-
-  if (!languageConfig) {
-    return {
-      steps: [
-        {
-          type: "error",
-          title: "Language Not Supported",
-          content: `Percy Web does not support the language: ${input.detectedLanguage}. Supported languages are: ${Object.keys(SUPPORTED_CONFIGURATIONS).join(", ")}.`,
-          isError: true,
-        },
-      ],
-      requiresPercy: true,
-      missingDependencies: [],
-      shouldSkipFormatting: true,
-    };
-  }
-
   const frameworkConfig =
     languageConfig[
       input.detectedBrowserAutomationFramework as SDKSupportedBrowserAutomationFramework
     ];
-
-  if (!frameworkConfig) {
-    return {
-      steps: [
-        {
-          type: "error",
-          title: "Framework Not Supported",
-          content: `Percy Web does not support ${input.detectedBrowserAutomationFramework} for ${input.detectedLanguage}. Supported frameworks for ${input.detectedLanguage} are: ${Object.keys(languageConfig).join(", ")}.`,
-          isError: true,
-        },
-      ],
-      requiresPercy: true,
-      missingDependencies: [],
-      shouldSkipFormatting: true,
-    };
-  }
 
   // Generate instructions for the supported configuration
   const instructions = frameworkConfig.instructions;

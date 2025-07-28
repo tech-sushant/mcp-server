@@ -3,10 +3,6 @@ import { RunTestsInstructionResult, RunTestsStep } from "../common/types.js";
 import { SetUpPercyInput } from "../common/schema.js";
 import { SUPPORTED_CONFIGURATIONS } from "./frameworks.js";
 import { SDKSupportedLanguage } from "../common/types.js";
-import {
-  PercyAutomateNotImplementedType,
-  getPercyAutomateNotImplementedMessage,
-} from "../common/errorMessages.js";
 
 export function runPercyAutomateOnly(
   input: SetUpPercyInput,
@@ -14,55 +10,10 @@ export function runPercyAutomateOnly(
 ): RunTestsInstructionResult {
   const steps: RunTestsStep[] = [];
 
-  // Check if this configuration is supported for Percy Automate
+  // Assume configuration is supported due to guardrails at orchestration layer
   const languageConfig =
     SUPPORTED_CONFIGURATIONS[input.detectedLanguage as SDKSupportedLanguage];
-
-  if (!languageConfig) {
-    return {
-      steps: [
-        {
-          type: "error",
-          title: "Language Not Supported",
-          content: getPercyAutomateNotImplementedMessage(
-            PercyAutomateNotImplementedType.LANGUAGE,
-            input,
-            Object.keys(SUPPORTED_CONFIGURATIONS),
-          ),
-          isError: true,
-        },
-      ],
-      requiresPercy: true,
-      missingDependencies: [],
-      shouldSkipFormatting: true,
-    };
-  }
-
   const testingFrameworkConfig = languageConfig[input.detectedTestingFramework];
-
-  if (!testingFrameworkConfig) {
-    return {
-      steps: [
-        {
-          type: "error",
-          title: "Testing Framework Not Supported",
-          content: getPercyAutomateNotImplementedMessage(
-            PercyAutomateNotImplementedType.FRAMEWORK,
-            {
-              ...input,
-              detectedBrowserAutomationFramework:
-                input.detectedTestingFramework,
-            },
-            Object.keys(languageConfig),
-          ),
-          isError: true,
-        },
-      ],
-      requiresPercy: true,
-      missingDependencies: [],
-      shouldSkipFormatting: true,
-    };
-  }
 
   // Generate instructions for the supported configuration with project name
   const instructions = testingFrameworkConfig.instructions;
