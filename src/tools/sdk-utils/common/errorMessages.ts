@@ -14,6 +14,26 @@ export const PERCY_WEB_NOT_IMPLEMENTED =
 export const PERCY_AUTOMATE_NOT_IMPLEMENTED =
   "Percy Automate support is not yet implemented for this configuration. Please check back later.";
 
+export enum PercyAutomateNotImplementedType {
+  LANGUAGE = "language",
+  FRAMEWORK = "framework",
+}
+
+export function getPercyAutomateNotImplementedMessage(
+  type: PercyAutomateNotImplementedType,
+  input: {
+    detectedLanguage: string;
+    detectedBrowserAutomationFramework: string;
+  },
+  supported: string[],
+): string {
+  if (type === PercyAutomateNotImplementedType.LANGUAGE) {
+    return `Percy Automate does not support the language: ${input.detectedLanguage}. Supported languages are: ${supported.join(", ")}.`;
+  } else {
+    return `Percy Automate does not support ${input.detectedBrowserAutomationFramework} for ${input.detectedLanguage}. Supported frameworks for ${input.detectedLanguage} are: ${supported.join(", ")}.`;
+  }
+}
+
 export const BOOTSTRAP_FAILED = (
   error: unknown,
   context: { config: unknown; percyMode?: string; sdkVersion?: string },

@@ -1,43 +1,88 @@
-// Handler for Percy Automate only (fallback when Percy SDK not supported)
-import { RunTestsInstructionResult } from "../common/types.js";
-import { PERCY_AUTOMATE_NOT_IMPLEMENTED } from "../common/errorMessages.js";
+// Handler for Percy Automate only mode - Visual testing without BrowserStack infrastructure
+import { RunTestsInstructionResult, RunTestsStep } from "../common/types.js";
+import { SetUpPercyInput } from "../common/schema.js";
+import { SUPPORTED_CONFIGURATIONS } from "./frameworks.js";
+import { SDKSupportedLanguage } from "../common/types.js";
+import {
+  PercyAutomateNotImplementedType,
+  getPercyAutomateNotImplementedMessage,
+} from "../common/errorMessages.js";
 
-// Placeholder function for Percy Automate fallback
-// Returns null if not supported, instructions string if supported
-function getPercyAutomateInstructions(): string | null {
-  return "It worked as a fallback for Percy Automate.";
-}
+export function runPercyAutomateOnly(
+  input: SetUpPercyInput,
+  percyToken: string,
+): RunTestsInstructionResult {
+  const steps: RunTestsStep[] = [];
 
-export function runPercyAutomateOnly(): RunTestsInstructionResult {
-  const percyAutomateInstructions = getPercyAutomateInstructions();
+  // Check if this configuration is supported for Percy Automate
+  const languageConfig =
+    SUPPORTED_CONFIGURATIONS[input.detectedLanguage as SDKSupportedLanguage];
 
-  if (percyAutomateInstructions) {
+  if (!languageConfig) {
     return {
       steps: [
         {
-          type: "instruction",
-          title: "Percy Automate Setup (Fallback)",
-          content: percyAutomateInstructions,
+          type: "error",
+          title: "Language Not Supported",
+          content: getPercyAutomateNotImplementedMessage(
+            PercyAutomateNotImplementedType.LANGUAGE,
+            input,
+            Object.keys(SUPPORTED_CONFIGURATIONS),
+          ),
+          isError: true,
         },
       ],
       requiresPercy: true,
       missingDependencies: [],
-      shouldSkipFormatting: false,
+      shouldSkipFormatting: true,
     };
   }
 
-  // Percy Automate not supported - skip formatting for error case
+  const testingFrameworkConfig = languageConfig[input.detectedTestingFramework];
+
+  if (!testingFrameworkConfig) {
+    return {
+      steps: [
+        {
+          type: "error",
+          title: "Testing Framework Not Supported",
+          content: getPercyAutomateNotImplementedMessage(
+            PercyAutomateNotImplementedType.FRAMEWORK,
+            {
+              ...input,
+              detectedBrowserAutomationFramework:
+                input.detectedTestingFramework,
+            },
+            Object.keys(languageConfig),
+          ),
+          isError: true,
+        },
+      ],
+      requiresPercy: true,
+      missingDependencies: [],
+      shouldSkipFormatting: true,
+    };
+  }
+
+  // Generate instructions for the supported configuration with project name
+  const instructions = testingFrameworkConfig.instructions;
+
+  // Prepend a step to set the Percy token in the environment
+  steps.push({
+    type: "instruction",
+    title: "Set Percy Token in Environment",
+    content: `Set the environment variable generated for your project before running your tests:\n\nexport PERCY_TOKEN="${percyToken}"\n\n(For Windows, use 'setx PERCY_TOKEN "${percyToken}"' or 'set PERCY_TOKEN=${percyToken}' as appropriate.)`,
+  });
+
+  steps.push({
+    type: "instruction",
+    title: `Percy Automate Setup for ${input.detectedLanguage} with ${input.detectedTestingFramework}`,
+    content: instructions,
+  });
+
   return {
-    steps: [
-      {
-        type: "error",
-        title: "Percy Automate Not Supported",
-        content: PERCY_AUTOMATE_NOT_IMPLEMENTED,
-        isError: true,
-      },
-    ],
+    steps,
     requiresPercy: true,
     missingDependencies: [],
-    shouldSkipFormatting: true,
   };
 }

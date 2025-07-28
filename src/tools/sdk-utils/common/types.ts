@@ -1,3 +1,8 @@
+export enum PercyIntegrationTypeEnum {
+  WEB = "web",
+  APP = "app",
+}
+
 export enum SDKSupportedLanguageEnum {
   nodejs = "nodejs",
   javascript = "javascript",

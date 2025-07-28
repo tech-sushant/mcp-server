@@ -26,9 +26,7 @@ npm i -D browserstack-node-sdk@latest
 Run the following command to setup browserstack sdk:
 \`\`\`bash
 npx setup --username ${username} --key ${accessKey}
-\`\`\`
----STEP---
-Edit the browserstack.yml file that was created in the project root to add your desired platforms and browsers.`;
+\`\`\``;
 
 // Template for Gradle setup instructions (platform-independent)
 const GRADLE_SETUP_INSTRUCTIONS = `

@@ -3,43 +3,51 @@ import {
   SDKSupportedBrowserAutomationFrameworkEnum,
   SDKSupportedTestingFrameworkEnum,
   SDKSupportedLanguageEnum,
+  PercyIntegrationTypeEnum,
 } from "./types.js";
 
-export enum PercyMode {
-  PercyDisabled = "percy-disabled", // BrowserStack SDK only, no Percy
-  PercyWithSDK = "percy-on-browserstack-infra", // BrowserStack SDK + Percy integration (with fallback)
-  PercyWeb = "percy-on-local-infra", // Percy Web only (not implemented)
-}
-
-// Internal enum for execution paths (includes fallback)
-export enum InternalPercyMode {
-  PercyDisabled = "percy-disabled",
-  PercyWithSDK = "percy-on-browserstack-infra",
-  PercyAutomate = "percy-automate",
-  PercyWeb = "percy-on-local-infra",
-}
-
-// Centralized enum for Percy (Zod) - Only user-facing options
-export const PercyModeEnum = z.nativeEnum(PercyMode);
-
-// User-facing schema - only 3 options for user
-export const RunTestsOnBrowserStackParamsShape = {
+export const SetUpPercyParamsShape = {
+  projectName: z.string().describe("A unique name for your Percy project."),
+  detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
   detectedBrowserAutomationFramework: z.nativeEnum(
     SDKSupportedBrowserAutomationFrameworkEnum,
   ),
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
-  detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
-  desiredPlatforms: z.array(z.enum(["windows", "macos", "android", "ios"])),
-  projectName: z.string(),
-  percyMode: PercyModeEnum.default(PercyMode.PercyDisabled).describe(
-    "Percy mode: No 'Percy' in user input → percy-disabled. 'Percy' without 'BrowserStack'/'Automate' → percy-on-local-infra. 'Percy' with 'BrowserStack' or 'Automate' → percy-on-browserstack-infra. Always map user requests to the correct tool and mode per these rules.",
-  ),
+  integrationType: z
+    .nativeEnum(PercyIntegrationTypeEnum)
+    .describe(
+      "The type of Percy integration. 'web' for Percy Web SDK for local setups, 'app' for Percy App SDK.",
+    ),
 };
 
+export const RunTestsOnBrowserStackParamsShape = {
+  projectName: z
+    .string()
+    .describe(
+      "A single name for your project to organize all your tests. This is required for Percy.",
+    ),
+  detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
+  detectedBrowserAutomationFramework: z.nativeEnum(
+    SDKSupportedBrowserAutomationFrameworkEnum,
+  ),
+  detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
+  desiredPlatforms: z
+    .array(z.enum(["windows", "macos", "android", "ios"]))
+    .describe("An array of platforms to run tests on."),
+  enablePercy: z
+    .boolean()
+    .default(false)
+    .describe(
+      "Set to true to enable Percy visual testing alongside your functional tests on BrowserStack.",
+    ),
+};
+
+export const SetUpPercySchema = z.object(SetUpPercyParamsShape);
 export const RunTestsOnBrowserStackSchema = z.object(
   RunTestsOnBrowserStackParamsShape,
 );
 
+export type SetUpPercyInput = z.infer<typeof SetUpPercySchema>;
 export type RunTestsOnBrowserStackInput = z.infer<
   typeof RunTestsOnBrowserStackSchema
 >;

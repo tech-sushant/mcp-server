@@ -1,15 +1,14 @@
 // Handler for Percy Web only mode - Visual testing without BrowserStack infrastructure
 import { RunTestsInstructionResult, RunTestsStep } from "../common/types.js";
-import { RunTestsOnBrowserStackInput } from "../common/schema.js";
+import { SetUpPercyInput } from "../common/schema.js";
 import { SUPPORTED_CONFIGURATIONS } from "./frameworks.js";
 import {
   SDKSupportedBrowserAutomationFramework,
-  SDKSupportedTestingFramework,
   SDKSupportedLanguage,
 } from "../common/types.js";
 
 export function runPercyWeb(
-  input: RunTestsOnBrowserStackInput,
+  input: SetUpPercyInput,
   percyToken: string,
 ): RunTestsInstructionResult {
   const steps: RunTestsStep[] = [];

@@ -1,33 +1,45 @@
-//Fetches a Percy token for a given project name from the BrowserStack API.
-// Returns the token if successful, or throws an error if not.
+import { PercyIntegrationTypeEnum } from "../common/types.js";
 
 export async function fetchPercyToken(
   projectName: string,
   authorization: string,
+  options: { type?: PercyIntegrationTypeEnum } = {},
 ): Promise<string> {
   try {
-    const encodedAuth = `Basic ${Buffer.from(authorization).toString("base64")}`;
-    const response = await fetch(
-      `https://api.browserstack.com/api/app_percy/get_project_token?name=${encodeURIComponent(projectName)}&type=web`,
-      {
-        headers: {
-          Authorization: encodedAuth,
-        },
-      },
-    );
-    if (!response.ok) {
-      throw new Error(`Failed to fetch Percy token: ${response.status}`);
+    const authHeader = `Basic ${Buffer.from(authorization).toString("base64")}`;
+    const baseUrl =
+      "https://api.browserstack.com/api/app_percy/get_project_token";
+    const params = new URLSearchParams({ name: projectName });
+
+    if (options.type) {
+      params.append("type", options.type);
     }
-    const data = await response.json();
-    if (!data || !data.token || !data.success) {
+
+    const url = `${baseUrl}?${params.toString()}`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: authHeader,
+      },
+    });
+
+    if (!response.ok) {
       throw new Error(
-        "Looks like project already exists but uses automate for running tests. Use different project name all together.",
+        `Failed to fetch Percy token (status: ${response.status})`,
       );
     }
+
+    const data = await response.json();
+
+    if (!data?.token || !data?.success) {
+      throw new Error(
+        "Project exists but is likely set up for Automate. Please use a different project name.",
+      );
+    }
+
     return data.token;
-  } catch (error) {
-    throw new Error(
-      `Error retrieving Percy token: ${error instanceof Error ? error.message : "Unknown error"}`,
-    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    throw new Error(`Error retrieving Percy token: ${message}`);
   }
 }

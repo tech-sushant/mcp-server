@@ -34,8 +34,8 @@ export function getPercyInstructions(
 export function formatPercyInstructions(instructions: {
   instructions: string;
 }): string {
-  return `## Percy Visual Testing Setup
+  return `---STEP--- Percy Visual Testing Setup
 To enable visual testing with Percy, you need to make the following changes to your project configuration and test scripts.
 ${instructions.instructions}
 `;
-}
+}   

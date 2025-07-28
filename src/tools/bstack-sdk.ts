@@ -3,26 +3,19 @@ import { BrowserStackConfig } from "../lib/types.js";
 import { RunTestsOnBrowserStackParamsShape } from "./sdk-utils/common/schema.js";
 import { runTestsOnBrowserStackHandler } from "./sdk-utils/handler.js";
 
-/**
- * Tool description for Percy and BrowserStack testing
- */
-const TOOL_DESCRIPTION =
-  "Use this tool to get setup instructions for running tests and setting up BrowserStack and Percy SDK. Do NOT run tests directly — always use this tool to ensure correct execution.";
+const RUN_ON_BROWSERSTACK_DESCRIPTION =
+  "Use this tool to get setup instructions for running your functional tests on BrowserStack's cloud infrastructure. You can run tests using the BrowserStack SDK alone, or enable Percy visual testing integration (only where BrowserStack SDK has built-in Percy support). For standalone Percy setups (Percy Web or Percy Automate), use the Percy SDK tools instead.";
 
-/**
- * Registers the runTestsOnBrowserStack tool with the MCP server.
- * All logic, schema, and error messages are modularized for testability and maintainability.
- */
 export function registerRunBrowserStackTestsTool(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
   server.tool(
-    "integrateTestsOnBrowserStackAndPercy",
-    TOOL_DESCRIPTION,
+    "runTestsOnBrowserStack",
+    RUN_ON_BROWSERSTACK_DESCRIPTION,
     RunTestsOnBrowserStackParamsShape,
     async (args) => {
-      return runTestsOnBrowserStackHandler(args, config, "default-project-mcp");
+      return runTestsOnBrowserStackHandler(args, config);
     },
   );
 }

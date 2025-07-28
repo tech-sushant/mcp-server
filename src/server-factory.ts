@@ -4,6 +4,7 @@ const require = createRequire(import.meta.url);
 const packageJson = require("../package.json");
 import logger from "./logger.js";
 import addSDKTools from "./tools/bstack-sdk.js";
+import addPercyTools from "./tools/percy-sdk.js";
 import addBrowserLiveTools from "./tools/live.js";
 import addAccessibilityTools from "./tools/accessibility.js";
 import addTestManagementTools from "./tools/testmanagement.js";
@@ -18,6 +19,7 @@ import { BrowserStackConfig } from "./lib/types.js";
 function registerTools(server: McpServer, config: BrowserStackConfig) {
   addAccessibilityTools(server, config);
   addSDKTools(server, config);
+  addPercyTools(server, config);
   addAppLiveTools(server, config);
   addBrowserLiveTools(server, config);
   addTestManagementTools(server, config);

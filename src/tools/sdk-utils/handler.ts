@@ -1,5 +1,7 @@
-import { RunTestsOnBrowserStackSchema } from "./common/schema.js";
-import { buildRunTestsInstructions } from "./common/instructionBuilder.js";
+import {
+  SetUpPercySchema,
+  RunTestsOnBrowserStackSchema,
+} from "./common/schema.js";
 import {
   BOOTSTRAP_FAILED,
   IMPORTANT_SETUP_WARNING,
@@ -10,70 +12,87 @@ import {
 } from "./common/formatUtils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import {
+  RunTestsInstructionResult,
+  PercyIntegrationTypeEnum,
+} from "./common/types.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { fetchPercyToken } from "./percy-web/fetchPercyToken.js";
+import { runPercyWeb } from "./percy-web/handler.js";
+import { runPercyAutomateOnly } from "./percy-automate/handler.js";
+import { runBstackSDKOnly } from "./bstack/sdkHandler.js";
+import { runPercyWithSDK } from "./percy-bstack/handler.js";
 
-export async function runTestsOnBrowserStackHandler(
-  rawInput: unknown,
-  config: BrowserStackConfig,
-  projectName: string,
+async function formatToolResult(
+  resultPromise: Promise<RunTestsInstructionResult> | RunTestsInstructionResult,
 ): Promise<CallToolResult> {
-  try {
-    // Validate input with schema
-    const input = RunTestsOnBrowserStackSchema.parse(rawInput);
+  const { steps, requiresPercy, missingDependencies, shouldSkipFormatting } =
+    await resultPromise;
 
-    // Build instructions and metadata
-    const { steps, requiresPercy, missingDependencies, shouldSkipFormatting } =
-      await buildRunTestsInstructions(input, config);
-
-    // If shouldSkipFormatting is true (for unsupported cases), return minimal response
-    if (shouldSkipFormatting) {
-      return {
-        content: steps.map((step: { content: string }) => ({
-          type: "text" as const,
-          text: step.content,
-        })),
-        isError: steps.some((s: { isError?: boolean }) => s.isError),
-        steps,
-        requiresPercy,
-        missingDependencies,
-      };
-    }
-
-    // Combine all step content into a single string for formatting
-    const combinedInstructions = steps
-      .map((step: { content: string }) => step.content)
-      .join("\n");
-
-    // Apply step numbering using the formatInstructionsWithNumbers function
-    const { formattedSteps, stepCount } =
-      formatInstructionsWithNumbers(combinedInstructions);
-
-    // Generate verification message
-    const verificationMessage = generateVerificationMessage(stepCount);
-
-    // Create the final content with setup warning, formatted instructions, and verification
-    const finalContent = [
-      {
-        type: "text" as const,
-        text: IMPORTANT_SETUP_WARNING,
-      },
-      {
-        type: "text" as const,
-        text: formattedSteps,
-      },
-      {
-        type: "text" as const,
-        text: verificationMessage,
-      },
-    ];
-
-    // Structured output
+  if (shouldSkipFormatting) {
     return {
-      content: finalContent,
-      isError: steps.some((s: { isError?: boolean }) => s.isError),
+      content: steps.map((step) => ({
+        type: "text" as const,
+        text: step.content,
+      })),
+      isError: steps.some((s) => s.isError),
       steps,
       requiresPercy,
       missingDependencies,
     };
+  }
+
+  const combinedInstructions = steps.map((step) => step.content).join("\n");
+  const { formattedSteps, stepCount } =
+    formatInstructionsWithNumbers(combinedInstructions);
+  const verificationMessage = generateVerificationMessage(stepCount);
+
+  const finalContent = [
+    { type: "text" as const, text: IMPORTANT_SETUP_WARNING },
+    { type: "text" as const, text: formattedSteps },
+    { type: "text" as const, text: verificationMessage },
+  ];
+
+  return {
+    content: finalContent,
+    isError: steps.some((s) => s.isError),
+    requiresPercy,
+    missingDependencies,
+  };
+}
+
+export async function runTestsOnBrowserStackHandler(
+  rawInput: unknown,
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
+  try {
+    const input = RunTestsOnBrowserStackSchema.parse(rawInput);
+
+    if (!input.enablePercy) {
+      const result = runBstackSDKOnly(input, config);
+      return await formatToolResult(result);
+    } else {
+      const percyWithSDKResult = runPercyWithSDK(input, config);
+
+      if (percyWithSDKResult.steps.some((step) => step.isError)) {
+        const {
+          detectedLanguage,
+          detectedBrowserAutomationFramework,
+          detectedTestingFramework,
+        } = input;
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Percy is not supported for this configuration using the BrowserStack SDK. Language: ${detectedLanguage} Framework: ${detectedBrowserAutomationFramework} Testing Framework: ${detectedTestingFramework} Would you like to try running this with the Percy SDK instead?`,
+            },
+          ],
+          isError: true,
+          shouldSkipFormatting: true,
+        };
+      }
+      return await formatToolResult(percyWithSDKResult);
+    }
   } catch (error) {
     return {
       content: [
@@ -81,7 +100,69 @@ export async function runTestsOnBrowserStackHandler(
           type: "text",
           text: BOOTSTRAP_FAILED(error, {
             config,
-            percyMode: (rawInput as any)?.percyMode,
+            percyMode: (rawInput as any)?.enablePercy
+              ? "percy-on-bstack"
+              : "bstack-only",
+          }),
+        },
+      ],
+      isError: true,
+    };
+  }
+}
+
+export async function setUpPercyHandler(
+  rawInput: unknown,
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
+  try {
+    const input = SetUpPercySchema.parse(rawInput);
+    const authorization = getBrowserStackAuth(config);
+
+    // Determine options for fetchPercyToken based on integrationType
+    let percyTokenOptions = {};
+    if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
+      percyTokenOptions = { type: PercyIntegrationTypeEnum.WEB };
+    } else if (input.integrationType === PercyIntegrationTypeEnum.APP) {
+      percyTokenOptions = { type: PercyIntegrationTypeEnum.APP };
+    }
+
+    const percyToken = await fetchPercyToken(
+      input.projectName,
+      authorization,
+      percyTokenOptions,
+    );
+
+    // Create adapter object for Percy handlers
+    const percyInput = {
+      projectName: input.projectName,
+      detectedLanguage: input.detectedLanguage,
+      detectedBrowserAutomationFramework:
+        input.detectedBrowserAutomationFramework,
+      detectedTestingFramework: input.detectedTestingFramework,
+      integrationType: input.integrationType,
+    };
+
+    let result: RunTestsInstructionResult;
+
+    if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
+      result = runPercyWeb(percyInput, percyToken || "YOUR_PERCY_TOKEN_HERE");
+    } else {
+      result = runPercyAutomateOnly(
+        percyInput,
+        percyToken || "YOUR_PERCY_TOKEN_HERE",
+      );
+    }
+
+    return await formatToolResult(result);
+  } catch (error) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: BOOTSTRAP_FAILED(error, {
+            config,
+            percyMode: (rawInput as any)?.integrationType,
           }),
         },
       ],
