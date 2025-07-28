@@ -22,3 +22,16 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     playwright: { instructions: constants.csharpPlaywrightInstructions },
   },
 };
+
+/**
+ * Utility function to check if a given language and testing framework
+ * are supported by Percy Web.
+ */
+export function isPercyWebFrameworkSupported(
+  language: string,
+  framework: string
+): boolean {
+  const languageConfig = SUPPORTED_CONFIGURATIONS[language as keyof typeof SUPPORTED_CONFIGURATIONS];
+  if (!languageConfig) return false;
+  return !!languageConfig[framework as keyof typeof languageConfig];
+}

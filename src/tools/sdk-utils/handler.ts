@@ -19,7 +19,9 @@ import {
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { fetchPercyToken } from "./percy-web/fetchPercyToken.js";
 import { runPercyWeb } from "./percy-web/handler.js";
+import { isPercyWebFrameworkSupported } from "./percy-web/frameworks.js";
 import { runPercyAutomateOnly } from "./percy-automate/handler.js";
+import { isPercyAutomateFrameworkSupported } from "./percy-automate/frameworks.js";
 import { runBstackSDKOnly } from "./bstack/sdkHandler.js";
 import { runPercyWithSDK } from "./percy-bstack/handler.js";
 
@@ -119,6 +121,56 @@ export async function setUpPercyHandler(
     const input = SetUpPercySchema.parse(rawInput);
     const authorization = getBrowserStackAuth(config);
 
+    // Create adapter object for Percy handlers
+    const percyInput = {
+      projectName: input.projectName,
+      detectedLanguage: input.detectedLanguage,
+      detectedBrowserAutomationFramework:
+        input.detectedBrowserAutomationFramework,
+      detectedTestingFramework: input.detectedTestingFramework,
+      integrationType: input.integrationType,
+    };
+
+    let result: RunTestsInstructionResult;
+
+    if (input.integrationType === PercyIntegrationTypeEnum.APP) {
+      // Check framework compatibility before fetching token
+      const isSupported = isPercyAutomateFrameworkSupported(
+        input.detectedLanguage,
+        input.detectedTestingFramework
+      );
+      if (!isSupported) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Percy Automate is not supported for this configuration. Language: ${input.detectedLanguage} Testing Framework: ${input.detectedTestingFramework}`,
+            },
+          ],
+          isError: true,
+          shouldSkipFormatting: true,
+        };
+      }
+    } else if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
+      // Check framework compatibility before fetching token for Percy Web
+      const isSupported = isPercyWebFrameworkSupported(
+        input.detectedLanguage,
+        input.detectedBrowserAutomationFramework
+      );
+      if (!isSupported) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Percy Web is not supported for this configuration. Language: ${input.detectedLanguage} Browser Automation Framework: ${input.detectedBrowserAutomationFramework}`,
+            },
+          ],
+          isError: true,
+          shouldSkipFormatting: true,
+        };
+      }
+    }
+
     // Determine options for fetchPercyToken based on integrationType
     let percyTokenOptions = {};
     if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
@@ -132,18 +184,6 @@ export async function setUpPercyHandler(
       authorization,
       percyTokenOptions,
     );
-
-    // Create adapter object for Percy handlers
-    const percyInput = {
-      projectName: input.projectName,
-      detectedLanguage: input.detectedLanguage,
-      detectedBrowserAutomationFramework:
-        input.detectedBrowserAutomationFramework,
-      detectedTestingFramework: input.detectedTestingFramework,
-      integrationType: input.integrationType,
-    };
-
-    let result: RunTestsInstructionResult;
 
     if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
       result = runPercyWeb(percyInput, percyToken || "YOUR_PERCY_TOKEN_HERE");
