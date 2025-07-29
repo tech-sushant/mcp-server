@@ -74,7 +74,9 @@ export default function addAppLiveTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.runAppLiveSession = server.tool(
     "runAppLiveSession",
     "Use this tool when user wants to manually check their app on a particular mobile device using BrowserStack's cloud infrastructure. Can be used to debug crashes, slow performance, etc.",
     {
@@ -129,4 +131,6 @@ export default function addAppLiveTools(
       }
     },
   );
+
+  return tools;
 }
