@@ -231,7 +231,9 @@ export default function addAppAutomationTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.takeAppScreenshot = server.tool(
     "takeAppScreenshot",
     "Use this tool to take a screenshot of an app running on a BrowserStack device. This is useful for visual testing and debugging.",
     {
@@ -284,7 +286,7 @@ export default function addAppAutomationTools(
     },
   );
 
-  server.tool(
+  tools.runAppTestsOnBrowserStack = server.tool(
     "runAppTestsOnBrowserStack",
     "Run AppAutomate tests on BrowserStack by uploading app and test suite. If running from Android Studio or Xcode, the tool will help export app and test files automatically. For other environments, you'll need to provide the paths to your pre-built app and test files.",
     {
@@ -358,4 +360,6 @@ export default function addAppAutomationTools(
       }
     },
   );
+
+  return tools;
 }

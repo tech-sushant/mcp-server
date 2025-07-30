@@ -111,7 +111,9 @@ export default function addBrowserLiveTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.runBrowserLiveSession = server.tool(
     "runBrowserLiveSession",
     "Launch a BrowserStack Live session (desktop or mobile).",
     LiveArgsShape,
@@ -145,4 +147,6 @@ export default function addBrowserLiveTools(
       }
     },
   );
+
+  return tools;
 }
