@@ -1,20 +1,10 @@
+import { percyAutomateAggressiveInstruction } from "../common/commonMessages.js";
 export const percyReviewSnapshotsStep = `
 ---STEP---
 Review the snapshots
   - Go to your Percy project on https://percy.io to review snapshots and approve/reject any visual changes.
 `;
 
-export const percyAggressiveInstruction = `
-**MANDATORY: Aggressive, Exhaustive Percy Integration**
-
-You MUST follow these steps with NO EXCEPTIONS:
-
-1. Recursively search the ENTIRE target directory and ALL subdirectories for EVERY file relevant to the language/framework.
-2. For EACH relevant file, analyze the code to find EVERY location where a Percy snapshot (or equivalent) should be called (e.g., after each navigation, UI change, or significant state in tests). Insert snapshot calls at ALL such points, not just the first or most obvious one.
-3. At the top of EVERY relevant file, ensure the necessary import/setup is present (do NOT duplicate if already present).
-4. Insert the snapshot call (with a clear, descriptive, and unique name) at EVERY identified point in EVERY relevant file.
-5. Double-check your work. If in doubt, add more snapshot calls rather than fewer. DO NOT stop until you have processed ALL relevant files and ALL important points within them.
-`;
 
 export const pythonInstructions = `
 Install Percy dependencies
@@ -24,7 +14,7 @@ Install Percy dependencies
     pip install percy-selenium
 
 Update your Python Selenium script
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
 Example:
 \`\`\`python
 from selenium import webdriver
@@ -32,7 +22,7 @@ from percy import percy_snapshot
 
 driver = webdriver.Chrome()
 driver.get('http://localhost:8000')
-  percy_snapshot(driver, 'Home page')
+percy_snapshot(driver, 'Home page')
 # ... more test steps ...
 percy_snapshot(driver, 'After login')
 \`\`\`
@@ -60,7 +50,7 @@ Install Percy dependencies
     npm install @percy/selenium-webdriver
 ---STEP---
 Update your Node.js Selenium script
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
   - Import the Percy snapshot helper:
     const { percySnapshot } = require('@percy/selenium-js');
   - In your test, take snapshots like this:
@@ -100,7 +90,7 @@ Add Percy dependencies to your project
 
 ---STEP---
 Update your Java Selenium test
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
   - Import the Percy snapshot helper:
     import io.percy.selenium.Percy;
   - In your test, take snapshots like this:
@@ -142,7 +132,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Ruby Selenium test
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
   - Require the Percy snapshot helper:
     require 'percy'
   - In your test, take snapshots like this:
@@ -167,8 +157,6 @@ Run Percy with your tests
 ${percyReviewSnapshotsStep}
 `;
 
-/* rubyInstructions is already exported above */
-
 export const csharpInstructions = `
 Install Percy CLI by running the following command:
 npm install --save-dev @percy/cli
@@ -180,7 +168,7 @@ Add Percy dependencies to your project
 
 ---STEP---
 Update your C# Selenium test
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
 
   - Import the Percy snapshot helper:
     using PercyIO.Selenium;
@@ -223,7 +211,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Java Playwright test
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
   - Import the Percy library and use the snapshot method:
     percy.snapshot("snapshot_1");
   - You can also pass options:
@@ -270,7 +258,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Playwright JavaScript test
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
   - Import the Percy snapshot helper:
     const percySnapshot = require('@percy/playwright');
   - In your test, take snapshots like this:
@@ -318,7 +306,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Playwright Python test
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
   - Import the Percy snapshot helper and use the snapshot method:
     percy_snapshot(page, name="Your snapshot name")
   - You can also use:
@@ -356,7 +344,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Playwright .NET test
-${percyAggressiveInstruction}
+${percyAutomateAggressiveInstruction}
   - Import the Percy snapshot helper and use the snapshot method:
     Percy.Snapshot(page, "Your snapshot name");
   - You can also pass options:

@@ -1,20 +1,10 @@
+import { percyAutomateAggressiveInstruction } from "../common/commonMessages.js";
 export const percyAutomateReviewSnapshotsStep = `
 ---STEP---
 Review the snapshots
   - Go to your Percy project on https://percy.io to review snapshots and approve/reject any visual changes.
 `;
 
-export const percyAutomateAggressiveInstruction = `
-**MANDATORY: Aggressive, Exhaustive Percy Automate Integration**
-
-You MUST follow these steps with NO EXCEPTIONS:
-
-1. Recursively search the ENTIRE target directory and ALL subdirectories for EVERY file relevant to the language/framework.
-2. For EACH relevant file, analyze the code to find EVERY location where a Percy snapshot (or equivalent) should be called (e.g., after each navigation, UI change, or significant state in tests). Insert snapshot calls at ALL such points, not just the first or most obvious one.
-3. At the top of EVERY relevant file, ensure the necessary import/setup is present (do NOT duplicate if already present).
-4. Insert the snapshot call (with a clear, descriptive, and unique name) at EVERY identified point in EVERY relevant file.
-5. Double-check your work. If in doubt, add more snapshot calls rather than fewer. DO NOT stop until you have processed ALL relevant files and ALL important points within them.
-`;
 
 export const pythonPytestPercyAutomateInstructions = `
 Install Percy Automate dependencies

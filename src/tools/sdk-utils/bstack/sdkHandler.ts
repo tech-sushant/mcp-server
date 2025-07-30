@@ -15,6 +15,7 @@ import {
 export function runBstackSDKOnly(
   input: RunTestsOnBrowserStackInput,
   config: BrowserStackConfig,
+  isPercyAutomate = false,
 ): RunTestsInstructionResult {
   const steps: RunTestsStep[] = [];
   const authString = getBrowserStackAuth(config);
@@ -32,12 +33,6 @@ export function runBstackSDKOnly(
       username,
       accessKey,
     );
-
-    steps.push({
-      type: "instruction",
-      title: "Framework-Specific Setup",
-      content: frameworkInstructions,
-    });
 
     return {
       steps,
@@ -85,11 +80,21 @@ export function runBstackSDKOnly(
   );
 
   if (frameworkInstructions) {
-    steps.push({
-      type: "instruction",
-      title: "Framework-Specific Setup",
-      content: frameworkInstructions,
-    });
+    if (frameworkInstructions.setup) {
+      steps.push({
+        type: "instruction",
+        title: "Framework-Specific Setup",
+        content: frameworkInstructions.setup ,
+      });
+    }
+    
+    if (frameworkInstructions.run && !isPercyAutomate) {
+      steps.push({
+        type: "instruction",
+        title: "Run the tests",
+        content: frameworkInstructions.run,
+      });
+    }
   }
 
   return {

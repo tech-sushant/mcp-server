@@ -1,10 +1,10 @@
-// Percy + BrowserStack SDK configuration constants
+import { percyAutomateAggressiveInstruction } from "../common/commonMessages.js";
 
 export const javaSeleniumInstructions = `
 Import the BrowserStack Percy SDK in your test script:
 Add the Percy import to your test file.
 
----STEP---
+${percyAutomateAggressiveInstruction}
 
 Add screenshot capture method at required points:
 Use the \`PercySDK.screenshot(driver, name)\` method at points in your test script where you want to capture screenshots.
@@ -35,6 +35,8 @@ export const nodejsSeleniumInstructions = `
 Import the BrowserStack Percy SDK in your test script:
 Add the Percy import to your test file.
 
+${percyAutomateAggressiveInstruction}
+
 ---STEP---
 
 Add screenshot capture method at required points:
@@ -60,7 +62,7 @@ In your WebdriverIO configuration file, modify the 'browserstack' service option
 
 - Set \`percy: true\`.
 - Set a \`projectName\`. This is required and will be used for both your Automate and Percy projects.
-- Set \`percyCaptureMode\`. The default \`auto\` mode is recommended, which captures screenshots on events like clicks. Other modes are \`testcase\`, \`click\`, \`screenshot\`, and \`manual\`.
+- Set \`percyCaptureMode\`. The default \`manual\` as we are adding screenshot commands manually.
 
 Here's how to modify the service configuration:
 \`\`\`javascript
@@ -74,7 +76,7 @@ exports.config = {
       { 
         // ... other service options
         percy: true,
-        percyCaptureMode: 'auto' // or 'manual', 'testcase', etc.
+        percyCaptureMode: 'manual' // or 'auto', etc.
       },
     ],
   ],
@@ -88,6 +90,8 @@ exports.config = {
   // ... rest of your config
 };
 \`\`\`
+
+${percyAutomateAggressiveInstruction}
 
 ---STEP---
 
@@ -121,7 +125,7 @@ export const csharpSeleniumInstructions = `
 Import the BrowserStack Percy SDK in your test script:
 Add the Percy import to your test file.
 
----STEP---
+${percyAutomateAggressiveInstruction}
 
 Add screenshot capture method at required points:
 Use the \`PercySDK.Screenshot(driver, name)\` method at points in your test script where you want to capture screenshots.

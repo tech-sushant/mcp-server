@@ -61,17 +61,27 @@ export function runPercyWithSDK(
       accessKey,
     );
 
-    steps.push({
-      type: "instruction",
-      title: "Framework-Specific Setup",
-      content: frameworkInstructions,
-    });
+    if (frameworkInstructions && frameworkInstructions.setup) {
+      steps.push({
+        type: "instruction",
+        title: "Framework-Specific Setup",
+        content: frameworkInstructions.setup,
+      });
+    }
 
     steps.push({
       type: "instruction",
       title: "Percy Setup (BrowserStack SDK + Percy)",
       content: formatPercyInstructions(percyResult),
     });
+
+    if (frameworkInstructions && frameworkInstructions.run) {
+      steps.push({
+        type: "instruction",
+        title: "Run the tests",
+        content: frameworkInstructions.run,
+      });
+    }
 
     return {
       steps,
@@ -118,11 +128,11 @@ export function runPercyWithSDK(
     accessKey,
   );
 
-  if (frameworkInstructions) {
+  if (frameworkInstructions && frameworkInstructions.setup) {
     steps.push({
       type: "instruction",
       title: "Framework-Specific Setup",
-      content: frameworkInstructions,
+      content: frameworkInstructions.setup,
     });
   }
 
@@ -131,6 +141,14 @@ export function runPercyWithSDK(
     title: "Percy Setup (BrowserStack SDK + Percy)",
     content: formatPercyInstructions(percyResult),
   });
+
+  if (frameworkInstructions && frameworkInstructions.run) {
+    steps.push({
+      type: "instruction",
+      title: "Run the tests",
+      content: frameworkInstructions.run,
+    });
+  }
 
   return {
     steps,

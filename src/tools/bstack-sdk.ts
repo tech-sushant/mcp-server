@@ -11,7 +11,7 @@ export function registerRunBrowserStackTestsTool(
   config: BrowserStackConfig,
 ) {
   server.tool(
-    "setupBrowserStackAutomatedTests",
+    "setupBrowserStackAutomateTests",
     RUN_ON_BROWSERSTACK_DESCRIPTION,
     RunTestsOnBrowserStackParamsShape,
     async (args) => {

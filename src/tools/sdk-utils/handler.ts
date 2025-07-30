@@ -5,7 +5,7 @@ import {
 import {
   BOOTSTRAP_FAILED,
   IMPORTANT_SETUP_WARNING,
-} from "./common/errorMessages.js";
+} from "./common/commonMessages.js";
 import {
   formatInstructionsWithNumbers,
   generateVerificationMessage,
@@ -78,20 +78,68 @@ export async function runTestsOnBrowserStackHandler(
 
       if (percyWithSDKResult.steps.some((step) => step.isError)) {
         const {
+          projectName,
           detectedLanguage,
           detectedBrowserAutomationFramework,
           detectedTestingFramework,
         } = input;
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Percy is not supported for this configuration using the BrowserStack SDK. Language: ${detectedLanguage} Framework: ${detectedBrowserAutomationFramework} Testing Framework: ${detectedTestingFramework} Would you like to try running this with the Percy SDK instead?`,
-            },
-          ],
-          isError: true,
-          shouldSkipFormatting: true,
+
+        // Check if standalone Percy Automate supports this configuration.
+        const isStandaloneSupported = isPercyAutomateFrameworkSupported(
+          detectedLanguage,
+          detectedTestingFramework,
+        );
+
+        if (!isStandaloneSupported) {
+          // If fallback is also not supported, return a definitive error.
+          const errorMessage = `Percy is not supported for this configuration with either BrowserStack SDK or the standalone Percy SDK.
+            - Language: ${detectedLanguage}
+            - Browser Automation Framework: ${detectedBrowserAutomationFramework}
+            - Testing Framework: ${detectedTestingFramework}
+            Please try running without Percy or check for a supported configuration.`;
+          return {
+            content: [{ type: "text", text: errorMessage }],
+            isError: true,
+            shouldSkipFormatting: true,
+          };
+        }
+
+        // Standalone Percy Automate is supported, proceed with its setup flow.
+        const percyAutomateInput = {
+          projectName,
+          detectedLanguage,
+          detectedBrowserAutomationFramework,
+          detectedTestingFramework,
+          integrationType: PercyIntegrationTypeEnum.AUTOMATE,
         };
+        const authorization = getBrowserStackAuth(config);
+
+        // 1. Get BrowserStack SDK setup steps (for Automate, without Percy)
+        const sdkResult = await runBstackSDKOnly(input, config,true);
+
+        // 2. Get Percy Automate setup steps
+        const percyAutomateResult = await runPercyAutomateOnly(
+          percyAutomateInput,
+          "YOUR_PERCY_TOKEN_HERE",
+        );  
+
+        // 3. Combine steps: warning, SDK steps, Percy Automate steps
+        const combinedSteps = [
+          {
+            type: "warning" as const,
+            content: `Note: Percy with the BrowserStack SDK is not supported for your project's configuration (Language: ${detectedLanguage}, Testing Framework: ${detectedTestingFramework}). Falling back to the standalone Percy Automate SDK setup. You must set up both BrowserStack Automate and Percy Automate.`,
+            title: "Percy Automate Fallback",
+            isError: false,
+          },
+          ...(sdkResult.steps || []),
+          ...(percyAutomateResult.steps || []),
+        ];
+
+        // 4. Pass combined steps to formatToolResult
+        return await formatToolResult({
+          ...percyAutomateResult,
+          steps: combinedSteps,
+        });
       }
       return await formatToolResult(percyWithSDKResult);
     }

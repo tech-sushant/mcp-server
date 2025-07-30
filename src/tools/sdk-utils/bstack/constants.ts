@@ -2,7 +2,8 @@
  * ---------- PYTHON INSTRUCTIONS ----------
  */
 
-export const pythonInstructions = (username: string, accessKey: string) => `
+export const pythonInstructions = (username: string, accessKey: string) => {
+  const setup = `
 ---STEP---
 
 Install the BrowserStack SDK:
@@ -16,7 +17,9 @@ Setup the BrowserStack SDK with your credentials:
 \`\`\`bash
 browserstack-sdk setup --username "${username}" --key "${accessKey}"
 \`\`\`
+`;
 
+  const run = `
 ---STEP---
 
 Run your tests on BrowserStack:
@@ -25,8 +28,12 @@ browserstack-sdk python <path-to-test-file>
 \`\`\`
 `;
 
+  return { setup, run };
+};
+
 export const generatePythonFrameworkInstructions =
-  (framework: string) => (username: string, accessKey: string) => `
+  (framework: string) => (username: string, accessKey: string) => {
+    const setup = `
 ---STEP---
 
 Install the BrowserStack SDK:
@@ -41,7 +48,9 @@ Setup the BrowserStack SDK with framework-specific configuration:
 \`\`\`bash
 browserstack-sdk setup --framework "${framework}" --username "${username}" --key "${accessKey}"
 \`\`\`
+`;
 
+    const run = `
 ---STEP---
 
 Run your ${framework} tests on BrowserStack:
@@ -49,6 +58,9 @@ Run your ${framework} tests on BrowserStack:
 browserstack-sdk ${framework} <path-to-test-files>
 \`\`\`
 `;
+
+    return { setup, run };
+  };
 
 export const robotInstructions = generatePythonFrameworkInstructions("robot");
 export const behaveInstructions = generatePythonFrameworkInstructions("behave");
@@ -61,7 +73,8 @@ export const pytestInstructions = generatePythonFrameworkInstructions("pytest");
 const argsInstruction =
   '<argLine>-javaagent:"${com.browserstack:browserstack-java-sdk:jar}"</argLine>';
 
-export const javaInstructions = (username: string, accessKey: string) => `
+export const javaInstructions = (username: string, accessKey: string) => {
+  const setup = `
 ---STEP---
 
 Add the BrowserStack Java SDK dependency to your \`pom.xml\`:
@@ -90,7 +103,9 @@ Export your BrowserStack credentials as environment variables:
 export BROWSERSTACK_USERNAME=${username}
 export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\`
+`;
 
+  const run = `
 ---STEP---
 
 Run your tests using Maven:
@@ -104,6 +119,9 @@ gradle clean test
 \`\`\`
 `;
 
+  return { setup, run };
+};
+
 /**
  * ---------- CSharp INSTRUCTIONS ----------
  */
@@ -111,7 +129,8 @@ gradle clean test
 export const csharpCommonInstructions = (
   username: string,
   accessKey: string,
-) => `
+) => {
+  const setup = `
 ---STEP---
 
 Install BrowserStack TestAdapter NuGet package:
@@ -160,7 +179,9 @@ Install the x64 version of .NET for BrowserStack compatibility.
   sudo dotnet browserstack-sdk setup-dotnet --dotnet-path "<your-chosen-path>" --dotnet-version "<your-dotnet-version>"
   \`\`\`
   Common paths: /usr/local/share/dotnet, ~/dotnet-x64, or /opt/dotnet-x64
+`;
 
+  const run = `
 ---STEP---
 
 Run the tests:
@@ -174,10 +195,14 @@ Run the tests:
   \`\`\`
 `;
 
+  return { setup, run };
+};
+
 export const csharpPlaywrightCommonInstructions = (
   username: string,
   accessKey: string,
-) => `
+) => {
+  const setup = `
 ---STEP---
 
 Install BrowserStack TestAdapter NuGet package:
@@ -239,7 +264,9 @@ Fix for Playwright architecture (macOS only):
 If the folder exists:  
 \`<project-folder>/bin/Debug/net8.0/.playwright/node/darwin-arm64\`  
 Rename \`darwin-arm64\` to \`darwin-x64\`
+`;
 
+  const run = `
 ---STEP---
 
 Run the tests:
@@ -253,11 +280,15 @@ Run the tests:
   \`\`\`
 `;
 
+  return { setup, run };
+};
+
 /**
  * ---------- NODEJS INSTRUCTIONS ----------
  */
 
-export const nodejsInstructions = (username: string, accessKey: string) => `
+export const nodejsInstructions = (username: string, accessKey: string) => {
+  const setup = `
 ---STEP---
 
 Ensure \`browserstack-node-sdk\` is present in package.json with the latest version:
@@ -284,6 +315,18 @@ export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\`
 `;
 
+  const run = `
+---STEP---
+
+Run your tests on BrowserStack:
+\`\`\`bash
+npm run test:browserstack
+\`\`\`
+`;
+
+  return { setup, run };
+};
+
 /**
  * ---------- EXPORT CONFIG ----------
  */
@@ -291,7 +334,8 @@ export BROWSERSTACK_ACCESS_KEY=${accessKey}
 export const webdriverioInstructions = (
   username: string,
   accessKey: string,
-) => `
+) => {
+  const setup = `
 ---STEP---
 
 Set BrowserStack Credentials:
@@ -390,14 +434,20 @@ exports.config.capabilities.forEach(function (caps) {
     caps[i] = { ...caps[i], ...exports.config.commonCapabilities[i]};
 });
 \`\`\`
+`;
 
+  const run = `
 ---STEP---
 
 Run your tests:
 You can now run your tests on BrowserStack using your standard WebdriverIO command.
 `;
 
-export const cypressInstructions = (username: string, accessKey: string) => `
+  return { setup, run };
+};
+
+export const cypressInstructions = (username: string, accessKey: string) => {
+  const setup = `
 ---STEP---
 
 Install the BrowserStack Cypress CLI:
@@ -458,7 +508,9 @@ Open the generated \`browserstack.json\` file and update it with your BrowserSta
 \`\`\`
 
 **Note:** For Cypress v9 or lower, use \`"cypress_config_file": "./cypress.json"\`. The \`testObservability: true\` flag enables the [Test Reporting & Analytics dashboard](https://www.browserstack.com/docs/test-management/test-reporting-and-analytics) for deeper insights into your test runs.
+`;
 
+  const run = `
 ---STEP---
 
 Run Your Tests on BrowserStack:
@@ -469,3 +521,6 @@ npx browserstack-cypress run --sync
 
 After the tests complete, you can view the results on your [BrowserStack Automate Dashboard](https://automate.browserstack.com/dashboard/).
 `;
+
+  return { setup, run };
+};

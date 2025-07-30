@@ -55,7 +55,7 @@ export type ConfigMapping = Partial<
         Partial<
           Record<
             SDKSupportedTestingFrameworkEnum,
-            { instructions: (username: string, accessKey: string) => string }
+            { instructions: (username: string, accessKey: string) => { setup: string; run: string } }
           >
         >
       >
