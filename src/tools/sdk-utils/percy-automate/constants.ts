@@ -43,7 +43,7 @@ def test_homepage(driver):
 ---STEP---
 Run Percy Automate with your tests
   - Use the following command:
-    npx percy exec -- <command to run the automate script file>
+    npx percy exec -- browserstack-sdk pytest
 
 ${percyAutomateReviewSnapshotsStep}
 `;
