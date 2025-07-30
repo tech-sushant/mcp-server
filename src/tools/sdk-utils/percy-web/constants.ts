@@ -5,7 +5,6 @@ Review the snapshots
   - Go to your Percy project on https://percy.io to review snapshots and approve/reject any visual changes.
 `;
 
-
 export const pythonInstructions = `
 Install Percy dependencies
   - Install Percy CLI:

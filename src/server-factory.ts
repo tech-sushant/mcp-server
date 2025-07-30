@@ -42,7 +42,6 @@ export class BrowserStackMcpServer {
     this.registerTools();
   }
 
-
   /**
    * Calls each tool-adder function and collects their returned tools
    */
@@ -83,7 +82,7 @@ export class BrowserStackMcpServer {
   public getTools(): Record<string, RegisteredTool> {
     return this.tools;
   }
-  
+
   public getTool(name: string): RegisteredTool | undefined {
     return this.tools[name];
   }

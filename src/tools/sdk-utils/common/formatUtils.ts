@@ -1,4 +1,3 @@
-
 export function formatInstructionsWithNumbers(
   instructionText: string,
   separator: string = "---STEP---",

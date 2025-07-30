@@ -29,9 +29,10 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
  */
 export function isPercyWebFrameworkSupported(
   language: string,
-  framework: string
+  framework: string,
 ): boolean {
-  const languageConfig = SUPPORTED_CONFIGURATIONS[language as keyof typeof SUPPORTED_CONFIGURATIONS];
+  const languageConfig =
+    SUPPORTED_CONFIGURATIONS[language as keyof typeof SUPPORTED_CONFIGURATIONS];
   if (!languageConfig) return false;
   return !!languageConfig[framework as keyof typeof languageConfig];
 }

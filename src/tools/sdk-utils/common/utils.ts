@@ -6,9 +6,7 @@ import {
   formatInstructionsWithNumbers,
   generateVerificationMessage,
 } from "./formatUtils.js";
-import {
-  RunTestsInstructionResult,
-} from "./types.js";
+import { RunTestsInstructionResult } from "./types.js";
 import { IMPORTANT_SETUP_WARNING } from "./index.js";
 
 /**
@@ -24,7 +22,7 @@ export function checkPercyIntegrationSupport(input: {
   if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
     const isSupported = isPercyAutomateFrameworkSupported(
       input.detectedLanguage,
-      input.detectedTestingFramework || ""
+      input.detectedTestingFramework || "",
     );
     if (!isSupported) {
       return {
@@ -35,7 +33,7 @@ export function checkPercyIntegrationSupport(input: {
   } else if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
     const isSupported = isPercyWebFrameworkSupported(
       input.detectedLanguage,
-      input.detectedBrowserAutomationFramework || ""
+      input.detectedBrowserAutomationFramework || "",
     );
     if (!isSupported) {
       return {

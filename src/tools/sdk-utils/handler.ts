@@ -2,11 +2,11 @@ import {
   SetUpPercySchema,
   RunTestsOnBrowserStackSchema,
 } from "./common/schema.js";
-import {BOOTSTRAP_FAILED} from "./common/commonMessages.js";
-import {formatToolResult} from "./common/utils.js";
+import { BOOTSTRAP_FAILED } from "./common/commonMessages.js";
+import { formatToolResult } from "./common/utils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import {PercyIntegrationTypeEnum} from "./common/types.js";
+import { PercyIntegrationTypeEnum } from "./common/types.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { fetchPercyToken } from "./percy-web/fetchPercyToken.js";
 import { runPercyWeb } from "./percy-web/handler.js";
@@ -14,7 +14,6 @@ import { runPercyAutomateOnly } from "./percy-automate/handler.js";
 import { runBstackSDKOnly } from "./bstack/sdkHandler.js";
 import { runPercyWithSDK } from "./percy-bstack/handler.js";
 import { checkPercyIntegrationSupport } from "./common/utils.js";
-
 
 export async function runTestsOnBrowserStackHandler(
   rawInput: unknown,
@@ -28,7 +27,9 @@ export async function runTestsOnBrowserStackHandler(
       return await formatToolResult(result);
     } else {
       const percyWithSDKResult = runPercyWithSDK(input, config);
-      const hasPercySDKError = percyWithSDKResult.steps.some((step) => step.isError);
+      const hasPercySDKError = percyWithSDKResult.steps.some(
+        (step) => step.isError,
+      );
       if (hasPercySDKError) {
         const {
           projectName,
@@ -46,7 +47,14 @@ export async function runTestsOnBrowserStackHandler(
 
         if (!percyWithBrowserstackSDK.supported) {
           return {
-            content: [{ type: "text", text: percyWithBrowserstackSDK.errorMessage || "Percy Automate is not supported for this configuration." }],
+            content: [
+              {
+                type: "text",
+                text:
+                  percyWithBrowserstackSDK.errorMessage ||
+                  "Percy Automate is not supported for this configuration.",
+              },
+            ],
             isError: true,
             shouldSkipFormatting: true,
           };
@@ -62,19 +70,17 @@ export async function runTestsOnBrowserStackHandler(
         };
 
         const authorization = getBrowserStackAuth(config);
-        const percyToken = await fetchPercyToken(
-          projectName,
-          authorization,
-          { type: PercyIntegrationTypeEnum.AUTOMATE },
-        );
+        const percyToken = await fetchPercyToken(projectName, authorization, {
+          type: PercyIntegrationTypeEnum.AUTOMATE,
+        });
 
         // 1. Get BrowserStack SDK setup steps (for Automate, without Percy)
-        const sdkResult = runBstackSDKOnly(input, config,true);
+        const sdkResult = runBstackSDKOnly(input, config, true);
 
         // 2. Get Percy Automate setup steps
         const percyAutomateResult = runPercyAutomateOnly(
           percyAutomateInput,
-          percyToken
+          percyToken,
         );
 
         // 3. Combine steps: warning, SDK steps, Percy Automate steps
@@ -139,7 +145,9 @@ export async function setUpPercyHandler(
         content: [
           {
             type: "text",
-            text: supportCheck.errorMessage || "Percy integration not supported for this configuration.",
+            text:
+              supportCheck.errorMessage ||
+              "Percy integration not supported for this configuration.",
           },
         ],
         isError: true,
@@ -147,11 +155,9 @@ export async function setUpPercyHandler(
       };
     }
 
-    const percyToken = await fetchPercyToken(
-      input.projectName,
-      authorization,
-      { type: PercyIntegrationTypeEnum.WEB },
-    );
+    const percyToken = await fetchPercyToken(input.projectName, authorization, {
+      type: PercyIntegrationTypeEnum.WEB,
+    });
 
     const result = runPercyWeb(percyInput, percyToken);
 

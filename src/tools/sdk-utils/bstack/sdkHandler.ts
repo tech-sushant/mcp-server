@@ -39,10 +39,10 @@ export function runBstackSDKOnly(
         steps.push({
           type: "instruction",
           title: "Framework-Specific Setup",
-          content: frameworkInstructions.setup ,
+          content: frameworkInstructions.setup,
         });
       }
-      
+
       if (frameworkInstructions.run && !isPercyAutomate) {
         steps.push({
           type: "instruction",
@@ -102,10 +102,10 @@ export function runBstackSDKOnly(
       steps.push({
         type: "instruction",
         title: "Framework-Specific Setup",
-        content: frameworkInstructions.setup ,
+        content: frameworkInstructions.setup,
       });
     }
-    
+
     if (frameworkInstructions.run && !isPercyAutomate) {
       steps.push({
         type: "instruction",
