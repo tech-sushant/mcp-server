@@ -34,7 +34,9 @@ export default function addSelfHealTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.fetchSelfHealedSelectors = server.tool(
     "fetchSelfHealedSelectors",
     "Retrieves AI-generated, self-healed selectors for a BrowserStack Automate session to resolve flaky tests caused by dynamic DOM changes.",
     {
@@ -69,4 +71,6 @@ export default function addSelfHealTools(
       }
     },
   );
+
+  return tools;
 }

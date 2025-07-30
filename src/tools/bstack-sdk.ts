@@ -18,6 +18,8 @@ export function registerRunBrowserStackTestsTool(
       return runTestsOnBrowserStackHandler(args, config);
     },
   );
+
+  return tools;
 }
 
 export default registerRunBrowserStackTestsTool;

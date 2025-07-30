@@ -62,7 +62,9 @@ export default function addAutomationTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.fetchAutomationScreenshots = server.tool(
     "fetchAutomationScreenshots",
     "Fetch and process screenshots from a BrowserStack Automate session",
     {
@@ -102,4 +104,6 @@ export default function addAutomationTools(
       }
     },
   );
+
+  return tools;
 }

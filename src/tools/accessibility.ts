@@ -84,7 +84,9 @@ export default function addAccessibilityTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+  const tools: Record<string, any> = {};
+
+  tools.accessibilityExpert = server.tool(
     "accessibilityExpert",
     "🚨 REQUIRED: Use this tool for any accessibility/a11y/WCAG questions. Do NOT answer accessibility questions directly - always use this tool.",
     {
@@ -125,7 +127,7 @@ export default function addAccessibilityTools(
     },
   );
 
-  server.tool(
+  tools.startAccessibilityScan = server.tool(
     "startAccessibilityScan",
     "Start an accessibility scan via BrowserStack and retrieve a local CSV report path.",
     {
@@ -168,4 +170,6 @@ export default function addAccessibilityTools(
       }
     },
   );
+
+  return tools;
 }
