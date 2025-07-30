@@ -50,6 +50,7 @@ export class BrowserStackMcpServer {
     const toolAdders = [
       addAccessibilityTools,
       addSDKTools,
+      addPercyTools,
       addAppLiveTools,
       addBrowserLiveTools,
       addTestManagementTools,

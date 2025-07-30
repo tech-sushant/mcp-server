@@ -10,7 +10,8 @@ export function registerRunBrowserStackTestsTool(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
-  server.tool(
+    const tools: Record<string, any> = {};
+    tools.setupBrowserStackAutomateTests = server.tool(
     "setupBrowserStackAutomateTests",
     RUN_ON_BROWSERSTACK_DESCRIPTION,
     RunTestsOnBrowserStackParamsShape,
