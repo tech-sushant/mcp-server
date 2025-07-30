@@ -28,7 +28,6 @@ export async function runTestsOnBrowserStackHandler(
       return await formatToolResult(result);
     } else {
       const percyWithSDKResult = runPercyWithSDK(input, config);
-
       const hasPercySDKError = percyWithSDKResult.steps.some((step) => step.isError);
       if (hasPercySDKError) {
         const {
@@ -61,7 +60,13 @@ export async function runTestsOnBrowserStackHandler(
           detectedTestingFramework,
           integrationType: PercyIntegrationTypeEnum.AUTOMATE,
         };
+
         const authorization = getBrowserStackAuth(config);
+        const percyToken = await fetchPercyToken(
+          projectName,
+          authorization,
+          { type: PercyIntegrationTypeEnum.AUTOMATE },
+        );
 
         // 1. Get BrowserStack SDK setup steps (for Automate, without Percy)
         const sdkResult = runBstackSDKOnly(input, config,true);
@@ -69,8 +74,8 @@ export async function runTestsOnBrowserStackHandler(
         // 2. Get Percy Automate setup steps
         const percyAutomateResult = runPercyAutomateOnly(
           percyAutomateInput,
-          "YOUR_PERCY_TOKEN_HERE",
-        );  
+          percyToken
+        );
 
         // 3. Combine steps: warning, SDK steps, Percy Automate steps
         const combinedSteps = [
@@ -148,7 +153,7 @@ export async function setUpPercyHandler(
       { type: PercyIntegrationTypeEnum.WEB },
     );
 
-    const result = runPercyWeb(percyInput, percyToken || "YOUR_PERCY_TOKEN_HERE");
+    const result = runPercyWeb(percyInput, percyToken);
 
     return await formatToolResult(result);
   } catch (error) {

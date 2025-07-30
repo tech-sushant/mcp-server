@@ -1,4 +1,3 @@
-// Handler for Percy Automate only mode - Visual testing without BrowserStack infrastructure
 import { RunTestsInstructionResult, RunTestsStep } from "../common/types.js";
 import { SetUpPercyInput } from "../common/schema.js";
 import { SUPPORTED_CONFIGURATIONS } from "./frameworks.js";
