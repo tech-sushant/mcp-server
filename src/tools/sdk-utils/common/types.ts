@@ -1,6 +1,6 @@
 export enum PercyIntegrationTypeEnum {
   WEB = "web",
-  APP = "app",
+  AUTOMATE = "automate",
 }
 
 export enum SDKSupportedLanguageEnum {

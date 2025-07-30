@@ -16,7 +16,7 @@ export const SetUpPercyParamsShape = {
   integrationType: z
     .nativeEnum(PercyIntegrationTypeEnum)
     .describe(
-      "The type of Percy integration. 'web' for Percy Web SDK for local setups, 'app' for Percy App SDK.",
+      "The type of Percy integration. 'web' for Percy Web SDK for local setups, 'automate' for Percy Automate SDK.",
     ),
 };
 

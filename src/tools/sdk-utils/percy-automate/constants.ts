@@ -27,15 +27,15 @@ Install Percy Automate dependencies
 Update your Pytest test script  
 ${percyAutomateAggressiveInstruction}
   - Import the Percy snapshot helper:
-    from percy import percy_snapshot
+    from percy import percy_screenshot
   - In your test, take snapshots at key points:
-    percy_snapshot(driver, "Your snapshot name")
+    percy_screenshot(driver, "Your snapshot name")
 
 Example:
 \`\`\`python
 import pytest
 from selenium import webdriver
-from percy import percy_snapshot
+from percy import percy_screenshot
 
 @pytest.fixture
 def driver():
@@ -45,9 +45,9 @@ def driver():
 
 def test_homepage(driver):
     driver.get("http://localhost:8000")
-    percy_snapshot(driver, "Home page")
+    percy_screenshot(driver, "Home page")
     # ... more test steps ...
-    percy_snapshot(driver, "After login")
+    percy_screenshot(driver, "After login")
 \`\`\`
 
 ---STEP---

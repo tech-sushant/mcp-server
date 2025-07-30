@@ -133,7 +133,7 @@ export async function setUpPercyHandler(
 
     let result: RunTestsInstructionResult;
 
-    if (input.integrationType === PercyIntegrationTypeEnum.APP) {
+    if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
       // Check framework compatibility before fetching token
       const isSupported = isPercyAutomateFrameworkSupported(
         input.detectedLanguage,
@@ -175,8 +175,8 @@ export async function setUpPercyHandler(
     let percyTokenOptions = {};
     if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
       percyTokenOptions = { type: PercyIntegrationTypeEnum.WEB };
-    } else if (input.integrationType === PercyIntegrationTypeEnum.APP) {
-      percyTokenOptions = { type: PercyIntegrationTypeEnum.APP };
+    } else if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
+      percyTokenOptions = { type: PercyIntegrationTypeEnum.AUTOMATE };
     }
 
     const percyToken = await fetchPercyToken(
