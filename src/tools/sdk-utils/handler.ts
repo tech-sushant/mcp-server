@@ -2,20 +2,11 @@ import {
   SetUpPercySchema,
   RunTestsOnBrowserStackSchema,
 } from "./common/schema.js";
-import {
-  BOOTSTRAP_FAILED,
-  IMPORTANT_SETUP_WARNING,
-} from "./common/commonMessages.js";
-import {
-  formatInstructionsWithNumbers,
-  generateVerificationMessage,
-} from "./common/formatUtils.js";
+import {BOOTSTRAP_FAILED} from "./common/commonMessages.js";
+import {formatToolResult} from "./common/utils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import {
-  RunTestsInstructionResult,
-  PercyIntegrationTypeEnum,
-} from "./common/types.js";
+import {PercyIntegrationTypeEnum} from "./common/types.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { fetchPercyToken } from "./percy-web/fetchPercyToken.js";
 import { runPercyWeb } from "./percy-web/handler.js";
@@ -24,43 +15,6 @@ import { runBstackSDKOnly } from "./bstack/sdkHandler.js";
 import { runPercyWithSDK } from "./percy-bstack/handler.js";
 import { checkPercyIntegrationSupport } from "./common/utils.js";
 
-async function formatToolResult(
-  resultPromise: Promise<RunTestsInstructionResult> | RunTestsInstructionResult,
-): Promise<CallToolResult> {
-  const { steps, requiresPercy, missingDependencies, shouldSkipFormatting } =
-    await resultPromise;
-
-  if (shouldSkipFormatting) {
-    return {
-      content: steps.map((step) => ({
-        type: "text" as const,
-        text: step.content,
-      })),
-      isError: steps.some((s) => s.isError),
-      steps,
-      requiresPercy,
-      missingDependencies,
-    };
-  }
-
-  const combinedInstructions = steps.map((step) => step.content).join("\n");
-  const { formattedSteps, stepCount } =
-    formatInstructionsWithNumbers(combinedInstructions);
-  const verificationMessage = generateVerificationMessage(stepCount);
-
-  const finalContent = [
-    { type: "text" as const, text: IMPORTANT_SETUP_WARNING },
-    { type: "text" as const, text: formattedSteps },
-    { type: "text" as const, text: verificationMessage },
-  ];
-
-  return {
-    content: finalContent,
-    isError: steps.some((s) => s.isError),
-    requiresPercy,
-    missingDependencies,
-  };
-}
 
 export async function runTestsOnBrowserStackHandler(
   rawInput: unknown,
@@ -171,7 +125,7 @@ export async function setUpPercyHandler(
       detectedBrowserAutomationFramework:
         input.detectedBrowserAutomationFramework,
       detectedTestingFramework: input.detectedTestingFramework,
-      integrationType: PercyIntegrationTypeEnum,
+      integrationType: PercyIntegrationTypeEnum.WEB,
     };
 
     const supportCheck = checkPercyIntegrationSupport(input);

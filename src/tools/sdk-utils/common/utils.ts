@@ -1,6 +1,15 @@
+import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { PercyIntegrationTypeEnum } from "../common/types.js";
 import { isPercyAutomateFrameworkSupported } from "../percy-automate/frameworks.js";
 import { isPercyWebFrameworkSupported } from "../percy-web/frameworks.js";
+import {
+  formatInstructionsWithNumbers,
+  generateVerificationMessage,
+} from "./formatUtils.js";
+import {
+  RunTestsInstructionResult,
+} from "./types.js";
+import { IMPORTANT_SETUP_WARNING } from "./index.js";
 
 /**
  * Utility to check Percy integration support for a given input.
@@ -36,4 +45,42 @@ export function checkPercyIntegrationSupport(input: {
     }
   }
   return { supported: true };
+}
+
+export async function formatToolResult(
+  resultPromise: Promise<RunTestsInstructionResult> | RunTestsInstructionResult,
+): Promise<CallToolResult> {
+  const { steps, requiresPercy, missingDependencies, shouldSkipFormatting } =
+    await resultPromise;
+
+  if (shouldSkipFormatting) {
+    return {
+      content: steps.map((step) => ({
+        type: "text" as const,
+        text: step.content,
+      })),
+      isError: steps.some((s) => s.isError),
+      steps,
+      requiresPercy,
+      missingDependencies,
+    };
+  }
+
+  const combinedInstructions = steps.map((step) => step.content).join("\n");
+  const { formattedSteps, stepCount } =
+    formatInstructionsWithNumbers(combinedInstructions);
+  const verificationMessage = generateVerificationMessage(stepCount);
+
+  const finalContent = [
+    { type: "text" as const, text: IMPORTANT_SETUP_WARNING },
+    { type: "text" as const, text: formattedSteps },
+    { type: "text" as const, text: verificationMessage },
+  ];
+
+  return {
+    content: finalContent,
+    isError: steps.some((s) => s.isError),
+    requiresPercy,
+    missingDependencies,
+  };
 }

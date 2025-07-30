@@ -34,6 +34,24 @@ export function runBstackSDKOnly(
       accessKey,
     );
 
+    if (frameworkInstructions) {
+      if (frameworkInstructions.setup) {
+        steps.push({
+          type: "instruction",
+          title: "Framework-Specific Setup",
+          content: frameworkInstructions.setup ,
+        });
+      }
+      
+      if (frameworkInstructions.run && !isPercyAutomate) {
+        steps.push({
+          type: "instruction",
+          title: "Run the tests",
+          content: frameworkInstructions.run,
+        });
+      }
+    }
+
     return {
       steps,
       requiresPercy: false,

@@ -36,7 +36,6 @@ export const RunTestsOnBrowserStackParamsShape = {
     .describe("An array of platforms to run tests on."),
   enablePercy: z
     .boolean()
-    .default(false)
     .describe(
       "Set to true to enable Percy visual testing alongside your functional tests on BrowserStack.",
     ),

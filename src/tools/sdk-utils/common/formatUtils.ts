@@ -1,6 +1,3 @@
-/**
- * Utilities for formatting instructions and generating verification messages.
- */
 
 export function formatInstructionsWithNumbers(
   instructionText: string,
