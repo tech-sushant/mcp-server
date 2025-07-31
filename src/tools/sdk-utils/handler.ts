@@ -139,7 +139,7 @@ export async function setUpPercyHandler(
       integrationType: PercyIntegrationTypeEnum.WEB,
     };
 
-    const supportCheck = checkPercyIntegrationSupport(input);
+    const supportCheck = checkPercyIntegrationSupport(percyInput);
     if (!supportCheck.supported) {
       return {
         content: [

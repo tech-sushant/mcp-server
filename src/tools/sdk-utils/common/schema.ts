@@ -3,7 +3,6 @@ import {
   SDKSupportedBrowserAutomationFrameworkEnum,
   SDKSupportedTestingFrameworkEnum,
   SDKSupportedLanguageEnum,
-  PercyIntegrationTypeEnum,
 } from "./types.js";
 
 export const SetUpPercyParamsShape = {
@@ -13,11 +12,6 @@ export const SetUpPercyParamsShape = {
     SDKSupportedBrowserAutomationFrameworkEnum,
   ),
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
-  integrationType: z
-    .nativeEnum(PercyIntegrationTypeEnum)
-    .describe(
-      "The type of Percy integration. 'web' for Percy Web SDK for local setups, 'automate' for Percy Automate SDK.",
-    ),
 };
 
 export const RunTestsOnBrowserStackParamsShape = {
