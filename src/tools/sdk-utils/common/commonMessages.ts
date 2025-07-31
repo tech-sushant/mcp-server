@@ -40,7 +40,6 @@ export const BOOTSTRAP_FAILED = (
 ) =>
   `Failed to bootstrap project with BrowserStack SDK.
 Error: ${error}
-Config: ${JSON.stringify(context.config, null, 2)}
 Percy Mode: ${context.percyMode ?? "automate"}
 SDK Version: ${context.sdkVersion ?? "N/A"}
 Please open an issue on GitHub if the problem persists.`;
