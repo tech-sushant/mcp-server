@@ -115,7 +115,7 @@ Create and manage test cases, create test plans and trigger test runs using natu
 "update test results as passed for Login tests test run from My Demo Project"
 ```
 
-### 🧪 Access BrowserStack AI agnets 
+### 🧪 Access BrowserStack AI agents 
 
 Generate test cases from PRDs, convert manual tests to low-code automation, and auto-heal flaky scripts powered by BrowserStack’s AI agents, seamlessly integrated into your workflow.  Below are few example prompts to access Browserstack AI agents
 
