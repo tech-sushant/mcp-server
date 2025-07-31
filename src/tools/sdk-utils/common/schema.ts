@@ -14,9 +14,8 @@ export const SetUpPercyParamsShape = {
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
   detectedIntegrationType: z
     .enum(["web", "automate", "automate_already_setup"])
-    .default("web")
     .describe(
-      "Type of Percy integration: 'web' for Percy Web testing, 'automate' for Percy Automate with BrowserStack, 'automate_already_setup' for Percy Automate when BrowserStack Automate is already configured, this should be detected looking at users codebase.",
+      "Type of Percy integration: 'web' for Percy Web testing, 'automate' for Percy Automate with BrowserStack, 'automate_already_setup' for Percy Automate when BrowserStack Automate is already configured, this should be detected looking at users codebase. Please ask user in case of doubt.",
     ),
 };
 
