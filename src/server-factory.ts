@@ -80,7 +80,7 @@ export class BrowserStackMcpServer {
   public getTools(): Record<string, RegisteredTool> {
     return this.tools;
   }
-  
+
   public getTool(name: string): RegisteredTool | undefined {
     return this.tools[name];
   }
