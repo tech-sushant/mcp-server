@@ -14,12 +14,12 @@ import { IMPORTANT_SETUP_WARNING } from "./index.js";
  * Returns { supported: boolean, errorMessage?: string }
  */
 export function checkPercyIntegrationSupport(input: {
-  integrationType: string;
+  detectedIntegrationType: string;
   detectedLanguage: string;
   detectedTestingFramework?: string;
   detectedBrowserAutomationFramework?: string;
 }): { supported: boolean; errorMessage?: string } {
-  if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
+  if (input.detectedIntegrationType === PercyIntegrationTypeEnum.AUTOMATE) {
     const isSupported = isPercyAutomateFrameworkSupported(
       input.detectedLanguage,
       input.detectedTestingFramework || "",
@@ -30,7 +30,7 @@ export function checkPercyIntegrationSupport(input: {
         errorMessage: `Percy Automate is not supported for this configuration. Language: ${input.detectedLanguage} Testing Framework: ${input.detectedTestingFramework}`,
       };
     }
-  } else if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
+  } else if (input.detectedIntegrationType === PercyIntegrationTypeEnum.WEB) {
     const isSupported = isPercyWebFrameworkSupported(
       input.detectedLanguage,
       input.detectedBrowserAutomationFramework || "",
