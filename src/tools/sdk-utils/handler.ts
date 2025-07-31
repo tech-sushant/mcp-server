@@ -47,7 +47,7 @@ export async function setUpPercyHandler(
     const authorization = getBrowserStackAuth(config);
 
     // Handle Percy Automate: Check if BrowserStack Automate needs to be set up first
-    if (input.integrationType === "automate") {
+    if (input.integrationType === "automate" || input.integrationType === "automate_already_setup") {
       // Create adapter object for Percy Automate
       const percyInput = {
         projectName: input.projectName,
@@ -78,15 +78,15 @@ export async function setUpPercyHandler(
         type: PercyIntegrationTypeEnum.AUTOMATE,
       });
 
-      // Create combined setup instructions: BrowserStack Automate first, then Percy Automate
-      const automateSteps = [
+      // Create combined setup instructions: BrowserStack Automate first (if needed), then Percy Automate
+      const automateSteps = input.integrationType === "automate" ? [
         {
           type: "instruction" as const,
           content: "First, set up BrowserStack Automate by using the setupBrowserStackAutomateTests tool if you haven't already. This is required for Percy Automate to work properly.",
           title: "Prerequisites: BrowserStack Automate Setup",
           isError: false,
         },
-      ];
+      ] : [];
 
       const percyAutomateResult = runPercyAutomateOnly(percyInput, percyToken);
 
