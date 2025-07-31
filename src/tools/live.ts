@@ -97,12 +97,12 @@ async function runBrowserSession(rawArgs: any, config: BrowserStackConfig) {
       ? await launchDesktopSession(args, config)
       : await launchMobileSession(args, config);
 
-  let response=[
-      {
-        type: "text" as const,
-        text: `✅ Session started. If it didn't open automatically, visit:\n${launchUrl}`,
-      },
-    ];
+  let response = [
+    {
+      type: "text" as const,
+      text: `✅ Session started. If it didn't open automatically, visit:\n${launchUrl}`,
+    },
+  ];
 
   if (globalConfig.REMOTE_MCP) {
     response = [
