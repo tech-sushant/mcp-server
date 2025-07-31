@@ -14,15 +14,15 @@ export const SetUpPercyParamsShape = {
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
   detectedIntegrationType: z
     .enum(["web", "automate", "automate_already_setup"])
-    .describe("Type of Percy integration: 'web' for Percy Web testing, 'automate' for Percy Automate with BrowserStack, 'automate_already_setup' for Percy Automate when BrowserStack Automate is already configured, this should be detected looking at users codebase."),
+    .describe(
+      "Type of Percy integration: 'web' for Percy Web testing, 'automate' for Percy Automate with BrowserStack, 'automate_already_setup' for Percy Automate when BrowserStack Automate is already configured, this should be detected looking at users codebase.",
+    ),
 };
 
 export const RunTestsOnBrowserStackParamsShape = {
   projectName: z
     .string()
-    .describe(
-      "A single name for your project to organize all your tests.",
-    ),
+    .describe("A single name for your project to organize all your tests."),
   detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
   detectedBrowserAutomationFramework: z.nativeEnum(
     SDKSupportedBrowserAutomationFrameworkEnum,

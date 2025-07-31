@@ -47,7 +47,10 @@ export async function setUpPercyHandler(
     const authorization = getBrowserStackAuth(config);
 
     // Handle Percy Automate: Check if BrowserStack Automate needs to be set up first
-    if (input.detectedIntegrationType === "automate" || input.detectedIntegrationType === "automate_already_setup") {
+    if (
+      input.detectedIntegrationType === "automate" ||
+      input.detectedIntegrationType === "automate_already_setup"
+    ) {
       // Create adapter object for Percy Automate
       const percyInput = {
         projectName: input.projectName,
@@ -62,7 +65,8 @@ export async function setUpPercyHandler(
         detectedIntegrationType: percyInput.detectedIntegrationType,
         detectedLanguage: percyInput.detectedLanguage,
         detectedTestingFramework: percyInput.detectedTestingFramework,
-        detectedBrowserAutomationFramework: percyInput.detectedBrowserAutomationFramework,
+        detectedBrowserAutomationFramework:
+          percyInput.detectedBrowserAutomationFramework,
       });
       if (!supportCheck.supported) {
         return {
@@ -79,19 +83,27 @@ export async function setUpPercyHandler(
         };
       }
 
-      const percyToken = await fetchPercyToken(input.projectName, authorization, {
-        type: PercyIntegrationTypeEnum.AUTOMATE,
-      });
+      const percyToken = await fetchPercyToken(
+        input.projectName,
+        authorization,
+        {
+          type: PercyIntegrationTypeEnum.AUTOMATE,
+        },
+      );
 
       // Create combined setup instructions: BrowserStack Automate first (if needed), then Percy Automate
-      const automateSteps = input.detectedIntegrationType === "automate" ? [
-        {
-          type: "instruction" as const,
-          content: "First, set up BrowserStack Automate by using the setupBrowserStackAutomateTests tool if you haven't already. This is required for Percy Automate to work properly.",
-          title: "Prerequisites: BrowserStack Automate Setup",
-          isError: false,
-        },
-      ] : [];
+      const automateSteps =
+        input.detectedIntegrationType === "automate"
+          ? [
+              {
+                type: "instruction" as const,
+                content:
+                  "First, set up BrowserStack Automate by using the setupBrowserStackAutomateTests tool if you haven't already. This is required for Percy Automate to work properly.",
+                title: "Prerequisites: BrowserStack Automate Setup",
+                isError: false,
+              },
+            ]
+          : [];
 
       const percyAutomateResult = runPercyAutomateOnly(percyInput, percyToken);
 
@@ -119,7 +131,8 @@ export async function setUpPercyHandler(
         detectedIntegrationType: percyInput.detectedIntegrationType,
         detectedLanguage: percyInput.detectedLanguage,
         detectedTestingFramework: percyInput.detectedTestingFramework,
-        detectedBrowserAutomationFramework: percyInput.detectedBrowserAutomationFramework,
+        detectedBrowserAutomationFramework:
+          percyInput.detectedBrowserAutomationFramework,
       });
       if (!supportCheck.supported) {
         return {
@@ -136,9 +149,13 @@ export async function setUpPercyHandler(
         };
       }
 
-      const percyToken = await fetchPercyToken(input.projectName, authorization, {
-        type: PercyIntegrationTypeEnum.WEB,
-      });
+      const percyToken = await fetchPercyToken(
+        input.projectName,
+        authorization,
+        {
+          type: PercyIntegrationTypeEnum.WEB,
+        },
+      );
 
       const result = runPercyWeb(percyInput, percyToken);
 

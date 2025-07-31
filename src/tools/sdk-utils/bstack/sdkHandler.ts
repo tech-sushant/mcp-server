@@ -56,7 +56,8 @@ export function runBstackSDKOnly(
     steps.push({
       type: "instruction",
       title: "Optional: Percy Visual Testing Setup",
-      content: "If you want to add Percy visual testing to your BrowserStack Automate tests, you can use the setupPercyVisualTesting tool with detectedIntegrationType: 'automate_already_setup' since BrowserStack Automate is now configured.",
+      content:
+        "If you want to add Percy visual testing to your BrowserStack Automate tests, you can use the setupPercyVisualTesting tool with detectedIntegrationType: 'automate_already_setup' since BrowserStack Automate is now configured.",
     });
 
     return {
@@ -126,7 +127,8 @@ export function runBstackSDKOnly(
   steps.push({
     type: "instruction",
     title: "Optional: Percy Visual Testing Setup",
-    content: "If you want to add Percy visual testing to your BrowserStack Automate tests, you can use the setupPercyVisualTesting tool with detectedIntegrationType: 'automate_already_setup' since BrowserStack Automate is now configured.",
+    content:
+      "If you want to add Percy visual testing to your BrowserStack Automate tests, you can use the setupPercyVisualTesting tool with detectedIntegrationType: 'automate_already_setup' since BrowserStack Automate is now configured.",
   });
 
   return {
