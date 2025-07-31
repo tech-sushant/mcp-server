@@ -7,11 +7,12 @@ import { setUpPercyHandler } from "./sdk-utils/handler.js";
  * Tool description for standalone Percy visual testing
  */
 const SETUP_PERCY_DESCRIPTION =
-  "This tool is intended only for Percy Web (integrationType: 'web') and is meant for users running Percy on their own infrastructure. If you're using Percy Automate, use the setupBrowserStackAutomateTests tool instead. If the user simply requests \"setup Percy\", and the codebase already uses BrowserStack Automate, default to using setupBrowserStackAutomateTests";
+  "Set up Percy visual testing. Supports both Percy Web (integrationType: 'web') for standalone Percy testing on your own infrastructure, and Percy Automate (integrationType: 'automate') for Percy with BrowserStack Automate. For Percy Automate, this tool will guide you to set up BrowserStack Automate first using setupBrowserStackAutomateTests if needed. Example prompts: setup Percy for web testing; setup Percy with BrowserStack Automate.";
 
 /**
- * Registers the standalone Percy setup tool with the MCP server.
- * Focuses on Percy Web and Percy Automate without BrowserStack integration.
+ * Registers the Percy setup tool with the MCP server.
+ * Handles both Percy Web and Percy Automate independently.
+ * For Percy Automate, guides users to set up BrowserStack Automate first.
  */
 export function registerPercySetupTool(
   server: McpServer,
