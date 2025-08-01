@@ -1,5 +1,5 @@
 // Percy + BrowserStack SDK utilities
-export { runPercyWithSDK } from "./handler.js";
+export { runPercyWithBrowserstackSDK } from "./handler.js";
 export {
   getPercyInstructions,
   formatPercyInstructions,

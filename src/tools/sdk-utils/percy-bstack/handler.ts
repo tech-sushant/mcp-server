@@ -16,7 +16,7 @@ import {
   SDKSupportedLanguage,
 } from "../common/types.js";
 
-export function runPercyWithSDK(
+export function runPercyWithBrowserstackSDK(
   input: RunTestsOnBrowserStackInput,
   config: BrowserStackConfig,
 ): RunTestsInstructionResult {
