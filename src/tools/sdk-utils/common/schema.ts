@@ -4,6 +4,7 @@ import {
   SDKSupportedTestingFrameworkEnum,
   SDKSupportedLanguageEnum,
 } from "./types.js";
+import { PercyIntegrationTypeEnum } from "./types.js";
 
 export const SetUpPercyParamsShape = {
   projectName: z.string().describe("A unique name for your Percy project."),
@@ -12,6 +13,11 @@ export const SetUpPercyParamsShape = {
     SDKSupportedBrowserAutomationFrameworkEnum,
   ),
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
+  integrationType: z
+    .nativeEnum(PercyIntegrationTypeEnum)
+    .describe(
+      "Set to 'automate' if the user says 'run Percy automate' or if the codebase contains BrowserStack Automate SDK or any related yml file. In all other cases, set to 'web'. This value must be provided explicitly or determined by clear codebase inspection—never inferred automatically."
+    ),
 };
 
 export const RunTestsOnBrowserStackParamsShape = {
@@ -28,11 +34,6 @@ export const RunTestsOnBrowserStackParamsShape = {
   desiredPlatforms: z
     .array(z.enum(["windows", "macos", "android", "ios"]))
     .describe("An array of platforms to run tests on."),
-  enablePercy: z
-    .boolean()
-    .describe(
-      "Set to true to enable Percy visual testing alongside your functional tests on BrowserStack.",
-    ),
 };
 
 export const SetUpPercySchema = z.object(SetUpPercyParamsShape);

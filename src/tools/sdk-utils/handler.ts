@@ -22,98 +22,15 @@ export async function runTestsOnBrowserStackHandler(
   try {
     const input = RunTestsOnBrowserStackSchema.parse(rawInput);
 
-    if (!input.enablePercy) {
-      const result = runBstackSDKOnly(input, config);
-      return await formatToolResult(result);
-    } else {
-      const percyWithSDKResult = runPercyWithSDK(input, config);
-      const hasPercySDKError = percyWithSDKResult.steps.some(
-        (step) => step.isError,
-      );
-      if (hasPercySDKError) {
-        const {
-          projectName,
-          detectedLanguage,
-          detectedBrowserAutomationFramework,
-          detectedTestingFramework,
-        } = input;
-
-        // Check if standalone Percy Automate supports this configuration.
-        const percyWithBrowserstackSDK = checkPercyIntegrationSupport({
-          integrationType: PercyIntegrationTypeEnum.AUTOMATE,
-          detectedLanguage,
-          detectedTestingFramework,
-        });
-
-        if (!percyWithBrowserstackSDK.supported) {
-          return {
-            content: [
-              {
-                type: "text",
-                text:
-                  percyWithBrowserstackSDK.errorMessage ||
-                  "Percy Automate is not supported for this configuration.",
-              },
-            ],
-            isError: true,
-            shouldSkipFormatting: true,
-          };
-        }
-
-        // Standalone Percy Automate is supported, proceed with its setup flow.
-        const percyAutomateInput = {
-          projectName,
-          detectedLanguage,
-          detectedBrowserAutomationFramework,
-          detectedTestingFramework,
-          integrationType: PercyIntegrationTypeEnum.AUTOMATE,
-        };
-
-        const authorization = getBrowserStackAuth(config);
-        const percyToken = await fetchPercyToken(projectName, authorization, {
-          type: PercyIntegrationTypeEnum.AUTOMATE,
-        });
-
-        // 1. Get BrowserStack SDK setup steps (for Automate, without Percy)
-        const sdkResult = runBstackSDKOnly(input, config, true);
-
-        // 2. Get Percy Automate setup steps
-        const percyAutomateResult = runPercyAutomateOnly(
-          percyAutomateInput,
-          percyToken,
-        );
-
-        // 3. Combine steps: warning, SDK steps, Percy Automate steps
-        const combinedSteps = [
-          {
-            type: "warning" as const,
-            content: `Note: Percy with the BrowserStack SDK is not supported for your project's configuration (Language: ${detectedLanguage}, Testing Framework: ${detectedTestingFramework}). Falling back to the standalone Percy Automate SDK setup. You must set up both BrowserStack Automate and Percy Automate.`,
-            title: "Percy Automate Fallback",
-            isError: false,
-          },
-          ...(sdkResult.steps || []),
-          ...(percyAutomateResult.steps || []),
-        ];
-
-        // 4. Pass combined steps to formatToolResult
-        return await formatToolResult({
-          ...percyAutomateResult,
-          steps: combinedSteps,
-        });
-      }
-      return await formatToolResult(percyWithSDKResult);
-    }
+    // Only handle BrowserStack SDK setup for functional/integration tests.
+    const result = runBstackSDKOnly(input, config);
+    return await formatToolResult(result);
   } catch (error) {
     return {
       content: [
         {
           type: "text",
-          text: BOOTSTRAP_FAILED(error, {
-            config,
-            percyMode: (rawInput as any)?.enablePercy
-              ? "percy-on-bstack"
-              : "bstack-only",
-          }),
+          text: BOOTSTRAP_FAILED(error, { config }),
         },
       ],
       isError: true,
@@ -129,39 +46,116 @@ export async function setUpPercyHandler(
     const input = SetUpPercySchema.parse(rawInput);
     const authorization = getBrowserStackAuth(config);
 
-    // Create adapter object for Percy handlers
     const percyInput = {
       projectName: input.projectName,
       detectedLanguage: input.detectedLanguage,
-      detectedBrowserAutomationFramework:
-        input.detectedBrowserAutomationFramework,
+      detectedBrowserAutomationFramework: input.detectedBrowserAutomationFramework,
       detectedTestingFramework: input.detectedTestingFramework,
-      integrationType: PercyIntegrationTypeEnum.WEB,
+      integrationType: input.integrationType,
     };
 
-    const supportCheck = checkPercyIntegrationSupport(percyInput);
-    if (!supportCheck.supported) {
+    if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
+      const supportCheck = checkPercyIntegrationSupport(percyInput);
+      if (!supportCheck.supported) {
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                supportCheck.errorMessage ||
+                "Percy Web integration is not supported for this configuration.",
+            },
+          ],
+          isError: true,
+          shouldSkipFormatting: true,
+        };
+      }
+      const percyToken = await fetchPercyToken(
+        input.projectName,
+        authorization,
+        { type: PercyIntegrationTypeEnum.WEB }
+      );
+      const result = runPercyWeb(percyInput, percyToken);
+      return await formatToolResult(result);
+    } else if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
+      // First try Percy with BrowserStack SDK
+      const percyWithSDKResult = runPercyWithSDK(
+        {
+          ...percyInput,
+          desiredPlatforms: [],
+        },
+        config
+      );
+      const hasPercySDKError =
+        percyWithSDKResult.steps && percyWithSDKResult.steps.some((step) => step.isError);
+
+      if (!hasPercySDKError) {
+        // Percy with SDK is supported, return those steps
+        return await formatToolResult(percyWithSDKResult);
+      } else {
+        // Fallback to standalone Percy Automate if supported
+        const supportCheck = checkPercyIntegrationSupport({
+          ...percyInput,
+          integrationType: PercyIntegrationTypeEnum.AUTOMATE,
+        });
+        if (!supportCheck.supported) {
+          return {
+            content: [
+              {
+                type: "text",
+                text:
+                  supportCheck.errorMessage ||
+                  "Percy Automate integration is not supported for this configuration.",
+              },
+            ],
+            isError: true,
+            shouldSkipFormatting: true,
+          };
+        }
+        // SDK setup instructions (for Automate, without Percy)
+        const sdkInput = {
+          projectName: input.projectName,
+          detectedLanguage: input.detectedLanguage,
+          detectedBrowserAutomationFramework: input.detectedBrowserAutomationFramework,
+          detectedTestingFramework: input.detectedTestingFramework,
+          desiredPlatforms: [],
+        };
+        const sdkResult = runBstackSDKOnly(sdkInput, config, true);
+        // Percy Automate instructions
+        const percyToken = await fetchPercyToken(
+          input.projectName,
+          authorization,
+          { type: PercyIntegrationTypeEnum.AUTOMATE }
+        );
+        const percyAutomateResult = runPercyAutomateOnly(percyInput, percyToken);
+        // Combine steps: warning, SDK steps, Percy Automate steps
+        const steps = [
+          {
+            type: "warning" as const,
+            content: `Note: Percy with the BrowserStack SDK is not supported for your project's configuration. Falling back to the standalone Percy Automate SDK setup. You must set up both BrowserStack Automate and Percy Automate.`,
+            title: "Percy Automate Fallback",
+            isError: false,
+          },
+          ...(sdkResult.steps || []),
+          ...(percyAutomateResult.steps || []),
+        ];
+        return await formatToolResult({
+          ...percyAutomateResult,
+          steps,
+        });
+      }
+    } else {
       return {
         content: [
           {
             type: "text",
-            text:
-              supportCheck.errorMessage ||
-              "Percy integration not supported for this configuration.",
+            text: "Unknown or unsupported Percy integration type requested.",
           },
         ],
         isError: true,
         shouldSkipFormatting: true,
       };
     }
-
-    const percyToken = await fetchPercyToken(input.projectName, authorization, {
-      type: PercyIntegrationTypeEnum.WEB,
-    });
-
-    const result = runPercyWeb(percyInput, percyToken);
-
-    return await formatToolResult(result);
   } catch (error) {
     return {
       content: [
