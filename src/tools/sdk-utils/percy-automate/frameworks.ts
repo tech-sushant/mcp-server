@@ -7,18 +7,13 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
       instructions: instructions.pythonPytestPercyAutomateInstructions,
     },
   },
-  javascript: {
+  nodejs: {
     cypress: { instructions: instructions.jsCypressPercyAutomateInstructions },
     mocha: { instructions: instructions.mochaPercyAutomateInstructions },
     jest: { instructions: instructions.jestPercyAutomateInstructions },
-    webdriverio: {
-      instructions: instructions.webdriverioPercyAutomateInstructions,
-    },
+    webdriverio: {  instructions: instructions.webdriverioPercyAutomateInstructions },
     testcafe: { instructions: instructions.testcafePercyAutomateInstructions },
-  },
-  java: {
-    testng: { instructions: instructions.testngPercyAutomateInstructions },
-  },
+  }
 };
 
 /**

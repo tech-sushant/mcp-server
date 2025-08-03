@@ -106,45 +106,6 @@ Run Percy Automate with your tests
 ${percyAutomateReviewSnapshotsStep}
 `;
 
-export const testngPercyAutomateInstructions = `
----STEP---
-Install or upgrade BrowserStack SDK
-  - Install the BrowserStack SDK using Maven:
-    mvn archetype:generate -B -DarchetypeGroupId=com.browserstack -DarchetypeArtifactId=browserstack-sdk-archetype-integrate -DgroupId=com.browserstack -DartifactId=browserstack-sdk-archetype-integrate -DBROWSERSTACK_USERNAME=YOUR_USERNAME -DBROWSERSTACK_ACCESS_KEY=YOUR_ACCESS_KEY -DBROWSERSTACK_FRAMEWORK=testng
-
----STEP---
-Update your browsersstack.yml config file
-  1. Set \`percy: true\`
-  2. Set a \`projectName\`
-  3. Set \`percyCaptureMode: manual\`
-
----STEP---
-Update your TestNG Script
-${percyAutomateAggressiveInstruction}
-  1. Import the BrowserStack Percy SDK in your test script:
-    import com.browserstack.PercySDK;
-  2. Add the \`PercySDK.screenshot(driver, name)\` method at required points in your test script.
-
-Example:
-\`\`\`java
-// ...imports
-import com.browserstack.PercySDK;
-public class TestNG extends SeleniumTest {
-  @Test
-  public void test() throws Exception {
-    // ...
-    PercySDK.screenshot(driver, "My Screenshot");
-    // ...
-  }
-}
-\`\`\`
-
----STEP---
-Run your test script
-  - npx percy exec -- mvn test -P sample-percy-test
-
-${percyAutomateReviewSnapshotsStep}
-`;
 
 export const jestPercyAutomateInstructions = `
 Install or upgrade the BrowserStack SDK:

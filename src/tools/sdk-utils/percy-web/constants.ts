@@ -121,6 +121,7 @@ Run Percy with your tests
 ${percyReviewSnapshotsStep}
 `;
 
+
 export const rubyInstructions = `
 ---STEP---
 Install Percy dependencies
@@ -152,6 +153,48 @@ driver.quit
 Run Percy with your tests
   - Use the following command:
     npx percy exec -- <your command to run tests>
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Capybara instructions for Ruby
+export const rubyCapybaraInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI:
+    npm install --save-dev @percy/cli
+  - Install Percy Capybara gem:
+    gem install percy-capybara
+
+---STEP---
+Update your Capybara or Rails test script
+${percyAutomateAggressiveInstruction}
+  - In your test setup file, require percy/capybara:
+    require 'percy/capybara'
+  - In your test, take snapshots like this:
+    page.percy_snapshot('Capybara snapshot')
+
+Example:
+\`\`\`ruby
+require 'percy/capybara'
+
+describe 'my feature', type: :feature do
+  it 'renders the page' do
+    visit 'https://example.com'
+    page.percy_snapshot('Capybara snapshot')
+  end
+end
+\`\`\`
+
+  - The snapshot method arguments are:
+    page.percy_snapshot(name[, options])
+    name - The snapshot name; must be unique to each snapshot; defaults to the test title
+    options - See per-snapshot configuration options
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- bundle exec rspec
 
 ${percyReviewSnapshotsStep}
 `;
@@ -281,6 +324,485 @@ const percySnapshot = require('@percy/playwright');
 Run Percy with your tests
   - Use the following command:
     npx percy exec -- <command to run the test script file>
+${percyReviewSnapshotsStep}
+`;
+
+// Percy WebdriverIO instructions for JavaScript
+export const jsWebdriverioInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI:
+    npm install --save-dev @percy/cli
+  - Install Percy Selenium Webdriver package:
+    npm install --save-dev @percy/selenium-webdriver
+
+---STEP---
+Update your WebdriverIO test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy snapshot helper:
+    const percySnapshot = require('@percy/selenium-webdriver');
+  - In your test, take snapshots like this:
+    await percySnapshot(driver, "Your snapshot name");
+
+Example:
+\`\`\`javascript
+const { remote } = require('webdriverio');
+const percySnapshot = require('@percy/selenium-webdriver');
+
+(async () => {
+  const browser = await remote({
+    logLevel: 'error',
+    capabilities: { browserName: 'chrome' }
+  });
+
+  await browser.url('https://example.com');
+  await percySnapshot(browser, 'WebdriverIO example');
+  await browser.deleteSession();
+})();
+\`\`\`
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- wdio run wdio.conf.js
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Ember instructions for JavaScript
+export const jsEmberInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and Ember SDK:
+    npm install --save-dev @percy/cli @percy/ember
+
+---STEP---
+Update your Ember test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy snapshot helper:
+    import percySnapshot from '@percy/ember';
+  - In your test, take snapshots like this:
+    await percySnapshot('My Snapshot');
+
+Example:
+\`\`\`javascript
+import percySnapshot from '@percy/ember';
+describe('My ppp', () => {
+  // ...app setup
+  it('about page should look good', async () => {
+    await visit('/about');
+    await percySnapshot('My Snapshot');
+  });
+});
+\`\`\`
+
+  - The snapshot method arguments are:
+    percySnapshot(name[, options])
+    name - The snapshot name; must be unique to each snapshot; defaults to the test title
+    options - See per-snapshot configuration options
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- ember test
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Cypress instructions for JavaScript
+export const jsCypressInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and Cypress SDK:
+    npm install --save-dev @percy/cli @percy/cypress
+
+---STEP---
+Update your Cypress test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy snapshot helper in your cypress/support/e2e.js file:
+    import '@percy/cypress';
+  - If you’re using TypeScript, include "types": ["cypress", "@percy/cypress"] in your tsconfig.json file.
+  - In your test, take snapshots like this:
+    cy.percySnapshot();
+
+Example:
+\`\`\`javascript
+import '@percy/cypress';
+
+describe('Integration test with visual testing', function() {
+  it('Loads the homepage', function() {
+    // Load the page or perform any other interactions with the app.
+    cy.visit('<URL under test>');
+    // Take a snapshot for visual diffing
+    cy.percySnapshot();
+  });
+});
+\`\`\`
+
+  - The snapshot method arguments are:
+    cy.percySnapshot([name][, options])
+    name - The snapshot name; must be unique to each snapshot; defaults to the test title
+    options - See per-snapshot configuration options
+
+  - For example:
+    cy.percySnapshot();
+    cy.percySnapshot('Homepage test');
+    cy.percySnapshot('Homepage responsive test', { widths: [768, 992, 1200] });
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- cypress run
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Puppeteer instructions for JavaScript
+export const jsPuppeteerInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and Puppeteer SDK:
+    npm install --save-dev @percy/cli @percy/puppeteer
+
+---STEP---
+Update your Puppeteer test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy snapshot helper:
+    const percySnapshot = require('@percy/puppeteer');
+  - In your test, take snapshots like this:
+    await percySnapshot(page, 'Snapshot name');
+
+Example:
+\`\`\`javascript
+const puppeteer = require('puppeteer');
+const percySnapshot = require('@percy/puppeteer');
+
+describe('Integration test with visual testing', function() {
+  it('Loads the homepage', async function() {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto('https://example.com');
+    await percySnapshot(page, this.test.fullTitle());
+    await browser.close();
+  });
+});
+\`\`\`
+
+  - The snapshot method arguments are:
+    percySnapshot(page, name[, options])
+    page (required) - A puppeteer page instance
+    name (required) - The snapshot name; must be unique to each snapshot
+    options - See per-snapshot configuration options
+
+  - For example:
+    percySnapshot(page, 'Homepage test');
+    percySnapshot(page, 'Homepage responsive test', { widths: [768, 992, 1200] });
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- mocha
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Nightmare instructions for JavaScript
+export const jsNightmareInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and Nightmare SDK:
+    npm install --save-dev @percy/cli @percy/nightmare
+
+---STEP---
+Update your Nightmare test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy snapshot helper:
+    const Nightmare = require('nightmare');
+    const percySnapshot = require('@percy/nightmare');
+  - In your test, take snapshots like this:
+    .use(percySnapshot('Snapshot name'))
+
+Example:
+\`\`\`javascript
+const Nightmare = require('nightmare');
+const percySnapshot = require('@percy/nightmare');
+
+Nightmare()
+  .goto('http://example.com')
+  // ... other actions ...
+  .use(percySnapshot('Example Snapshot'))
+  // ... more actions ...
+  .end()
+  .then(() => {
+    // ...
+  });
+\`\`\`
+
+  - The snapshot method arguments are:
+    percySnapshot(name[, options])
+    name (required) - The snapshot name; must be unique to each snapshot
+    options - See per-snapshot configuration options
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- node script.js
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Nightwatch instructions for JavaScript
+export const jsNightwatchInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and Nightwatch SDK:
+    npm install --save-dev @percy/cli @percy/nightwatch
+
+---STEP---
+Update your Nightwatch configuration and test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy library and add the path exported by @percy/nightwatch to your Nightwatch configuration’s custom_commands_path property:
+    const percy = require('@percy/nightwatch');
+    module.exports = {
+      // ...
+      custom_commands_path: [percy.path],
+      // ...
+    };
+  - In your test, take snapshots like this:
+    browser.percySnapshot('Snapshot name');
+
+Example:
+\`\`\`javascript
+const percy = require('@percy/nightwatch');
+module.exports = {
+  // ...
+  custom_commands_path: [percy.path],
+  // ...
+};
+
+// Example test
+module.exports = {
+  'Snapshots pages': function(browser) {
+    browser
+      .url('http://example.com')
+      .assert.containsText('h1', 'Example Domain')
+      .percySnapshot('Example snapshot');
+    browser
+      .url('http://google.com')
+      .assert.elementPresent('img[alt="Google"]')
+      .percySnapshot('Google homepage');
+    browser.end();
+  }
+};
+\`\`\`
+
+  - The snapshot method arguments are:
+    percySnapshot([name][, options])
+    name (required) - The snapshot name; must be unique to each snapshot
+    options - See per-snapshot configuration options
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- nightwatch
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Protractor instructions for JavaScript
+export const jsProtractorInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and Protractor SDK:
+    npm install --save-dev @percy/cli @percy/protractor
+
+---STEP---
+Update your Protractor test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy snapshot helper:
+    import percySnapshot from '@percy/protractor';
+  - In your test, take snapshots like this:
+    await percySnapshot('Snapshot name');
+    // or
+    await percySnapshot(browser, 'Snapshot name');
+
+Example:
+\`\`\`javascript
+import percySnapshot from '@percy/protractor';
+describe('angularjs homepage', function() {
+  it('should greet the named user', async function() {
+    await browser.get('https://www.angularjs.org');
+    await percySnapshot('AngularJS homepage');
+    await element(by.model('yourName')).sendKeys('Percy');
+    var greeting = element(by.binding('yourName'));
+    expect(await greeting.getText()).toEqual('Hello Percy!');
+    await percySnapshot('AngularJS homepage greeting');
+  });
+});
+\`\`\`
+
+  - The snapshot method arguments are:
+    percySnapshot(name[, options])
+    Standalone mode:
+    percySnapshot(browser, name[, options])
+    browser (required) - The Protractor browser object
+    name (required) - The snapshot name; must be unique to each snapshot
+    options - See per-snapshot configuration options
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- protractor conf.js
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy TestCafe instructions for JavaScript
+export const jsTestcafeInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and TestCafe SDK:
+    npm install --save-dev @percy/cli @percy/testcafe
+
+---STEP---
+Update your TestCafe test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy snapshot helper:
+    import percySnapshot from '@percy/testcafe';
+  - In your test, take snapshots like this:
+    await percySnapshot(t, 'Snapshot name');
+
+Example:
+\`\`\`javascript
+import percySnapshot from '@percy/testcafe';
+fixture('MyFixture')
+  .page('https://devexpress.github.io/testcafe/example');
+test('Test1', async t => {
+  await t.typeText('#developer-name', 'John Doe');
+  await percySnapshot(t, 'TestCafe Example');
+});
+\`\`\`
+
+  - The snapshot method arguments are:
+    percySnapshot(t, name[, options])
+    t (required) - The test controller instance passed from test
+    name (required) - The snapshot name; must be unique to each snapshot
+    options - See per-snapshot configuration options
+
+---STEP---
+Run Percy with your tests
+  - Use the following command:
+    npx percy exec -- testcafe chrome:headless tests
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Gatsby instructions for JavaScript
+export const jsGatsbyInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and Gatsby plugin:
+    npm install --save @percy/cli gatsby-plugin-percy
+
+---STEP---
+Update your Gatsby configuration
+${percyAutomateAggressiveInstruction}
+  - Add the Percy plugin to your gatsby-config.js file:
+    module.exports = {
+      plugins: [\`gatsby-plugin-percy\`]
+    }
+
+---STEP---
+Run Percy with your Gatsby build
+  - Use the following command:
+    npx percy exec -- gatsby build
+
+  - The plugin will take snapshots of discovered pages during the build process.
+
+  - Example gatsby-config.js with options:
+\`\`\`javascript
+module.exports = {
+  plugins: [{
+    resolve: \`gatsby-plugin-percy\`,
+    options: {
+      // gatsby specific options
+      query: \`{
+        allSitePage { nodes { path } }
+        allOtherPage { nodes { path } }
+      }\`,
+      resolvePages: ({
+        allSitePage: { nodes: allPages },
+        allOtherPage: { nodes: otherPages }
+      }) => {
+        return [...allPages, ...otherPages]
+          .map(({ path }) => path);
+      },
+      // percy static snapshot options
+      exclude: [
+        '/dev-404-page/',
+        '/offline-plugin-app-shell-fallback/'
+      ],
+      overrides: [{
+        include: '/foobar/',
+        waitForSelector: '.done-loading',
+        additionalSnapshots: [{
+          suffix: ' - after btn click',
+          execute: () => document.querySelector('.btn').click()
+        }]
+      }]
+    }
+  }]
+}
+\`\`\`
+
+${percyReviewSnapshotsStep}
+`;
+
+// Percy Storybook instructions for JavaScript
+export const jsStorybookInstructions = `
+---STEP---
+Install Percy dependencies
+  - Install Percy CLI and Storybook SDK:
+    npm install --save-dev @percy/cli @percy/storybook
+
+---STEP---
+Update your Storybook stories
+${percyAutomateAggressiveInstruction}
+  - Add Percy parameters to your stories to customize snapshots:
+\`\`\`js
+MyStory.parameters = {
+  percy: {
+    name: 'My snapshot',
+    additionalSnapshots: [
+      { prefix: '[Dark mode] ', args: { colorScheme: 'dark' } },
+      { suffix: ' with globals', globals: { textDirection: 'rtl' } },
+      { name: 'Search snapshot', queryParams: { search: 'foobar' } }
+    ]
+  }
+};
+\`\`\`
+  - Use argument names and values defined in your codebase.
+
+---STEP---
+Run Percy with your Storybook
+  - With a static Storybook build:
+    percy storybook ./storybook-build
+  - With a local or live Storybook URL:
+    percy storybook http://localhost:9009
+    percy storybook https://storybook.foobar.com
+  - Automatically run start-storybook:
+    percy storybook:start --port=9009 --static-dir=./public
+
+  - Example output:
+    [percy] Snapshot found: My snapshot
+    [percy] - url: [...]?id=component--my-story
+    [percy] Snapshot found: [Dark mode] My snapshot
+    [percy] - url: [...]?id=component--my-story&args=colorScheme:dark
+    [percy] Snapshot found: My snapshot with globals
+    [percy] - url: [...]?id=component--my-story&globals=textDirection:rtl
+    [percy] Snapshot found: Search snapshot
+    [percy] - url: [...]?id=component--my-story&search=foobar
+
 ${percyReviewSnapshotsStep}
 `;
 

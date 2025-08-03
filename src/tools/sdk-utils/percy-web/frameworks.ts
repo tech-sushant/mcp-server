@@ -9,6 +9,16 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   javascript: {
     selenium: { instructions: constants.nodejsInstructions },
     playwright: { instructions: constants.jsPlaywrightInstructions },
+    webdriverio: { instructions: constants.jsWebdriverioInstructions },
+    ember: { instructions: constants.jsEmberInstructions },
+    cypress: { instructions: constants.jsCypressInstructions },
+    puppeteer: { instructions: constants.jsPuppeteerInstructions },
+    nightmare: { instructions: constants.jsNightmareInstructions },
+    nightwatch: { instructions: constants.jsNightwatchInstructions },
+    protractor: { instructions: constants.jsProtractorInstructions },
+    testcafe: { instructions: constants.jsTestcafeInstructions },
+    gatsby: { instructions: constants.jsGatsbyInstructions },
+    storybook: { instructions: constants.jsStorybookInstructions },
   },
   java: {
     selenium: { instructions: constants.javaInstructions },
@@ -16,6 +26,7 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   },
   ruby: {
     selenium: { instructions: constants.rubyInstructions },
+    capybara: { instructions: constants.rubyCapybaraInstructions },
   },
   csharp: {
     selenium: { instructions: constants.csharpInstructions },
