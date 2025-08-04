@@ -15,16 +15,20 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     },
   },
   java: {
-    playwright:{
+    playwright: {
       junit: { instructions: instructions.javaPlaywrightJunitInstructions },
-    }
+    },
   },
   nodejs: {
     selenium: {
       mocha: { instructions: instructions.mochaPercyAutomateInstructions },
       jest: { instructions: instructions.jestPercyAutomateInstructions },
-      webdriverio: { instructions: instructions.webdriverioPercyAutomateInstructions },
-      testcafe: { instructions: instructions.testcafePercyAutomateInstructions },
+      webdriverio: {
+        instructions: instructions.webdriverioPercyAutomateInstructions,
+      },
+      testcafe: {
+        instructions: instructions.testcafePercyAutomateInstructions,
+      },
     },
     playwright: {
       mocha: { instructions: instructions.mochaPercyPlaywrightInstructions },

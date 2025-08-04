@@ -18,6 +18,12 @@ export const SetUpPercyParamsShape = {
     .describe(
       "User can say 'setup Percy' then if the codebase contains BrowserStack Automate SDK or any related yml file then use 'automate'. In all other cases, set to 'web' which is standalone percy. Set to 'automate' if the user says 'run Percy automate'. This value must be provided explicitly or determined by clear codebase inspection—never inferred automatically.",
     ),
+  testPath: z
+    .string()
+    .optional()
+    .describe(
+      "Path to the directory containing test files for Percy integration sampling.",
+    ),
 };
 
 export const RunTestsOnBrowserStackParamsShape = {

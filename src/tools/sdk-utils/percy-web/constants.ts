@@ -121,7 +121,6 @@ Run Percy with your tests
 ${percyReviewSnapshotsStep}
 `;
 
-
 export const rubyInstructions = `
 ---STEP---
 Install Percy dependencies

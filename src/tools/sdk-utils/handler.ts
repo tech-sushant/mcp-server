@@ -41,6 +41,7 @@ export async function runTestsOnBrowserStackHandler(
 export async function setUpPercyHandler(
   rawInput: unknown,
   config: BrowserStackConfig,
+  mcpServer?: any,
 ): Promise<CallToolResult> {
   try {
     const input = SetUpPercySchema.parse(rawInput);
@@ -80,12 +81,14 @@ export async function setUpPercyHandler(
       return await formatToolResult(result);
     } else if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
       // First try Percy with BrowserStack SDK
-      const percyWithBrowserstackSDKResult = runPercyWithBrowserstackSDK(
+      const percyWithBrowserstackSDKResult = await runPercyWithBrowserstackSDK(
         {
           ...percyInput,
           desiredPlatforms: [],
         },
         config,
+        input.testPath,
+        mcpServer,
       );
       const hasPercySDKError =
         percyWithBrowserstackSDKResult.steps &&

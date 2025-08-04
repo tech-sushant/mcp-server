@@ -18,7 +18,9 @@ export function runPercyAutomateOnly(
     : undefined;
 
   // Generate instructions for the supported configuration with project name
-  const instructions = testingFrameworkConfig ? testingFrameworkConfig.instructions : "";
+  const instructions = testingFrameworkConfig
+    ? testingFrameworkConfig.instructions
+    : "";
 
   // Prepend a step to set the Percy token in the environment
   steps.push({

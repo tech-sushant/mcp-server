@@ -23,7 +23,7 @@ export function registerPercySetupTool(
     SETUP_PERCY_DESCRIPTION,
     SetUpPercyParamsShape,
     async (args) => {
-      return setUpPercyHandler(args, config);
+      return setUpPercyHandler(args, config, server);
     },
   );
   return tools;
