@@ -54,4 +54,6 @@ You MUST follow these steps with NO EXCEPTIONS:
 3. At the top of EVERY relevant file, ensure the necessary import/setup is present (do NOT duplicate if already present).
 4. Insert the snapshot call (with a clear, descriptive, and unique name) at EVERY identified point in EVERY relevant file.
 5. Double-check your work. If in doubt, add more snapshot calls rather than fewer. DO NOT stop until you have processed ALL relevant files and ALL important points within them.
+
+Iteratively update every relevant test file in the directory and all subdirectories, adding Percy integration to each, one file at a time, until all are complete.
 `;
