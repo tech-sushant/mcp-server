@@ -3,29 +3,50 @@ import * as instructions from "./constants.js";
 
 export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   python: {
-    pytest: {
-      instructions: instructions.pythonPytestPercyAutomateInstructions,
+    selenium: {
+      pytest: {
+        instructions: instructions.pythonPytestSeleniumInstructions,
+      },
+    },
+    playwright: {
+      pytest: {
+        instructions: instructions.pythonPytestPlaywrightInstructions,
+      },
     },
   },
+  java: {
+    playwright:{
+      junit: { instructions: instructions.javaPlaywrightJunitInstructions },
+    }
+  },
   nodejs: {
-    cypress: { instructions: instructions.jsCypressPercyAutomateInstructions },
-    mocha: { instructions: instructions.mochaPercyAutomateInstructions },
-    jest: { instructions: instructions.jestPercyAutomateInstructions },
-    webdriverio: {  instructions: instructions.webdriverioPercyAutomateInstructions },
-    testcafe: { instructions: instructions.testcafePercyAutomateInstructions },
-  }
+    selenium: {
+      mocha: { instructions: instructions.mochaPercyAutomateInstructions },
+      jest: { instructions: instructions.jestPercyAutomateInstructions },
+      webdriverio: { instructions: instructions.webdriverioPercyAutomateInstructions },
+      testcafe: { instructions: instructions.testcafePercyAutomateInstructions },
+    },
+    playwright: {
+      mocha: { instructions: instructions.mochaPercyPlaywrightInstructions },
+      jest: { instructions: instructions.jestPercyAutomateInstructions },
+    },
+  },
 };
 
 /**
- * Utility function to check if a given language and testing framework
+ * Utility function to check if a given language, driver, and testing framework
  * are supported by Percy Automate.
+ * This now expects the structure: language -> driver -> framework
  */
 export function isPercyAutomateFrameworkSupported(
   language: string,
+  driver: string,
   framework: string,
 ): boolean {
   const languageConfig =
     SUPPORTED_CONFIGURATIONS[language as keyof typeof SUPPORTED_CONFIGURATIONS];
   if (!languageConfig) return false;
-  return !!languageConfig[framework as keyof typeof languageConfig];
+  const driverConfig = languageConfig[driver as keyof typeof languageConfig];
+  if (!driverConfig) return false;
+  return !!driverConfig[framework as keyof typeof driverConfig];
 }

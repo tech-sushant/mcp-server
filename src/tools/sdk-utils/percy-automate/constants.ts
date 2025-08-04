@@ -5,7 +5,7 @@ Review the snapshots
   - Go to your Percy project on https://percy.io to review snapshots and approve/reject any visual changes.
 `;
 
-export const pythonPytestPercyAutomateInstructions = `
+export const pythonPytestSeleniumInstructions = `
 Install Percy Automate dependencies
   - Install Percy CLI:
     npm install --save-dev @percy/cli
@@ -43,6 +43,47 @@ def test_homepage(driver):
 Run Percy Automate with your tests
   - Use the following command:
     npx percy exec -- browserstack-sdk pytest
+
+${percyAutomateReviewSnapshotsStep}
+`;
+
+export const pythonPytestPlaywrightInstructions = `
+Install Percy Automate dependencies
+  - Install Percy CLI:
+    npm install --save @percy/cli
+  - Install Percy Playwright SDK for Automate:
+    pip install percy-playwright
+
+---STEP---
+Update your Playwright test script
+${percyAutomateAggressiveInstruction}
+  - Import the Percy screenshot helper:
+    from percy import percy_screenshot
+  - In your test, take snapshots at key points:
+    percy_screenshot(page, name="Your snapshot name")
+    # You can pass \`options\`:
+    percy_screenshot(page, name="Your snapshot name", options={ "full_page": True })
+
+Example:
+\`\`\`python
+from playwright.sync_api import sync_playwright
+from percy import percy_screenshot
+
+def test_visual_regression():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto("http://localhost:8000")
+        percy_screenshot(page, name="Home page")
+        # ... more test steps ...
+        percy_screenshot(page, name="After login", options={ "full_page": True })
+        browser.close()
+\`\`\`
+
+---STEP---
+Run Percy Automate with your tests
+  - Use the following command:
+    npx percy exec -- <command to run the automate script file>
 
 ${percyAutomateReviewSnapshotsStep}
 `;
@@ -97,6 +138,36 @@ Update your Mocha Automate test script
     await percyScreenshot(driver, 'Screenshot 1');
     options = { percyCSS: 'h1{color:red;}' };
     await percyScreenshot(driver, 'Screenshot 2', options);
+
+---STEP---
+Run Percy Automate with your tests
+  - Use the following command:
+    npx percy exec -- <command to run the automate script file>
+
+${percyAutomateReviewSnapshotsStep}
+`;
+
+// Mocha Percy Playwright Instructions
+export const mochaPercyPlaywrightInstructions = `
+Install Percy Automate dependencies
+  - Install the latest Percy CLI:
+    npm install --save @percy/cli
+  - Install the Percy Playwright SDK:
+    npm install @percy/playwright
+
+---STEP---
+Update your Mocha Playwright test script
+  - Import the Percy screenshot helper:
+    const { percyScreenshot } = require("@percy/playwright");
+  - Use the Percy screenshot command to take required screenshots in your Automate session.
+
+Example:
+\`\`\`javascript
+const { percyScreenshot } = require("@percy/playwright");
+await percyScreenshot(page, "Screenshot 1");
+// With options
+await percyScreenshot(page, "Screenshot 2", { percyCSS: "h1{color:green;}" });
+\`\`\`
 
 ---STEP---
 Run Percy Automate with your tests
@@ -227,6 +298,74 @@ test('Test1', async t => {
 Run Percy
   - Use the following command to run your tests with Percy:
     npx percy exec -- testcafe chrome:headless tests
+
+${percyAutomateReviewSnapshotsStep}
+`;
+
+// Java Playwright Percy Automate Instructions
+export const javaPlaywrightJunitInstructions = `
+Install Percy Automate dependencies
+  - Install the latest Percy CLI:
+    npm install --save @percy/cli
+  - Add the Percy Playwright Java SDK to your pom.xml:
+\`\`\`xml
+<dependency>
+  <groupId>io.percy</groupId>
+  <artifactId>percy-playwright-java</artifactId>
+  <version>1.0.0</version>
+</dependency>
+\`\`\`
+
+---STEP---
+Update your Automate test script
+  - Import the Percy library:
+    import io.percy.playwright.Percy;
+  - Use the Percy screenshot command to take required screenshots in your Automate session.
+
+Example:
+\`\`\`java
+Percy percy = new Percy(page);
+percy.screenshot("screenshot_1");
+// With options
+percy.screenshot("screenshot_2", options);
+\`\`\`
+
+---STEP---
+Run Percy Automate with your tests
+  - Use the following command:
+    npx percy exec -- <command to run the automate script file>
+
+${percyAutomateReviewSnapshotsStep}
+`;
+
+// C# Playwright NUnit Percy Automate Instructions
+export const csharpPlaywrightNunitInstructions = `
+Install Percy Automate dependencies
+  - Install the latest Percy CLI:
+    npm install --save @percy/cli
+  - Add the Percy Playwright SDK to your .csproj file:
+\`\`\`xml
+<PackageReference Include="PercyIO.Playwright" Version="1.0.0" />
+\`\`\`
+
+---STEP---
+Update your NUnit Playwright test script
+  - Import the Percy library:
+    using PercyIO.Playwright;
+  - Use the Percy screenshot command to take required screenshots in your Automate session.
+
+Example:
+\`\`\`csharp
+using PercyIO.Playwright;
+Percy.Screenshot(page, "example_screenshot_1");
+// With options
+Percy.Screenshot(page, "example_screenshot_2", options);
+\`\`\`
+
+---STEP---
+Run Percy Automate with your tests
+  - Use the following command:
+    npx percy exec -- <command to run the automate script file>
 
 ${percyAutomateReviewSnapshotsStep}
 `;

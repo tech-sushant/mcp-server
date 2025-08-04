@@ -12,10 +12,13 @@ export function runPercyAutomateOnly(
   // Assume configuration is supported due to guardrails at orchestration layer
   const languageConfig =
     SUPPORTED_CONFIGURATIONS[input.detectedLanguage as SDKSupportedLanguage];
-  const testingFrameworkConfig = languageConfig[input.detectedTestingFramework];
+  const driverConfig = languageConfig[input.detectedBrowserAutomationFramework];
+  const testingFrameworkConfig = driverConfig
+    ? driverConfig[input.detectedTestingFramework]
+    : undefined;
 
   // Generate instructions for the supported configuration with project name
-  const instructions = testingFrameworkConfig.instructions;
+  const instructions = testingFrameworkConfig ? testingFrameworkConfig.instructions : "";
 
   // Prepend a step to set the Percy token in the environment
   steps.push({

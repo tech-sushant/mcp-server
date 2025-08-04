@@ -22,6 +22,7 @@ export function checkPercyIntegrationSupport(input: {
   if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
     const isSupported = isPercyAutomateFrameworkSupported(
       input.detectedLanguage,
+      input.detectedBrowserAutomationFramework || "",
       input.detectedTestingFramework || "",
     );
     if (!isSupported) {

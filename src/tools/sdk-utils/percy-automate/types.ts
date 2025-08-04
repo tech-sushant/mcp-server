@@ -1,11 +1,13 @@
 /**
  * Type for Percy Automate configuration mapping.
- * Structure: language -> testingFramework -> { instructions: (projectName: string) => string }
+ * Structure: language -> driver -> testingFramework -> { instructions: string }
  */
 export type ConfigMapping = {
   [language: string]: {
-    [testingFramework: string]: {
-      instructions: string;
+    [driver: string]: {
+      [framework: string]: {
+        instructions: string;
+      };
     };
   };
 };
