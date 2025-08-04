@@ -49,7 +49,7 @@ describe("sample Test", () => {
   
   test("my test", async () => {
     // ....
-    await percy.snapshot(driver, "My Snapshot")
+    await percy.screenshot(driver, "My Snapshot")
     // ....
   });
 })
@@ -134,8 +134,6 @@ Here's an example:
 
 \`\`\`csharp
 using BrowserStackSDK.Percy;
-using NUnit.Framework;
-
 namespace Tests;
 
 public class MyTest

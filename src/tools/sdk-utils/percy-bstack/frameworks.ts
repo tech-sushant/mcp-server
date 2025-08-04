@@ -8,11 +8,15 @@ export const PERCY_INSTRUCTIONS: ConfigMapping = {
       cucumber: { instructions: constants.javaSeleniumInstructions },
       junit4: { instructions: constants.javaSeleniumInstructions },
       junit5: { instructions: constants.javaSeleniumInstructions },
+      selenide : { instructions: constants.javaSeleniumInstructions },
+      jbehave: { instructions: constants.javaSeleniumInstructions },
     },
   },
   csharp: {
     selenium: {
       nunit: { instructions: constants.csharpSeleniumInstructions },
+      xunit: { instructions: constants.csharpSeleniumInstructions },
+      specflow: { instructions: constants.csharpSeleniumInstructions },
     },
   },
   nodejs: {
