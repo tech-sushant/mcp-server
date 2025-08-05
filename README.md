@@ -141,7 +141,7 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
 &nbsp;&nbsp;&nbsp;&nbsp;
 [![Install in Cursor](https://img.shields.io/static/v1?label=Cursor&message=Install%20Browserstack%20MCP&color=444444&style=for-the-badge&labelColor=000000&logo=cursor&logoColor=ffffff)](https://cursor.com/install-mcp?name=browserstack-cursor&config=eyJjb21tYW5kIjoibm9kZSAvVXNlcnMvc3VzaGFudC9Eb3dubG9hZHMvbWNwLXNlcnZlci9kaXN0L2luZGV4LmpzIiwiZW52Ijp7IkJST1dTRVJTVEFDS19VU0VSTkFNRSI6InN1c2hhbmFrZV9xZ2hrZjUiLCJCUk9XU0VSU1RBQ0tfQUNDRVNTX0tFWSI6IlhzREU5aUp1eVMiLCJOT0RFX0VOViI6ImRldmVsb3BtZW50In0sInR5cGUiOiJzdGRpbyJ9)
 &nbsp;
-
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=Browserstack&config=JTdCJTIydHlwZSUyMiUzQSUyMnN0ZGlvJTIyJTJDJTIyY29tbWFuZCUyMiUzQSUyMm5weCUyMC15JTIwJTQwYnJvd3NlcnN0YWNrJTJGbWNwLXNlcnZlciU0MGxhdGVzdCUyMiUyQyUyMmVudiUyMiUzQSU3QiUyMkJST1dTRVJTVEFDS19VU0VSTkFNRSUyMiUzQSUyMiUyNCU3QmlucHV0JTNBQlJPV1NFUlNUQUNLX1VTRVJOQU1FJTdEJTIyJTJDJTIyQlJPV1NFUlNUQUNLX0FDQ0VTU19LRVklMjIlM0ElMjIlMjQlN0JpbnB1dCUzQUJST1dTRVJTVEFDS19BQ0NFU1NfS0VZJTdEJTIyJTdEJTdE)
 ## 🛠️ Installation
 
 1. **Create a BrowserStack Account**
