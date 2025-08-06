@@ -135,14 +135,8 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
 “Help fix flaky tests in my test script with Browserstack AI self healing”
 ```
 
-## ⚡️ One Click Installation
-
-[![Install in VS Code](https://img.shields.io/static/v1?label=VS%20Code&message=Install%20Browserstack%20MCP&color=444444&style=for-the-badge&labelColor=007ACC&logo=visualstudiocode&logoColor=ffffff)](https://insiders.vscode.dev/redirect/mcp/install?name=Browserstack&inputs=%5B%7B%22id%22%3A%22BROWSERSTACK_USERNAME%22%2C%22type%22%3A%22promptString%22%2C%22description%22%3A%22BrowserStack%20Username%22%7D%2C%7B%22id%22%3A%22BROWSERSTACK_ACCESS_KEY%22%2C%22type%22%3A%22promptString%22%2C%22description%22%3A%22BrowserStack%20Access%20Key%22%2C%22password%22%3Atrue%7D%5D&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40browserstack%2Fmcp-server%40latest%22%5D%2C%22env%22%3A%7B%22BROWSERSTACK_USERNAME%22%3A%22%24%7Binput%3ABROWSERSTACK_USERNAME%7D%22%2C%22BROWSERSTACK_ACCESS_KEY%22%3A%22%24%7Binput%3ABROWSERSTACK_ACCESS_KEY%7D%22%7D%7D)
-&nbsp;&nbsp;&nbsp;&nbsp;
-[![Install in Cursor](https://img.shields.io/static/v1?label=Cursor&message=Install%20Browserstack%20MCP&color=444444&style=for-the-badge&labelColor=000000&logo=cursor&logoColor=ffffff)](https://cursor.com/install-mcp?name=browserstack-cursor&config=eyJjb21tYW5kIjoibm9kZSAvVXNlcnMvc3VzaGFudC9Eb3dubG9hZHMvbWNwLXNlcnZlci9kaXN0L2luZGV4LmpzIiwiZW52Ijp7IkJST1dTRVJTVEFDS19VU0VSTkFNRSI6InN1c2hhbmFrZV9xZ2hrZjUiLCJCUk9XU0VSU1RBQ0tfQUNDRVNTX0tFWSI6IlhzREU5aUp1eVMiLCJOT0RFX0VOViI6ImRldmVsb3BtZW50In0sInR5cGUiOiJzdGRpbyJ9)
-&nbsp;
-[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=Browserstack&config=JTdCJTIydHlwZSUyMiUzQSUyMnN0ZGlvJTIyJTJDJTIyY29tbWFuZCUyMiUzQSUyMm5weCUyMC15JTIwJTQwYnJvd3NlcnN0YWNrJTJGbWNwLXNlcnZlciU0MGxhdGVzdCUyMiUyQyUyMmVudiUyMiUzQSU3QiUyMkJST1dTRVJTVEFDS19VU0VSTkFNRSUyMiUzQSUyMiUyNCU3QmlucHV0JTNBQlJPV1NFUlNUQUNLX1VTRVJOQU1FJTdEJTIyJTJDJTIyQlJPV1NFUlNUQUNLX0FDQ0VTU19LRVklMjIlM0ElMjIlMjQlN0JpbnB1dCUzQUJST1dTRVJTVEFDS19BQ0NFU1NfS0VZJTdEJTIyJTdEJTdE)
 ## 🛠️ Installation
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=vscode) &nbsp; [![Install in Cursor](https://img.shields.io/badge/Cursor-Install_Server-24bfa5?style=flat-square&color=000000&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=cursor)
 
 1. **Create a BrowserStack Account**
 
