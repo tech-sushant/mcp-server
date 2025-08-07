@@ -2,7 +2,7 @@ import {
   SetUpPercySchema,
   RunTestsOnBrowserStackSchema,
 } from "./common/schema.js";
-import { BOOTSTRAP_FAILED } from "./common/constants.js";
+import { getBootstrapFailedMessage } from "./common/utils.js";
 import { formatToolResult } from "./common/utils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -12,8 +12,9 @@ import { fetchPercyToken } from "./percy-web/fetchPercyToken.js";
 import { runPercyWeb } from "./percy-web/handler.js";
 import { runPercyAutomateOnly } from "./percy-automate/handler.js";
 import { runBstackSDKOnly } from "./bstack/sdkHandler.js";
-import { runPercyWithBrowserstackSDK } from "./percy-bstack/handler.js";
-import { checkPercyIntegrationSupport } from "./common/utils.js";
+import { runPercyWithBrowserstackSDK} from "./percy-bstack/handler.js";
+import { checkPercyIntegrationSupport} from "./common/utils.js";
+import {PERCY_SIMULATE_INSTRUCTION, PERCY_REPLACE_REGEX, PERCY_SIMULATION_DRIVER_INSTRUCTION} from "./common/constants.js";
 
 export async function runTestsOnBrowserStackHandler(
   rawInput: unknown,
@@ -30,7 +31,7 @@ export async function runTestsOnBrowserStackHandler(
       content: [
         {
           type: "text",
-          text: BOOTSTRAP_FAILED(error, { config }),
+          text: getBootstrapFailedMessage(error, { config }),
         },
       ],
       isError: true,
@@ -175,7 +176,7 @@ export async function setUpPercyHandler(
       content: [
         {
           type: "text",
-          text: BOOTSTRAP_FAILED(error, {
+          text: getBootstrapFailedMessage(error, {
             config,
             percyMode: (rawInput as any)?.integrationType,
           }),
@@ -185,3 +186,39 @@ export async function setUpPercyHandler(
     };
   }
 }
+
+export async function setUpSimulatePercyChangeHandler(
+  rawInput: unknown,
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
+  try {
+    const percyInstruction = await setUpPercyHandler(rawInput, config);
+
+    if (Array.isArray(percyInstruction.content)) {
+      percyInstruction.content.forEach((item) => {
+        if (typeof item.text === "string" && PERCY_REPLACE_REGEX.test(item.text)) {
+          item.text = item.text.replace(PERCY_REPLACE_REGEX, PERCY_SIMULATE_INSTRUCTION);
+        }
+      });
+    }
+    
+    percyInstruction.content?.push({
+      type: "text" as const,
+      text: PERCY_SIMULATION_DRIVER_INSTRUCTION,
+    });
+
+    return percyInstruction;
+  } catch (error) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: getBootstrapFailedMessage(error, { config }),
+        },
+      ],
+      isError: true,
+    };
+  }
+}
+
+
