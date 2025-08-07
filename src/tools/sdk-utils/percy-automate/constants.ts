@@ -1,4 +1,4 @@
-import { percyAutomateAggressiveInstruction } from "../common/constants.js";
+import { PERCY_SNAPSHOT_INSTRUCTION } from "../common/constants.js";
 export const percyAutomateReviewSnapshotsStep = `
 ---STEP---
 Review the snapshots
@@ -14,7 +14,7 @@ Install Percy Automate dependencies
 
 ---STEP---
 Update your Pytest test script  
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     from percy import percy_screenshot
   - In your test, take snapshots at key points:
@@ -56,7 +56,7 @@ Install Percy Automate dependencies
 
 ---STEP---
 Update your Playwright test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy screenshot helper:
     from percy import percy_screenshot
   - In your test, take snapshots at key points:
@@ -97,7 +97,7 @@ Install Percy Automate dependencies
 
 ---STEP---
 Update your Cypress test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import and initialize Percy in your cypress/support/index.js:
     import '@percy/cypress';
   - In your test, take snapshots at key points:
@@ -280,7 +280,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy library and use the percySnapshot function to take screenshots.
 
 Example:

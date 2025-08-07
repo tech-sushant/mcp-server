@@ -1,10 +1,10 @@
-import { percyAutomateAggressiveInstruction } from "../common/constants.js";
+import { PERCY_SNAPSHOT_INSTRUCTION } from "../common/constants.js";
 
 export const javaSeleniumInstructions = `
 Import the BrowserStack Percy SDK in your test script:
 Add the Percy import to your test file.
 
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
 
 Add screenshot capture method at required points:
 Use the \`PercySDK.screenshot(driver, name)\` method at points in your test script where you want to capture screenshots.
@@ -35,7 +35,7 @@ export const nodejsSeleniumInstructions = `
 Import the BrowserStack Percy SDK in your test script:
 Add the Percy import to your test file.
 
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
 
 ---STEP---
 
@@ -91,7 +91,7 @@ exports.config = {
 };
 \`\`\`
 
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
 
 ---STEP---
 
@@ -125,7 +125,7 @@ export const csharpSeleniumInstructions = `
 Import the BrowserStack Percy SDK in your test script:
 Add the Percy import to your test file.
 
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
 
 Add screenshot capture method at required points:
 Use the \`PercySDK.Screenshot(driver, name)\` method at points in your test script where you want to capture screenshots.

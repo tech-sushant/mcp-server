@@ -6,13 +6,9 @@ import {
   formatInstructionsWithNumbers,
   generateVerificationMessage,
 } from "./formatUtils.js";
-import { RunTestsInstructionResult } from "./types.js";
+import { RunTestsInstructionResult, PercyAutomateNotImplementedType } from "./types.js";
 import { IMPORTANT_SETUP_WARNING } from "./index.js";
 
-/**
- * Utility to check Percy integration support for a given input.
- * Returns { supported: boolean, errorMessage?: string }
- */
 export function checkPercyIntegrationSupport(input: {
   integrationType: string;
   detectedLanguage: string;
@@ -66,8 +62,7 @@ export async function formatToolResult(
   }
 
   const combinedInstructions = steps.map((step) => step.content).join("\n");
-  const { formattedSteps, stepCount } =
-    formatInstructionsWithNumbers(combinedInstructions);
+  const { formattedSteps, stepCount } = formatInstructionsWithNumbers(combinedInstructions);
   const verificationMessage = generateVerificationMessage(stepCount);
 
   const finalContent = [
@@ -82,4 +77,30 @@ export async function formatToolResult(
     requiresPercy,
     missingDependencies,
   };
+}
+
+export function getPercyAutomateNotImplementedMessage(
+  type: PercyAutomateNotImplementedType,
+  input: {
+    detectedLanguage: string;
+    detectedBrowserAutomationFramework: string;
+  },
+  supported: string[],
+): string {
+  if (type === PercyAutomateNotImplementedType.LANGUAGE) {
+    return `Percy Automate does not support the language: ${input.detectedLanguage}. Supported languages are: ${supported.join(", ")}.`;
+  } else {
+    return `Percy Automate does not support ${input.detectedBrowserAutomationFramework} for ${input.detectedLanguage}. Supported frameworks for ${input.detectedLanguage} are: ${supported.join(", ")}.`;
+  }
+}
+
+export function getBootstrapFailedMessage(
+  error: unknown,
+  context: { config: unknown; percyMode?: string; sdkVersion?: string },
+): string {
+  return `Failed to bootstrap project with BrowserStack SDK.
+Error: ${error}
+Percy Mode: ${context.percyMode ?? "automate"}
+SDK Version: ${context.sdkVersion ?? "N/A"}
+Please open an issue on GitHub if the problem persists.`;
 }

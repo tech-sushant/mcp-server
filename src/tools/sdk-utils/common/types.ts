@@ -82,3 +82,8 @@ export interface RunTestsInstructionResult {
   missingDependencies: string[];
   shouldSkipFormatting?: boolean;
 }
+
+export enum PercyAutomateNotImplementedType {
+  LANGUAGE = "language",
+  FRAMEWORK = "framework",
+}

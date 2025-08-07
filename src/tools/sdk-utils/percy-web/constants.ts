@@ -1,4 +1,4 @@
-import { percyAutomateAggressiveInstruction } from "../common/constants.js";
+import { PERCY_SNAPSHOT_INSTRUCTION } from "../common/constants.js";
 export const percyReviewSnapshotsStep = `
 ---STEP---
 Review the snapshots
@@ -13,7 +13,7 @@ Install Percy dependencies
     pip install percy-selenium
 
 Update your Python Selenium script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
 Example:
 \`\`\`python
 from selenium import webdriver
@@ -49,7 +49,7 @@ Install Percy dependencies
     npm install @percy/selenium-webdriver
 ---STEP---
 Update your Node.js Selenium script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     const { percySnapshot } = require('@percy/selenium-js');
   - In your test, take snapshots like this:
@@ -89,7 +89,7 @@ Add Percy dependencies to your project
 
 ---STEP---
 Update your Java Selenium test
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     import io.percy.selenium.Percy;
   - In your test, take snapshots like this:
@@ -132,7 +132,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Ruby Selenium test
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Require the Percy snapshot helper:
     require 'percy'
   - In your test, take snapshots like this:
@@ -168,7 +168,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Capybara or Rails test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - In your test setup file, require percy/capybara:
     require 'percy/capybara'
   - In your test, take snapshots like this:
@@ -210,7 +210,7 @@ Add Percy dependencies to your project
 
 ---STEP---
 Update your C# Selenium test
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
 
   - Import the Percy snapshot helper:
     using PercyIO.Selenium;
@@ -253,7 +253,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Java Playwright test
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy library and use the snapshot method:
     percy.snapshot("snapshot_1");
   - You can also pass options:
@@ -300,7 +300,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Playwright JavaScript test
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     const percySnapshot = require('@percy/playwright');
   - In your test, take snapshots like this:
@@ -338,7 +338,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your WebdriverIO test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     const percySnapshot = require('@percy/selenium-webdriver');
   - In your test, take snapshots like this:
@@ -378,7 +378,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Ember test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     import percySnapshot from '@percy/ember';
   - In your test, take snapshots like this:
@@ -418,7 +418,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Cypress test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper in your cypress/support/e2e.js file:
     import '@percy/cypress';
   - If you’re using TypeScript, include "types": ["cypress", "@percy/cypress"] in your tsconfig.json file.
@@ -466,7 +466,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Puppeteer test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     const percySnapshot = require('@percy/puppeteer');
   - In your test, take snapshots like this:
@@ -515,7 +515,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Nightmare test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     const Nightmare = require('nightmare');
     const percySnapshot = require('@percy/nightmare');
@@ -560,7 +560,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Nightwatch configuration and test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy library and add the path exported by @percy/nightwatch to your Nightwatch configuration’s custom_commands_path property:
     const percy = require('@percy/nightwatch');
     module.exports = {
@@ -618,7 +618,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Protractor test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     import percySnapshot from '@percy/protractor';
   - In your test, take snapshots like this:
@@ -666,7 +666,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your TestCafe test script
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper:
     import percySnapshot from '@percy/testcafe';
   - In your test, take snapshots like this:
@@ -706,7 +706,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Gatsby configuration
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Add the Percy plugin to your gatsby-config.js file:
     module.exports = {
       plugins: [\`gatsby-plugin-percy\`]
@@ -767,7 +767,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Storybook stories
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Add Percy parameters to your stories to customize snapshots:
 \`\`\`js
 MyStory.parameters = {
@@ -827,7 +827,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Playwright Python test
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper and use the snapshot method:
     percy_snapshot(page, name="Your snapshot name")
   - You can also use:
@@ -865,7 +865,7 @@ Install Percy dependencies
 
 ---STEP---
 Update your Playwright .NET test
-${percyAutomateAggressiveInstruction}
+${PERCY_SNAPSHOT_INSTRUCTION}
   - Import the Percy snapshot helper and use the snapshot method:
     Percy.Snapshot(page, "Your snapshot name");
   - You can also pass options:
