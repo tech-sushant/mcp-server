@@ -8,6 +8,7 @@ const packageJson = require("../package.json");
 import logger from "./logger.js";
 import addSDKTools from "./tools/bstack-sdk.js";
 import addPercyTools from "./tools/percy-sdk.js";
+import addSimulatePercyChangeTool from "./tools/simulatePercyChange.js";
 import addBrowserLiveTools from "./tools/live.js";
 import addAccessibilityTools from "./tools/accessibility.js";
 import addTestManagementTools from "./tools/testmanagement.js";
@@ -50,6 +51,7 @@ export class BrowserStackMcpServer {
       addAccessibilityTools,
       addSDKTools,
       addPercyTools,
+      addSimulatePercyChangeTool,
       addAppLiveTools,
       addBrowserLiveTools,
       addTestManagementTools,

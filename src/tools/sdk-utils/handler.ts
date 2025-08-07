@@ -2,7 +2,7 @@ import {
   SetUpPercySchema,
   RunTestsOnBrowserStackSchema,
 } from "./common/schema.js";
-import { BOOTSTRAP_FAILED } from "./common/commonMessages.js";
+import { BOOTSTRAP_FAILED } from "./common/constants.js";
 import { formatToolResult } from "./common/utils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";

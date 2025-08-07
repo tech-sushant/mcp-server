@@ -1,4 +1,4 @@
-import { percyAutomateAggressiveInstruction } from "../common/commonMessages.js";
+import { percyAutomateAggressiveInstruction } from "../common/constants.js";
 export const percyReviewSnapshotsStep = `
 ---STEP---
 Review the snapshots

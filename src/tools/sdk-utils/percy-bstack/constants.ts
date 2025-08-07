@@ -1,4 +1,4 @@
-import { percyAutomateAggressiveInstruction } from "../common/commonMessages.js";
+import { percyAutomateAggressiveInstruction } from "../common/constants.js";
 
 export const javaSeleniumInstructions = `
 Import the BrowserStack Percy SDK in your test script:
