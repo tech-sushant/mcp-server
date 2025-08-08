@@ -175,22 +175,52 @@ async function takeAppScreenshot(args: {
 //Runs AppAutomate tests on BrowserStack by uploading app and test suite, then triggering a test run.
 async function runAppTestsOnBrowserStack(
   args: {
-    appPath: string;
-    testSuitePath: string;
+    appPath?: string;
+    testSuitePath?: string;
+    browserstack_app_url?: string;
+    browserstack_test_suite_url?: string;
     devices: string[];
     project: string;
     detectedAutomationFramework: string;
   },
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
+  // Validate that either paths or URLs are provided for both app and test suite
+  if (!args.browserstack_app_url && !args.appPath) {
+    throw new Error(
+      "appPath is required when browserstack_app_url is not provided",
+    );
+  }
+  if (!args.browserstack_test_suite_url && !args.testSuitePath) {
+    throw new Error(
+      "testSuitePath is required when browserstack_test_suite_url is not provided",
+    );
+  }
+
   switch (args.detectedAutomationFramework) {
     case AppTestPlatform.ESPRESSO: {
       try {
-        const app_url = await uploadEspressoApp(args.appPath, config);
-        const test_suite_url = await uploadEspressoTestSuite(
-          args.testSuitePath,
-          config,
-        );
+        let app_url: string;
+        if (args.browserstack_app_url) {
+          app_url = args.browserstack_app_url;
+          logger.info(`Using provided BrowserStack app URL: ${app_url}`);
+        } else {
+          app_url = await uploadEspressoApp(args.appPath!, config);
+          logger.info(`App uploaded. URL: ${app_url}`);
+        }
+
+        let test_suite_url: string;
+        if (args.browserstack_test_suite_url) {
+          test_suite_url = args.browserstack_test_suite_url;
+          logger.info(`Using provided BrowserStack test suite URL: ${test_suite_url}`);
+        } else {
+          test_suite_url = await uploadEspressoTestSuite(
+            args.testSuitePath!,
+            config,
+          );
+          logger.info(`Test suite uploaded. URL: ${test_suite_url}`);
+        }
+
         const build_id = await triggerEspressoBuild(
           app_url,
           test_suite_url,
@@ -213,11 +243,27 @@ async function runAppTestsOnBrowserStack(
     }
     case AppTestPlatform.XCUITEST: {
       try {
-        const app_url = await uploadXcuiApp(args.appPath, config);
-        const test_suite_url = await uploadXcuiTestSuite(
-          args.testSuitePath,
-          config,
-        );
+        let app_url: string;
+        if (args.browserstack_app_url) {
+          app_url = args.browserstack_app_url;
+          logger.info(`Using provided BrowserStack app URL: ${app_url}`);
+        } else {
+          app_url = await uploadXcuiApp(args.appPath!, config);
+          logger.info(`App uploaded. URL: ${app_url}`);
+        }
+
+        let test_suite_url: string;
+        if (args.browserstack_test_suite_url) {
+          test_suite_url = args.browserstack_test_suite_url;
+          logger.info(`Using provided BrowserStack test suite URL: ${test_suite_url}`);
+        } else {
+          test_suite_url = await uploadXcuiTestSuite(
+            args.testSuitePath!,
+            config,
+          );
+          logger.info(`Test suite uploaded. URL: ${test_suite_url}`);
+        }
+
         const build_id = await triggerXcuiBuild(
           app_url,
           test_suite_url,
@@ -310,6 +356,7 @@ export default function addAppAutomationTools(
     {
       appPath: z
         .string()
+        .optional()
         .describe(
           "Path to your application file:\n" +
             "If in development IDE directory:\n" +
@@ -322,6 +369,7 @@ export default function addAppAutomationTools(
         ),
       testSuitePath: z
         .string()
+        .optional()
         .describe(
           "Path to your test suite file:\n" +
             "If in development IDE directory:\n" +
