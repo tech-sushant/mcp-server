@@ -193,7 +193,11 @@ export async function setUpSimulatePercyChangeHandler(
 ): Promise<CallToolResult> {
   try {
     const percyInstruction = await setUpPercyHandler(rawInput, config);
-
+    
+    if (percyInstruction.isError) {
+      return percyInstruction;
+    }
+    
     if (Array.isArray(percyInstruction.content)) {
       percyInstruction.content.forEach((item) => {
         if (typeof item.text === "string" && PERCY_REPLACE_REGEX.test(item.text)) {

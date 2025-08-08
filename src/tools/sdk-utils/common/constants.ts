@@ -43,7 +43,7 @@ MANDATORY: Step-by-Step Percy Visual Change Simulation
 You MUST follow these steps with NO EXCEPTIONS:
 
 STEP 1: At this case we have added Percy snapshot commands to the test files at the appropriate locations (e.g., after navigation, UI change, or significant state). 
-- Use ONLY existing snapshot names (e.g., "Before Adding to Cart").
+- Use ONLY existing snapshot names.
 - Do NOT add any popup injection or visual changes yet.
 - Do NOT run any Percy builds at this stage.
 
