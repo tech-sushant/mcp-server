@@ -8,7 +8,7 @@ export const RUN_ON_BROWSERSTACK_DESCRIPTION =
   "Set up and run automated web-based tests on BrowserStack using the BrowserStack SDK. Use this tool for functional or integration test setup on BrowserStack only. For any visual testing or Percy integration, use the dedicated Percy setup tool. Example prompts: run this test on browserstack; set up this project for browserstack.";
 
 export const SIMULATE_PERCY_CHANGE_DESCRIPTION =
-  "Simulate a Percy visual change by guiding the user to inject a visible UI change (such as a large popup) into the app, re-run Percy, and confirm that the visual difference is detected. This tool analyzes the project, provides step-by-step instructions for the simulation, and leverages existing Percy setup logic. No direct code injection is performed; this is an instructional tool for LLM-driven workflows.";
+  "This tool helps new users simulate a Percy visual change by guiding them to make a visible UI modification, rerun Percy, and verify that the change is detected.";
 
 export const PERCY_REPLACE_REGEX =
 /MANDATORY: Aggressive, Exhaustive Percy Snapshot Integration[\s\S]*?Iteratively update every relevant test file in the directory and all subdirectories, adding Percy integration to each, one file at a time, until all are complete\./;
@@ -29,6 +29,8 @@ Iteratively update every relevant test file in the directory and all subdirector
 export const PERCY_SIMULATE_INSTRUCTION = `
 MANDATORY: Aggressive, Accurate Percy Snapshots Integration
 
+Prerequisite: Before making any code changes in the user's repo, switch to a branch named temp-percy (run git init first if the repo is not yet initialized).
+
 You MUST follow these steps with NO EXCEPTIONS:
 1. Identify 4-5 key test files in the project that are critical for visual testing.
 2. For EACH identified test file, analyze the code to find EVERY location where a Percy snapshot should be called (e.g., after each navigation, UI change, or significant state in tests).
@@ -45,17 +47,14 @@ STEP 1: At this case we have added Percy snapshot commands to the test files at 
 - Do NOT add any popup injection or visual changes yet.
 - Do NOT run any Percy builds at this stage.
 
-STEP 2: Run a baseline Percy build to capture the original snapshots.
-- Ensure all snapshots use the existing names.
-- Do NOT add new snapshot names.
+STEP 2: Run ONE comprehensive baseline Percy build that executes ALL tests containing Percy snapshots in a SINGLE build. This creates one baseline build with all snapshots for comparison. Use a command like: npx percy exec -- python -m pytest tests/ -k 'test_name1 or test_name2 or test_name3' -v to run multiple specific tests in one build."
 
-STEP 3: Modify your test to inject a visible UI change (such as a popup) IMMEDIATELY BEFORE an EXISTING snapshot command (e.g., before percy_snapshot(self.driver, "Before Adding to Cart")).
+STEP 3: Modify your test to inject a visible UI change (such as a popup) IMMEDIATELY BEFORE an EXISTING snapshot command (e.g., before percy_snapshot(self.driver, "screenshot name")).
 - Do NOT add a new snapshot name for the popup.
 - The popup must appear in an existing snapshot, not a new one.
+- Add this popup code in some test files before the percy_snapshot command you've added, to display the visual changes.
 
-Example popup code (Python/Selenium):
-
-\`\`\`python
+\`\`\`Javascript
 popup_script = \`
 var popup = document.createElement('div');
 popup.id = 'percy-test-popup';
@@ -75,6 +74,7 @@ percy_snapshot(self.driver, "Before Adding to Cart")  # (Do NOT change the snaps
 STEP 4: Run a second Percy build.
 - The snapshot names must remain the same as in the baseline.
 - The visual change should now appear in the same snapshot as before.
+- Use the same build command you ran for the baseline.
 
 STEP 5: Compare the two Percy builds to see the detected visual difference.
 
@@ -87,5 +87,8 @@ CONSTRAINTS:
 VALIDATION CHECKPOINTS (before proceeding to the next step):
 - Are you adding only snapshot commands (not running builds)?
 - Are you reusing existing snapshot names (not creating new ones)?
-- Have you established the baseline first (before adding visual changes)?
+- Have you established the baseline first (before adding visual changes)
+
+CRITICAL: 
+Do NOT run tests separately or create multiple builds during baseline establishment. The goal is to have exactly TWO builds total: (1) baseline build with all original snapshots, (2) modified build with the same tests but visual changes injected.
 `;
