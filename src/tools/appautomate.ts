@@ -360,7 +360,6 @@ export default function addAppAutomationTools(
     {
       appPath: z
         .string()
-        .optional()
         .describe(
           "Path to your application file:\n" +
             "If in development IDE directory:\n" +
@@ -373,7 +372,6 @@ export default function addAppAutomationTools(
         ),
       testSuitePath: z
         .string()
-        .optional()
         .describe(
           "Path to your test suite file:\n" +
             "If in development IDE directory:\n" +
