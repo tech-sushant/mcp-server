@@ -14,8 +14,9 @@ export async function startAppLiveSession(
   args: {
     desiredPlatform: string;
     desiredPlatformVersion: string;
-    appPath: string;
+    appPath?: string;
     desiredPhone: string;
+    browserstack_app_url?: string;
   },
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
@@ -23,31 +24,34 @@ export async function startAppLiveSession(
     throw new Error("You must provide a desiredPlatform.");
   }
 
-  if (!args.appPath) {
-    throw new Error("You must provide a appPath.");
+  if (!args.appPath && !args.browserstack_app_url) {
+    throw new Error("You must provide either appPath or browserstack_app_url.");
   }
 
   if (!args.desiredPhone) {
     throw new Error("You must provide a desiredPhone.");
   }
 
-  if (args.desiredPlatform === "android" && !args.appPath.endsWith(".apk")) {
-    throw new Error("You must provide a valid Android app path.");
-  }
-
-  if (args.desiredPlatform === "ios" && !args.appPath.endsWith(".ipa")) {
-    throw new Error("You must provide a valid iOS app path.");
-  }
-
-  // check if the app path exists && is readable
-  try {
-    if (!fs.existsSync(args.appPath)) {
-      throw new Error("The app path does not exist.");
+  // Only validate app path if it's provided (not using browserstack_app_url)
+  if (args.appPath) {
+    if (args.desiredPlatform === "android" && !args.appPath.endsWith(".apk")) {
+      throw new Error("You must provide a valid Android app path.");
     }
-    fs.accessSync(args.appPath, fs.constants.R_OK);
-  } catch (error) {
-    logger.error("The app path does not exist or is not readable: %s", error);
-    throw new Error("The app path does not exist or is not readable.");
+
+    if (args.desiredPlatform === "ios" && !args.appPath.endsWith(".ipa")) {
+      throw new Error("You must provide a valid iOS app path.");
+    }
+
+    // check if the app path exists && is readable
+    try {
+      if (!fs.existsSync(args.appPath)) {
+        throw new Error("The app path does not exist.");
+      }
+      fs.accessSync(args.appPath, fs.constants.R_OK);
+    } catch (error) {
+      logger.error("The app path does not exist or is not readable: %s", error);
+      throw new Error("The app path does not exist or is not readable.");
+    }
   }
 
   const launchUrl = await startSession(
@@ -56,6 +60,7 @@ export async function startAppLiveSession(
       desiredPlatform: args.desiredPlatform as "android" | "ios",
       desiredPhone: args.desiredPhone,
       desiredPlatformVersion: args.desiredPlatformVersion,
+      browserstack_app_url: args.browserstack_app_url,
     },
     { config },
   );

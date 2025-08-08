@@ -90,11 +90,17 @@ export function resolveVersion(
 export function validateArgs(args: {
   desiredPlatform: string;
   desiredPlatformVersion: string;
-  appPath: string;
+  appPath?: string;
   desiredPhone: string;
+  browserstack_app_url?: string;
 }): void {
-  const { desiredPlatform, desiredPlatformVersion, appPath, desiredPhone } =
-    args;
+  const {
+    desiredPlatform,
+    desiredPlatformVersion,
+    appPath,
+    desiredPhone,
+    browserstack_app_url,
+  } = args;
 
   if (!desiredPlatform || !desiredPhone) {
     throw new Error(
@@ -108,16 +114,19 @@ export function validateArgs(args: {
     );
   }
 
-  if (!appPath) {
-    throw new Error("You must provide an appPath.");
+  if (!appPath && !browserstack_app_url) {
+    throw new Error("Either appPath or browserstack_app_url must be provided");
   }
 
-  if (desiredPlatform === "android" && !appPath.endsWith(".apk")) {
-    throw new Error("You must provide a valid Android app path (.apk).");
-  }
+  // Only validate app path format if appPath is provided
+  if (appPath) {
+    if (desiredPlatform === "android" && !appPath.endsWith(".apk")) {
+      throw new Error("You must provide a valid Android app path (.apk).");
+    }
 
-  if (desiredPlatform === "ios" && !appPath.endsWith(".ipa")) {
-    throw new Error("You must provide a valid iOS app path (.ipa).");
+    if (desiredPlatform === "ios" && !appPath.endsWith(".ipa")) {
+      throw new Error("You must provide a valid iOS app path (.ipa).");
+    }
   }
 }
 

@@ -53,14 +53,21 @@ enum Platform {
 async function takeAppScreenshot(args: {
   desiredPlatform: Platform;
   desiredPlatformVersion: string;
-  appPath: string;
+  appPath?: string;
   desiredPhone: string;
+  browserstack_app_url?: string;
   config: BrowserStackConfig;
 }): Promise<CallToolResult> {
   let driver;
   try {
     validateArgs(args);
-    const { desiredPlatform, desiredPhone, appPath, config } = args;
+    const {
+      desiredPlatform,
+      desiredPhone,
+      appPath,
+      browserstack_app_url,
+      config,
+    } = args;
     let { desiredPlatformVersion } = args;
 
     const platforms = (
@@ -98,8 +105,19 @@ async function takeAppScreenshot(args: {
     const authString = getBrowserStackAuth(config);
     const [username, password] = authString.split(":");
 
-    const app_url = await uploadApp(appPath, username, password);
-    logger.info(`App uploaded. URL: ${app_url}`);
+    let app_url: string;
+    if (browserstack_app_url) {
+      app_url = browserstack_app_url;
+      logger.info(`Using provided BrowserStack app URL: ${app_url}`);
+    } else {
+      if (!appPath) {
+        throw new Error(
+          "appPath is required when browserstack_app_url is not provided",
+        );
+      }
+      app_url = await uploadApp(appPath, username, password);
+      logger.info(`App uploaded. URL: ${app_url}`);
+    }
 
     const capabilities = {
       platformName: desiredPlatform,
