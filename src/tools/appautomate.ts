@@ -212,7 +212,9 @@ async function runAppTestsOnBrowserStack(
         let test_suite_url: string;
         if (args.browserstack_test_suite_url) {
           test_suite_url = args.browserstack_test_suite_url;
-          logger.info(`Using provided BrowserStack test suite URL: ${test_suite_url}`);
+          logger.info(
+            `Using provided BrowserStack test suite URL: ${test_suite_url}`,
+          );
         } else {
           test_suite_url = await uploadEspressoTestSuite(
             args.testSuitePath!,
@@ -255,7 +257,9 @@ async function runAppTestsOnBrowserStack(
         let test_suite_url: string;
         if (args.browserstack_test_suite_url) {
           test_suite_url = args.browserstack_test_suite_url;
-          logger.info(`Using provided BrowserStack test suite URL: ${test_suite_url}`);
+          logger.info(
+            `Using provided BrowserStack test suite URL: ${test_suite_url}`,
+          );
         } else {
           test_suite_url = await uploadXcuiTestSuite(
             args.testSuitePath!,
