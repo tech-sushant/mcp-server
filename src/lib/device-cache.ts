@@ -2,6 +2,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { apiClient } from "./apiClient.js";
+import config from "../config.js";
 
 const CACHE_DIR = path.join(os.homedir(), ".browserstack", "combined_cache");
 const CACHE_FILE = path.join(CACHE_DIR, "data.json");
@@ -69,6 +70,9 @@ export async function getDevicesAndBrowsers(
 // Rate limiter for started event (3H)
 export function shouldSendStartedEvent(): boolean {
   try {
+    if(config && config.REMOTE_MCP){
+      return false;
+    }
     if (!fs.existsSync(CACHE_DIR)) {
       fs.mkdirSync(CACHE_DIR, { recursive: true });
     }
