@@ -178,7 +178,7 @@ async function runAppTestsOnBrowserStack(
     appPath?: string;
     testSuitePath?: string;
     browserstackAppUrl?: string;
-    browserstack_test_suite_url?: string;
+    browserstackTestSuiteUrl?: string;
     devices: string[];
     project: string;
     detectedAutomationFramework: string;
@@ -191,9 +191,9 @@ async function runAppTestsOnBrowserStack(
       "appPath is required when browserstackAppUrl is not provided",
     );
   }
-  if (!args.browserstack_test_suite_url && !args.testSuitePath) {
+  if (!args.browserstackTestSuiteUrl && !args.testSuitePath) {
     throw new Error(
-      "testSuitePath is required when browserstack_test_suite_url is not provided",
+      "testSuitePath is required when browserstackTestSuiteUrl is not provided",
     );
   }
 
@@ -210,8 +210,8 @@ async function runAppTestsOnBrowserStack(
         }
 
         let test_suite_url: string;
-        if (args.browserstack_test_suite_url) {
-          test_suite_url = args.browserstack_test_suite_url;
+        if (args.browserstackTestSuiteUrl) {
+          test_suite_url = args.browserstackTestSuiteUrl;
           logger.info(
             `Using provided BrowserStack test suite URL: ${test_suite_url}`,
           );
@@ -255,8 +255,8 @@ async function runAppTestsOnBrowserStack(
         }
 
         let test_suite_url: string;
-        if (args.browserstack_test_suite_url) {
-          test_suite_url = args.browserstack_test_suite_url;
+        if (args.browserstackTestSuiteUrl) {
+          test_suite_url = args.browserstackTestSuiteUrl;
           logger.info(
             `Using provided BrowserStack test suite URL: ${test_suite_url}`,
           );
