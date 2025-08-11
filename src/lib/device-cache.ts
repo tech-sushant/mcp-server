@@ -70,7 +70,7 @@ export async function getDevicesAndBrowsers(
 // Rate limiter for started event (3H)
 export function shouldSendStartedEvent(): boolean {
   try {
-    if(config && config.REMOTE_MCP){
+    if (config && config.REMOTE_MCP) {
       return false;
     }
     if (!fs.existsSync(CACHE_DIR)) {
@@ -88,7 +88,7 @@ export function shouldSendStartedEvent(): boolean {
     cache.lastStartedEvent = Date.now();
     fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), "utf8");
     return true;
-  } catch (e) {
+  } catch {
     return true;
   }
 }
