@@ -66,7 +66,7 @@ describe('appautomate utils', () => {
 
     it('should fail if app path is not provided', () => {
       const args = { ...validAndroidArgs, appPath: '' };
-      expect(() => validateArgs(args)).toThrow('Either appPath or browserstack_app_url must be provided');
+      expect(() => validateArgs(args)).toThrow('Either appPath or browserstackAppUrl must be provided');
     });
 
     it('should fail if phone is not provided', () => {

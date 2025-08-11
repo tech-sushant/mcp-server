@@ -89,7 +89,7 @@ describe('startAppLiveSession', () => {
 
   it('should fail if app path is not provided', async () => {
     const args = { ...validAndroidArgs, appPath: '' };
-    await expect(startAppLiveSession(args, mockConfig)).rejects.toThrow('You must provide either appPath or browserstack_app_url.');
+    await expect(startAppLiveSession(args, mockConfig)).rejects.toThrow('You must provide either appPath or browserstackAppUrl.');
   });
 
   it('should fail if phone is not provided', async () => {

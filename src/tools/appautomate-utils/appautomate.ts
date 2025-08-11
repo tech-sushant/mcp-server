@@ -92,14 +92,14 @@ export function validateArgs(args: {
   desiredPlatformVersion: string;
   appPath?: string;
   desiredPhone: string;
-  browserstack_app_url?: string;
+  browserstackAppUrl?: string;
 }): void {
   const {
     desiredPlatform,
     desiredPlatformVersion,
     appPath,
     desiredPhone,
-    browserstack_app_url,
+    browserstackAppUrl,
   } = args;
 
   if (!desiredPlatform || !desiredPhone) {
@@ -114,8 +114,8 @@ export function validateArgs(args: {
     );
   }
 
-  if (!appPath && !browserstack_app_url) {
-    throw new Error("Either appPath or browserstack_app_url must be provided");
+  if (!appPath && !browserstackAppUrl) {
+    throw new Error("Either appPath or browserstackAppUrl must be provided");
   }
 
   // Only validate app path format if appPath is provided

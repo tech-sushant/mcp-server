@@ -18,7 +18,7 @@ interface StartSessionArgs {
   desiredPlatform: "android" | "ios";
   desiredPhone: string;
   desiredPlatformVersion: string;
-  browserstack_app_url?: string;
+  browserstackAppUrl?: string;
 }
 
 interface StartSessionOptions {
@@ -37,7 +37,7 @@ export async function startSession(
     desiredPlatform,
     desiredPhone,
     desiredPlatformVersion,
-    browserstack_app_url,
+    browserstackAppUrl,
   } = args;
   const { config } = options;
 
@@ -79,13 +79,13 @@ export async function startSession(
 
   // 6) Upload app or use provided URL
   let app_url: string;
-  if (browserstack_app_url) {
-    app_url = browserstack_app_url;
+  if (browserstackAppUrl) {
+    app_url = browserstackAppUrl;
     logger.info(`Using provided BrowserStack app URL: ${app_url}`);
   } else {
     if (!appPath) {
       throw new Error(
-        "appPath is required when browserstack_app_url is not provided",
+        "appPath is required when browserstackAppUrl is not provided",
       );
     }
     const authString = getBrowserStackAuth(config);

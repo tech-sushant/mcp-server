@@ -55,7 +55,7 @@ async function takeAppScreenshot(args: {
   desiredPlatformVersion: string;
   appPath?: string;
   desiredPhone: string;
-  browserstack_app_url?: string;
+  browserstackAppUrl?: string;
   config: BrowserStackConfig;
 }): Promise<CallToolResult> {
   let driver;
@@ -65,7 +65,7 @@ async function takeAppScreenshot(args: {
       desiredPlatform,
       desiredPhone,
       appPath,
-      browserstack_app_url,
+      browserstackAppUrl,
       config,
     } = args;
     let { desiredPlatformVersion } = args;
@@ -106,13 +106,13 @@ async function takeAppScreenshot(args: {
     const [username, password] = authString.split(":");
 
     let app_url: string;
-    if (browserstack_app_url) {
-      app_url = browserstack_app_url;
+    if (browserstackAppUrl) {
+      app_url = browserstackAppUrl;
       logger.info(`Using provided BrowserStack app URL: ${app_url}`);
     } else {
       if (!appPath) {
         throw new Error(
-          "appPath is required when browserstack_app_url is not provided",
+          "appPath is required when browserstackAppUrl is not provided",
         );
       }
       app_url = await uploadApp(appPath, username, password);
@@ -177,7 +177,7 @@ async function runAppTestsOnBrowserStack(
   args: {
     appPath?: string;
     testSuitePath?: string;
-    browserstack_app_url?: string;
+    browserstackAppUrl?: string;
     browserstack_test_suite_url?: string;
     devices: string[];
     project: string;
@@ -186,9 +186,9 @@ async function runAppTestsOnBrowserStack(
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   // Validate that either paths or URLs are provided for both app and test suite
-  if (!args.browserstack_app_url && !args.appPath) {
+  if (!args.browserstackAppUrl && !args.appPath) {
     throw new Error(
-      "appPath is required when browserstack_app_url is not provided",
+      "appPath is required when browserstackAppUrl is not provided",
     );
   }
   if (!args.browserstack_test_suite_url && !args.testSuitePath) {
@@ -201,8 +201,8 @@ async function runAppTestsOnBrowserStack(
     case AppTestPlatform.ESPRESSO: {
       try {
         let app_url: string;
-        if (args.browserstack_app_url) {
-          app_url = args.browserstack_app_url;
+        if (args.browserstackAppUrl) {
+          app_url = args.browserstackAppUrl;
           logger.info(`Using provided BrowserStack app URL: ${app_url}`);
         } else {
           app_url = await uploadEspressoApp(args.appPath!, config);
@@ -246,8 +246,8 @@ async function runAppTestsOnBrowserStack(
     case AppTestPlatform.XCUITEST: {
       try {
         let app_url: string;
-        if (args.browserstack_app_url) {
-          app_url = args.browserstack_app_url;
+        if (args.browserstackAppUrl) {
+          app_url = args.browserstackAppUrl;
           logger.info(`Using provided BrowserStack app URL: ${app_url}`);
         } else {
           app_url = await uploadXcuiApp(args.appPath!, config);

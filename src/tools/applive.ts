@@ -16,7 +16,7 @@ export async function startAppLiveSession(
     desiredPlatformVersion: string;
     appPath?: string;
     desiredPhone: string;
-    browserstack_app_url?: string;
+    browserstackAppUrl?: string;
   },
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
@@ -24,15 +24,15 @@ export async function startAppLiveSession(
     throw new Error("You must provide a desiredPlatform.");
   }
 
-  if (!args.appPath && !args.browserstack_app_url) {
-    throw new Error("You must provide either appPath or browserstack_app_url.");
+  if (!args.appPath && !args.browserstackAppUrl) {
+    throw new Error("You must provide either appPath or browserstackAppUrl.");
   }
 
   if (!args.desiredPhone) {
     throw new Error("You must provide a desiredPhone.");
   }
 
-  // Only validate app path if it's provided (not using browserstack_app_url)
+  // Only validate app path if it's provided (not using browserstackAppUrl)
   if (args.appPath) {
     if (args.desiredPlatform === "android" && !args.appPath.endsWith(".apk")) {
       throw new Error("You must provide a valid Android app path.");
@@ -60,7 +60,7 @@ export async function startAppLiveSession(
       desiredPlatform: args.desiredPlatform as "android" | "ios",
       desiredPhone: args.desiredPhone,
       desiredPlatformVersion: args.desiredPlatformVersion,
-      browserstack_app_url: args.browserstack_app_url,
+      browserstackAppUrl: args.browserstackAppUrl,
     },
     { config },
   );
