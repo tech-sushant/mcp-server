@@ -177,7 +177,6 @@ Run Percy Automate with your tests
 ${percyAutomateReviewSnapshotsStep}
 `;
 
-
 export const jestPercyAutomateInstructions = `
 Install or upgrade the BrowserStack SDK:
   - Install the SDK:

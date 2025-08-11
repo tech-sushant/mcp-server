@@ -15,7 +15,7 @@ export function registerSimulatePercyChangeTool(
     SetUpPercyParamsShape,
     async (args) => {
       return setUpSimulatePercyChangeHandler(args, config);
-    }
+    },
   );
   return tools;
 }

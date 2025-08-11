@@ -1,6 +1,6 @@
-export const IMPORTANT_SETUP_WARNING = 
-"IMPORTANT: DO NOT SKIP ANY STEP. All the setup steps described below MUST be executed regardless of any existing configuration or setup. This ensures proper BrowserStack SDK setup."
-  
+export const IMPORTANT_SETUP_WARNING =
+  "IMPORTANT: DO NOT SKIP ANY STEP. All the setup steps described below MUST be executed regardless of any existing configuration or setup. This ensures proper BrowserStack SDK setup.";
+
 export const SETUP_PERCY_DESCRIPTION =
   "Set up Percy visual testing for your project. This supports both Percy Web Standalone and Percy Automate.";
 
@@ -11,7 +11,7 @@ export const SIMULATE_PERCY_CHANGE_DESCRIPTION =
   "This tool helps new users simulate a Percy visual change by guiding them to make a visible UI modification, rerun Percy, and verify that the change is detected.";
 
 export const PERCY_REPLACE_REGEX =
-/MANDATORY: Aggressive, Exhaustive Percy Snapshot Integration[\s\S]*?Iteratively update every relevant test file in the directory and all subdirectories, adding Percy integration to each, one file at a time, until all are complete\./;
+  /MANDATORY: Aggressive, Exhaustive Percy Snapshot Integration[\s\S]*?Iteratively update every relevant test file in the directory and all subdirectories, adding Percy integration to each, one file at a time, until all are complete\./;
 
 export const PERCY_SNAPSHOT_INSTRUCTION = `
 MANDATORY: Aggressive, Exhaustive Percy Snapshot Integration

@@ -5,7 +5,6 @@ export enum PercyIntegrationTypeEnum {
 
 export enum SDKSupportedLanguageEnum {
   nodejs = "nodejs",
-  javascript = "javascript",
   python = "python",
   java = "java",
   csharp = "csharp",
@@ -43,8 +42,13 @@ export enum SDKSupportedTestingFrameworkEnum {
   reqnroll = "reqnroll",
   rspec = "rspec",
 }
+
+export const SDKSupportedLanguages = Object.values(SDKSupportedLanguageEnum);
 export type SDKSupportedTestingFramework =
   keyof typeof SDKSupportedTestingFrameworkEnum;
+export const SDKSupportedTestingFrameworks = Object.values(
+  SDKSupportedTestingFrameworkEnum,
+);
 
 export type ConfigMapping = Partial<
   Record<

@@ -6,7 +6,10 @@ import {
   formatInstructionsWithNumbers,
   generateVerificationMessage,
 } from "./formatUtils.js";
-import { RunTestsInstructionResult, PercyAutomateNotImplementedType } from "./types.js";
+import {
+  RunTestsInstructionResult,
+  PercyAutomateNotImplementedType,
+} from "./types.js";
 import { IMPORTANT_SETUP_WARNING } from "./index.js";
 
 export function checkPercyIntegrationSupport(input: {
@@ -62,7 +65,8 @@ export async function formatToolResult(
   }
 
   const combinedInstructions = steps.map((step) => step.content).join("\n");
-  const { formattedSteps, stepCount } = formatInstructionsWithNumbers(combinedInstructions);
+  const { formattedSteps, stepCount } =
+    formatInstructionsWithNumbers(combinedInstructions);
   const verificationMessage = generateVerificationMessage(stepCount);
 
   const finalContent = [
