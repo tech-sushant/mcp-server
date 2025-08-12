@@ -25,10 +25,13 @@
       <img src="assets/thumbnail.webp">
     </a>
   </div>
+
   
 Manage test cases, execute manual or automated tests, debug issues, and even fix code—directly within tools like Cursor, Claude, or any MCP-enabled client, using plain English.
 #### Test from anywhere:
 Easily connect the BrowserStack Test Platform to your favourite AI tools, such as IDEs, LLMs, or agentic workflows.
+#### Test with natural language:
+Manage, execute, debug tests, and even fix code using plain English prompts.
 #### Reduced context switching:
 Stay in flow—keep all project context in one place and trigger actions directly from your IDE or LLM.
 
@@ -115,7 +118,7 @@ Create and manage test cases, create test plans and trigger test runs using natu
 "update test results as passed for Login tests test run from My Demo Project"
 ```
 
-### 🧪 Access BrowserStack AI agnets 
+### 🧪 Access BrowserStack AI agents 
 
 Generate test cases from PRDs, convert manual tests to low-code automation, and auto-heal flaky scripts powered by BrowserStack’s AI agents, seamlessly integrated into your workflow.  Below are few example prompts to access Browserstack AI agents
 

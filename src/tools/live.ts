@@ -1,4 +1,3 @@
-// File: src/tools/live.ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import logger from "../logger.js";
@@ -6,6 +5,7 @@ import { startBrowserSession } from "./live-utils/start-session.js";
 import { PlatformType } from "./live-utils/types.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { BrowserStackConfig } from "../lib/types.js";
+import globalConfig from "../config.js";
 
 // Define the schema shape
 const LiveArgsShape = {
@@ -97,13 +97,24 @@ async function runBrowserSession(rawArgs: any, config: BrowserStackConfig) {
       ? await launchDesktopSession(args, config)
       : await launchMobileSession(args, config);
 
-  return {
-    content: [
+  let response = [
+    {
+      type: "text" as const,
+      text: `✅ Session started. If it didn't open automatically, visit:\n${launchUrl}`,
+    },
+  ];
+
+  if (globalConfig.REMOTE_MCP) {
+    response = [
       {
         type: "text" as const,
-        text: `✅ Session started. If it didn't open automatically, visit:\n${launchUrl}`,
+        text: `✅ To start the session. Click on ${launchUrl}`,
       },
-    ],
+    ];
+  }
+
+  return {
+    content: response,
   };
 }
 

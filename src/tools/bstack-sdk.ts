@@ -9,6 +9,7 @@ export function registerRunBrowserStackTestsTool(
   config: BrowserStackConfig,
 ) {
   const tools: Record<string, any> = {};
+
   tools.setupBrowserStackAutomateTests = server.tool(
     "setupBrowserStackAutomateTests",
     RUN_ON_BROWSERSTACK_DESCRIPTION,
