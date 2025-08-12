@@ -40,7 +40,7 @@ export async function bootstrapAppProjectWithSDK({
   detectedTestingFramework: AppSDKSupportedTestingFramework;
   detectedLanguage: AppSDKSupportedLanguage;
   desiredPlatforms: AppSDKSupportedPlatform[];
-  appPath?: string;
+  appPath: string;
   config: BrowserStackConfig;
 }): Promise<CallToolResult> {
   // Get credentials from config
@@ -53,7 +53,6 @@ export async function bootstrapAppProjectWithSDK({
     detectedTestingFramework,
     username,
     accessKey,
-    appPath,
   );
 
   // Generate browserstack.yml instructions
@@ -61,7 +60,7 @@ export async function bootstrapAppProjectWithSDK({
     desiredPlatforms,
     username,
     accessKey,
-    appPath || "bs://sample.app",
+    appPath,
   );
 
   // Get project configuration instructions
@@ -100,6 +99,7 @@ function formatFinalAppInstructions(
   const fullInstructions = `⚠️ IMPORTANT: DO NOT SKIP ANY STEP
 All the setup steps described in this file MUST be executed regardless of any existing configuration or setup.
 This ensures proper BrowserStack App Automate SDK setup.
+Each step is compulsory and sequence needs to be maintained.
 
 ${formatAppInstructionsWithNumbers(combinedInstructions)}`;
 
@@ -150,9 +150,8 @@ export default function addAppSDKTools(
 
       appPath: z
         .string()
-        .optional()
         .describe(
-          "Path to the mobile app file (.apk for Android, .ipa for iOS). Can be a local file path or a BrowserStack app URL (bs://). If not provided, will use sample app.",
+          "Path to the mobile app file (.apk for Android, .ipa for iOS). Can be a local file path or a BrowserStack app URL (bs://). This parameter is required.",
         ),
     },
 

@@ -34,7 +34,7 @@ export function generateAppBrowserStackYMLInstructions(
         .map(
           (device) => `  - platformName: ${platform}
     deviceName: ${device.deviceName}
-    platformVersion: ${device.platformVersion}`,
+    platformVersion: "${device.platformVersion}"`,
         )
         .join("\n");
     })

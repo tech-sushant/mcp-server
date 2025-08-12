@@ -3,7 +3,10 @@ import { AppSDKSupportedLanguage } from "./types.js";
 
 // Framework mapping for Java Maven archetype generation for App Automate
 const JAVA_APP_FRAMEWORK_MAP: Record<string, string> = {
-  testng: "testng-archetype-integrate",
+  testng: "browserstack-sdk-archetype-integrate",
+  "cucumber-testng": "browserstack-sdk-archetype-integrate",
+  "cucumber-junit4": "browserstack-sdk-archetype-integrate",
+  "cucumber-junit5": "browserstack-sdk-archetype-integrate",
 };
 
 // Common Gradle setup instructions for App Automate (platform-independent)
@@ -24,25 +27,22 @@ export function getAppSDKPrefixCommand(
   framework: string,
   username: string,
   accessKey: string,
-  appPath?: string,
 ): string {
   switch (language) {
     case "java": {
       const mavenFramework = getJavaAppFrameworkForMaven(framework);
       const isWindows = process.platform === "win32";
 
-      const appPathParam = appPath
-        ? `-DBROWSERSTACK_APP="${appPath}"`
-        : `-DBROWSERSTACK_APP="bs://sample.app"`;
+      const frameworkParam = `-DBROWSERSTACK_FRAMEWORK="${framework}"`;
 
       const mavenCommand = isWindows
-        ? `mvn archetype:generate -B -DarchetypeGroupId="com.browserstack" -DarchetypeArtifactId="${mavenFramework}" -DarchetypeVersion="1.4" -DgroupId="com.browserstack" -DartifactId="${mavenFramework}" -Dversion="1.4" -DBROWSERSTACK_USERNAME="${username}" -DBROWSERSTACK_ACCESS_KEY="${accessKey}" ${appPathParam}`
+        ? `mvn archetype:generate -B -DarchetypeGroupId="com.browserstack" -DarchetypeArtifactId="${mavenFramework}" -DarchetypeVersion="1.0" -DgroupId="com.browserstack" -DartifactId="${mavenFramework}" -Dversion="1.0" -DBROWSERSTACK_USERNAME="${username}" -DBROWSERSTACK_ACCESS_KEY="${accessKey}" ${frameworkParam}`
         : `mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
--DarchetypeArtifactId=${mavenFramework} -DarchetypeVersion=1.4 \\
--DgroupId=com.browserstack -DartifactId=${mavenFramework} -Dversion=1.4 \\
+-DarchetypeArtifactId=${mavenFramework} -DarchetypeVersion=1.0 \\
+-DgroupId=com.browserstack -DartifactId=${mavenFramework} -Dversion=1.0 \\
 -DBROWSERSTACK_USERNAME="${username}" \\
 -DBROWSERSTACK_ACCESS_KEY="${accessKey}" \\
-${appPathParam}`;
+${frameworkParam}`;
 
       const platformLabel = isWindows ? "Windows" : "macOS/Linux";
 
