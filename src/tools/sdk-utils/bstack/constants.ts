@@ -1,3 +1,5 @@
+import { ConfigMapping } from "../common/types.js";
+
 /**
  * ---------- PYTHON INSTRUCTIONS ----------
  */
@@ -440,7 +442,7 @@ exports.config.capabilities.forEach(function (caps) {
 ---STEP---
 
 Run your tests:
-You can now run your tests on BrowserStack using your standard WebdriverIO command.
+You can now run your tests on BrowserStack using your standard WebdriverIO command or Use the commands defined in your package.json file to run the tests.
 `;
 
   return { setup, run };
@@ -519,8 +521,128 @@ Execute your tests on BrowserStack using the following command:
 npx browserstack-cypress run --sync
 \`\`\`
 
-After the tests complete, you can view the results on your [BrowserStack Automate Dashboard](https://automate.browserstack.com/dashboard/).
+After the tests complete, you can view the results on your [BrowserStack Automate Dashboard](https://automate.browserstack.com/dashboard/).`;
+
+  return { setup, run };
+};
+
+const serenityInstructions = (username: string, accessKey: string) => {
+  const setup = `
+---STEP---
+
+Set BrowserStack credentials as environment variables:
+For macOS/Linux:
+\`\`\`bash
+export BROWSERSTACK_USERNAME=${username}
+export BROWSERSTACK_ACCESS_KEY=${accessKey}
+\`\`\`
+
+For Windows Command Prompt:
+\`\`\`cmd
+set BROWSERSTACK_USERNAME=${username}
+set BROWSERSTACK_ACCESS_KEY=${accessKey}
+\`\`\`
+
+---STEP---
+
+Add serenity-browserstack dependency in pom.xml:
+Add the following dependency to your pom.xml file and save it:
+\`\`\`xml
+<dependency>
+  <groupId>net.serenity-bdd</groupId>
+  <artifactId>serenity-browserstack</artifactId>
+  <version>3.3.4</version>
+</dependency>
+\`\`\`
+
+---STEP---
+
+Set up serenity.conf file:
+Create or update your serenity.conf file in the project root with the following configuration:
+\`\`\`
+webdriver {
+  driver = remote
+  remote.url = "https://hub.browserstack.com/wd/hub"
+}
+browserstack.user="${username}"
+browserstack.key="${accessKey}"
+\`\`\`
+`;
+
+  const run = `
+---STEP---
+
+Run your Serenity tests:
+You can continue running your tests as you normally would. For example:
+
+Using Maven:
+\`\`\`bash
+mvn clean verify
+\`\`\`
+
+Using Gradle:
+\`\`\`bash
+gradle clean test
+\`\`\`
 `;
 
   return { setup, run };
+};
+
+export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
+  python: {
+    playwright: {
+      pytest: { instructions: pythonInstructions },
+    },
+    selenium: {
+      pytest: { instructions: pytestInstructions },
+      robot: { instructions: robotInstructions },
+      behave: { instructions: behaveInstructions },
+    },
+  },
+  java: {
+    playwright: {
+      junit4: { instructions: javaInstructions },
+      junit5: { instructions: javaInstructions },
+      testng: { instructions: javaInstructions },
+    },
+    selenium: {
+      testng: { instructions: javaInstructions },
+      cucumber: { instructions: javaInstructions },
+      junit4: { instructions: javaInstructions },
+      junit5: { instructions: javaInstructions },
+      serenity: { instructions: serenityInstructions },
+    },
+  },
+  csharp: {
+    playwright: {
+      nunit: { instructions: csharpPlaywrightCommonInstructions },
+      mstest: { instructions: csharpPlaywrightCommonInstructions },
+    },
+    selenium: {
+      xunit: { instructions: csharpCommonInstructions },
+      nunit: { instructions: csharpCommonInstructions },
+      mstest: { instructions: csharpCommonInstructions },
+      specflow: { instructions: csharpCommonInstructions },
+      reqnroll: { instructions: csharpCommonInstructions },
+    },
+  },
+  nodejs: {
+    playwright: {
+      jest: { instructions: nodejsInstructions },
+      codeceptjs: { instructions: nodejsInstructions },
+      playwright: { instructions: nodejsInstructions },
+    },
+    selenium: {
+      jest: { instructions: nodejsInstructions },
+      webdriverio: { instructions: webdriverioInstructions },
+      mocha: { instructions: nodejsInstructions },
+      cucumber: { instructions: nodejsInstructions },
+      nightwatch: { instructions: nodejsInstructions },
+      codeceptjs: { instructions: nodejsInstructions },
+    },
+    cypress: {
+      cypress: { instructions: cypressInstructions },
+    },
+  },
 };

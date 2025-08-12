@@ -41,6 +41,7 @@ export enum SDKSupportedTestingFrameworkEnum {
   specflow = "specflow",
   reqnroll = "reqnroll",
   rspec = "rspec",
+  serenity = "serenity",
 }
 
 export const SDKSupportedLanguages = Object.values(SDKSupportedLanguageEnum);

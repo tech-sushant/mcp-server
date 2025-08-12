@@ -53,14 +53,21 @@ enum Platform {
 async function takeAppScreenshot(args: {
   desiredPlatform: Platform;
   desiredPlatformVersion: string;
-  appPath: string;
+  appPath?: string;
   desiredPhone: string;
+  browserstackAppUrl?: string;
   config: BrowserStackConfig;
 }): Promise<CallToolResult> {
   let driver;
   try {
     validateArgs(args);
-    const { desiredPlatform, desiredPhone, appPath, config } = args;
+    const {
+      desiredPlatform,
+      desiredPhone,
+      appPath,
+      browserstackAppUrl,
+      config,
+    } = args;
     let { desiredPlatformVersion } = args;
 
     const platforms = (
@@ -98,8 +105,19 @@ async function takeAppScreenshot(args: {
     const authString = getBrowserStackAuth(config);
     const [username, password] = authString.split(":");
 
-    const app_url = await uploadApp(appPath, username, password);
-    logger.info(`App uploaded. URL: ${app_url}`);
+    let app_url: string;
+    if (browserstackAppUrl) {
+      app_url = browserstackAppUrl;
+      logger.info(`Using provided BrowserStack app URL: ${app_url}`);
+    } else {
+      if (!appPath) {
+        throw new Error(
+          "appPath is required when browserstackAppUrl is not provided",
+        );
+      }
+      app_url = await uploadApp(appPath, username, password);
+      logger.info(`App uploaded. URL: ${app_url}`);
+    }
 
     const capabilities = {
       platformName: desiredPlatform,
@@ -157,22 +175,54 @@ async function takeAppScreenshot(args: {
 //Runs AppAutomate tests on BrowserStack by uploading app and test suite, then triggering a test run.
 async function runAppTestsOnBrowserStack(
   args: {
-    appPath: string;
-    testSuitePath: string;
+    appPath?: string;
+    testSuitePath?: string;
+    browserstackAppUrl?: string;
+    browserstackTestSuiteUrl?: string;
     devices: string[];
     project: string;
     detectedAutomationFramework: string;
   },
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
+  // Validate that either paths or URLs are provided for both app and test suite
+  if (!args.browserstackAppUrl && !args.appPath) {
+    throw new Error(
+      "appPath is required when browserstackAppUrl is not provided",
+    );
+  }
+  if (!args.browserstackTestSuiteUrl && !args.testSuitePath) {
+    throw new Error(
+      "testSuitePath is required when browserstackTestSuiteUrl is not provided",
+    );
+  }
+
   switch (args.detectedAutomationFramework) {
     case AppTestPlatform.ESPRESSO: {
       try {
-        const app_url = await uploadEspressoApp(args.appPath, config);
-        const test_suite_url = await uploadEspressoTestSuite(
-          args.testSuitePath,
-          config,
-        );
+        let app_url: string;
+        if (args.browserstackAppUrl) {
+          app_url = args.browserstackAppUrl;
+          logger.info(`Using provided BrowserStack app URL: ${app_url}`);
+        } else {
+          app_url = await uploadEspressoApp(args.appPath!, config);
+          logger.info(`App uploaded. URL: ${app_url}`);
+        }
+
+        let test_suite_url: string;
+        if (args.browserstackTestSuiteUrl) {
+          test_suite_url = args.browserstackTestSuiteUrl;
+          logger.info(
+            `Using provided BrowserStack test suite URL: ${test_suite_url}`,
+          );
+        } else {
+          test_suite_url = await uploadEspressoTestSuite(
+            args.testSuitePath!,
+            config,
+          );
+          logger.info(`Test suite uploaded. URL: ${test_suite_url}`);
+        }
+
         const build_id = await triggerEspressoBuild(
           app_url,
           test_suite_url,
@@ -195,11 +245,29 @@ async function runAppTestsOnBrowserStack(
     }
     case AppTestPlatform.XCUITEST: {
       try {
-        const app_url = await uploadXcuiApp(args.appPath, config);
-        const test_suite_url = await uploadXcuiTestSuite(
-          args.testSuitePath,
-          config,
-        );
+        let app_url: string;
+        if (args.browserstackAppUrl) {
+          app_url = args.browserstackAppUrl;
+          logger.info(`Using provided BrowserStack app URL: ${app_url}`);
+        } else {
+          app_url = await uploadXcuiApp(args.appPath!, config);
+          logger.info(`App uploaded. URL: ${app_url}`);
+        }
+
+        let test_suite_url: string;
+        if (args.browserstackTestSuiteUrl) {
+          test_suite_url = args.browserstackTestSuiteUrl;
+          logger.info(
+            `Using provided BrowserStack test suite URL: ${test_suite_url}`,
+          );
+        } else {
+          test_suite_url = await uploadXcuiTestSuite(
+            args.testSuitePath!,
+            config,
+          );
+          logger.info(`Test suite uploaded. URL: ${test_suite_url}`);
+        }
+
         const build_id = await triggerXcuiBuild(
           app_url,
           test_suite_url,
