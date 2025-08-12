@@ -480,3 +480,35 @@ export const EXCLUDED_DIRS = new Set([
   "packages",
   ".nuget",
 ]);
+
+export const backendIndicators = [
+  /import\s+requests/,
+  /requests\.(get|post|put|delete|patch)/,
+  /@pytest\.mark\.(api|backend|integration)/,
+  /BASE_URL\s*=/,
+  /\.status_code/,
+  /\.json\(\)/,
+  /TestClient/,
+  /Bearer\s+/,
+  /Authorization.*Bearer/,
+];
+
+export const strongUIIndicators = [
+  // Browser automation with specific context
+  /(driver|browser|page)\.(click|type|fill|screenshot|wait)/,
+  /webdriver\.(Chrome|Firefox|Safari|Edge)/,
+  /(selenium|playwright|puppeteer|cypress).*import/,
+  // CSS/XPath selectors
+  /By\.(ID|CLASS_NAME|XPATH|CSS_SELECTOR)/,
+  /\$\(['"#[.][^'"]*['"]\)/, // $(".class") or $("#id")
+  // Page Object Model
+  /class.*Page.*:/,
+  /class.*PageObject/,
+  // UI test markers
+  /@(ui|web|e2e|browser)_?test/,
+  /@pytest\.mark\.(ui|web|e2e|browser)/,
+  // Browser navigation
+  /\.goto\s*\(['"]https?:/,
+  /\.visit\s*\(['"]https?:/,
+  /\.navigate\(\)\.to\(/,
+];
