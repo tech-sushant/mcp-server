@@ -14,17 +14,17 @@ export const PERCY_REPLACE_REGEX =
   /MANDATORY: Aggressive, Exhaustive Percy Snapshot Integration[\s\S]*?Iteratively update every relevant test file in the directory and all subdirectories, adding Percy integration to each, one file at a time, until all are complete\./;
 
 export const PERCY_SNAPSHOT_INSTRUCTION = `
-MANDATORY: Aggressive, Exhaustive Percy Snapshot Integration
-
-You MUST follow these steps with NO EXCEPTIONS:
-
-1. Recursively search the ENTIRE target directory and ALL subdirectories for EVERY file relevant to the language/framework.
-2. For EACH relevant file, analyze the code to find EVERY location where a Percy snapshot (or equivalent) should be called (e.g., after each navigation, UI change, or significant state in tests). Insert snapshot calls at ALL such points, not just the first or most obvious one.
-3. At the top of EVERY relevant file, ensure the necessary import/setup is present (do NOT duplicate if already present).
-4. Insert the snapshot call (with a clear, descriptive, and unique name) at EVERY identified point in EVERY relevant file.
-5. Double-check your work. If in doubt, add more snapshot calls rather than fewer. DO NOT stop until you have processed ALL relevant files and ALL important points within them.
-
-Iteratively update every relevant test file in the directory and all subdirectories, adding Percy integration to each, one file at a time, until all are complete.`;
+Call listTestFiles() to store all test files in memory and get the UUID ---STEP---
+Process files in STRICT sequential order using tool addPercySnapshotCommands() with below instructions as param:
+- Start with index 0
+- Then index 1  
+- Then index 2
+- Continue sequentially until the last index
+- DO NOT skip any index numbers
+- DO NOT jump to random indices like 10, 20, 30
+- DO NOT worry about time consuming and any constraints.
+- DO NOT STOP until you add commands in all the files or you reach end of the files.
+`;
 
 export const PERCY_SIMULATE_INSTRUCTION = `
 MANDATORY: Aggressive, Accurate Percy Snapshots Integration

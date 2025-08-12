@@ -16,7 +16,12 @@ export const SetUpPercyParamsShape = {
   integrationType: z
     .nativeEnum(PercyIntegrationTypeEnum)
     .describe(
-      "User can say 'setup Percy' then if the codebase contains BrowserStack Automate SDK or any related yml file then use 'automate'. In all other cases, set to 'web' which is standalone percy. Set to 'automate' if the user says 'run Percy automate'. This value must be provided explicitly or determined by clear codebase inspection—never inferred automatically.",
+      "Specifies whether to integrate with Percy Web or Percy Automate. If not explicitly provided, prompt the user to select the desired integration type.",
+    ),
+  folderPaths: z
+    .array(z.string())
+    .describe(
+      "An array of folder paths to include in which Percy will be integrated. If not provided, strictly inspect the code and return the folders which contain UI test cases.",
     ),
 };
 

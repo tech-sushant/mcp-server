@@ -7,6 +7,8 @@ import {
   SDKSupportedLanguage,
 } from "../common/types.js";
 
+export let percyWebSetupInstructions = "";
+
 export function runPercyWeb(
   input: SetUpPercyInput,
   percyToken: string,
@@ -24,6 +26,9 @@ export function runPercyWeb(
   // Generate instructions for the supported configuration
   const instructions = frameworkConfig.instructions;
 
+  // Store instructions globally for use in add-percy-snapshots
+  percyWebSetupInstructions = instructions;
+
   // Prepend a step to set the Percy token in the environment
   steps.push({
     type: "instruction",
@@ -33,7 +38,7 @@ export function runPercyWeb(
 
   steps.push({
     type: "instruction",
-    title: `Percy Web Setup for ${input.detectedLanguage} with ${input.detectedBrowserAutomationFramework}`,
+    title: `Percy Web Setup Instructions`,
     content: instructions,
   });
 

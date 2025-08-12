@@ -17,6 +17,8 @@ import addFailureLogsTools from "./tools/getFailureLogs.js";
 import addAutomateTools from "./tools/automate.js";
 import addSelfHealTools from "./tools/selfheal.js";
 import addAppLiveTools from "./tools/applive.js";
+import addListTestFilesTool from "./tools/list-test-files.js";
+import addPercySnapshotTools from "./tools/add-percy-snapshots.js";
 import { setupOnInitialized } from "./oninitialized.js";
 import { BrowserStackConfig } from "./lib/types.js";
 
@@ -59,6 +61,8 @@ export class BrowserStackMcpServer {
       addFailureLogsTools,
       addAutomateTools,
       addSelfHealTools,
+      addListTestFilesTool,
+      addPercySnapshotTools,
     ];
 
     toolAdders.forEach((adder) => {

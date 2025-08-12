@@ -58,6 +58,7 @@ export async function setUpPercyHandler(
         input.detectedBrowserAutomationFramework,
       detectedTestingFramework: input.detectedTestingFramework,
       integrationType: input.integrationType,
+      folderPaths: input.folderPaths || [],
     };
 
     if (input.integrationType === PercyIntegrationTypeEnum.WEB) {

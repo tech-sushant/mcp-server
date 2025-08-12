@@ -121,7 +121,6 @@ Run Percy with your tests
 ${percyReviewSnapshotsStep}
 `;
 
-
 export const rubyInstructions = `
 ---STEP---
 Install Percy dependencies
@@ -293,7 +292,7 @@ Run Percy with your tests
 ${percyReviewSnapshotsStep}
 `;
 
-export const jsPlaywrightInstructions = `
+export const nodejsPlaywrightInstructions = `
 Install Percy dependencies
   - Install Percy Playwright SDK:
     npm install @percy/playwright
@@ -328,7 +327,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy WebdriverIO instructions for JavaScript
-export const jsWebdriverioInstructions = `
+export const nodejsWebdriverioInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI:
@@ -370,7 +369,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy Ember instructions for JavaScript
-export const jsEmberInstructions = `
+export const nodejsEmberInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and Ember SDK:
@@ -410,7 +409,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy Cypress instructions for JavaScript
-export const jsCypressInstructions = `
+export const nodejsCypressInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and Cypress SDK:
@@ -458,7 +457,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy Puppeteer instructions for JavaScript
-export const jsPuppeteerInstructions = `
+export const nodejsPuppeteerInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and Puppeteer SDK:
@@ -507,7 +506,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy Nightmare instructions for JavaScript
-export const jsNightmareInstructions = `
+export const nodejsNightmareInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and Nightmare SDK:
@@ -552,7 +551,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy Nightwatch instructions for JavaScript
-export const jsNightwatchInstructions = `
+export const nodejsNightwatchInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and Nightwatch SDK:
@@ -610,7 +609,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy Protractor instructions for JavaScript
-export const jsProtractorInstructions = `
+export const nodejsProtractorInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and Protractor SDK:
@@ -658,7 +657,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy TestCafe instructions for JavaScript
-export const jsTestcafeInstructions = `
+export const nodejsTestcafeInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and TestCafe SDK:
@@ -698,7 +697,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy Gatsby instructions for JavaScript
-export const jsGatsbyInstructions = `
+export const nodejsGatsbyInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and Gatsby plugin:
@@ -759,7 +758,7 @@ ${percyReviewSnapshotsStep}
 `;
 
 // Percy Storybook instructions for JavaScript
-export const jsStorybookInstructions = `
+export const nodejsStorybookInstructions = `
 ---STEP---
 Install Percy dependencies
   - Install Percy CLI and Storybook SDK:
