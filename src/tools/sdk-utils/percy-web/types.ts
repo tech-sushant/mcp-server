@@ -6,6 +6,7 @@ export type ConfigMapping = {
   [language: string]: {
     [automationFramework: string]: {
       instructions: string;
+      snapshotInstruction: string;
     };
   };
 };

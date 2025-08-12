@@ -3,34 +3,94 @@ import * as constants from "./constants.js";
 
 export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
   python: {
-    selenium: { instructions: constants.pythonInstructions },
-    playwright: { instructions: constants.pythonPlaywrightInstructions },
+    selenium: {
+      instructions: constants.pythonInstructions,
+      snapshotInstruction: constants.pythonInstructionsSnapshot,
+    },
+    playwright: {
+      instructions: constants.pythonPlaywrightInstructions,
+      snapshotInstruction: constants.pythonPlaywrightInstructionsSnapshot,
+    },
   },
   nodejs: {
-    selenium: { instructions: constants.nodejsInstructions },
-    playwright: { instructions: constants.nodejsPlaywrightInstructions },
-    webdriverio: { instructions: constants.nodejsWebdriverioInstructions },
-    ember: { instructions: constants.nodejsEmberInstructions },
-    cypress: { instructions: constants.nodejsCypressInstructions },
-    puppeteer: { instructions: constants.nodejsPuppeteerInstructions },
-    nightmare: { instructions: constants.nodejsNightmareInstructions },
-    nightwatch: { instructions: constants.nodejsNightwatchInstructions },
-    protractor: { instructions: constants.nodejsProtractorInstructions },
-    testcafe: { instructions: constants.nodejsTestcafeInstructions },
-    gatsby: { instructions: constants.nodejsGatsbyInstructions },
-    storybook: { instructions: constants.nodejsStorybookInstructions },
+    selenium: {
+      instructions: constants.nodejsInstructions,
+      snapshotInstruction: constants.nodejsInstructionsSnapshot,
+    },
+    playwright: {
+      instructions: constants.nodejsPlaywrightInstructions,
+      snapshotInstruction: constants.nodejsPlaywrightInstructionsSnapshot,
+    },
+    webdriverio: {
+      instructions: constants.nodejsWebdriverioInstructions,
+      snapshotInstruction: constants.nodejsWebdriverioInstructionsSnapshot,
+    },
+    ember: {
+      instructions: constants.nodejsEmberInstructions,
+      snapshotInstruction: constants.nodejsEmberInstructionsSnapshot,
+    },
+    cypress: {
+      instructions: constants.nodejsCypressInstructions,
+      snapshotInstruction: constants.nodejsCypressInstructionsSnapshot,
+    },
+    puppeteer: {
+      instructions: constants.nodejsPuppeteerInstructions,
+      snapshotInstruction: constants.nodejsPuppeteerInstructionsSnapshot,
+    },
+    nightmare: {
+      instructions: constants.nodejsNightmareInstructions,
+      snapshotInstruction: constants.nodejsNightmareInstructionsSnapshot,
+    },
+    nightwatch: {
+      instructions: constants.nodejsNightwatchInstructions,
+      snapshotInstruction: constants.nodejsNightwatchInstructionsSnapshot,
+    },
+    protractor: {
+      instructions: constants.nodejsProtractorInstructions,
+      snapshotInstruction: constants.nodejsProtractorInstructionsSnapshot,
+    },
+    testcafe: {
+      instructions: constants.nodejsTestcafeInstructions,
+      snapshotInstruction: constants.nodejsTestcafeInstructionsSnapshot,
+    },
+    gatsby: {
+      instructions: constants.nodejsGatsbyInstructions,
+      snapshotInstruction: constants.nodejsGatsbyInstructionsSnapshot,
+    },
+    storybook: {
+      instructions: constants.nodejsStorybookInstructions,
+      snapshotInstruction: constants.nodejsStorybookInstructionsSnapshot,
+    },
   },
   java: {
-    selenium: { instructions: constants.javaInstructions },
-    playwright: { instructions: constants.javaPlaywrightInstructions },
+    selenium: {
+      instructions: constants.javaInstructions,
+      snapshotInstruction: constants.javaInstructionsSnapshot,
+    },
+    playwright: {
+      instructions: constants.javaPlaywrightInstructions,
+      snapshotInstruction: constants.javaPlaywrightInstructionsSnapshot,
+    },
   },
   ruby: {
-    selenium: { instructions: constants.rubyInstructions },
-    capybara: { instructions: constants.rubyCapybaraInstructions },
+    selenium: {
+      instructions: constants.rubyInstructions,
+      snapshotInstruction: constants.rubyInstructionsSnapshot,
+    },
+    capybara: {
+      instructions: constants.rubyCapybaraInstructions,
+      snapshotInstruction: constants.rubyCapybaraInstructionsSnapshot,
+    },
   },
   csharp: {
-    selenium: { instructions: constants.csharpInstructions },
-    playwright: { instructions: constants.csharpPlaywrightInstructions },
+    selenium: {
+      instructions: constants.csharpInstructions,
+      snapshotInstruction: constants.csharpInstructionsSnapshot,
+    },
+    playwright: {
+      instructions: constants.csharpPlaywrightInstructions,
+      snapshotInstruction: constants.csharpPlaywrightInstructionsSnapshot,
+    },
   },
 };
 

@@ -2,6 +2,7 @@
 import { RunTestsInstructionResult, RunTestsStep } from "../common/types.js";
 import { SetUpPercyInput } from "../common/schema.js";
 import { SUPPORTED_CONFIGURATIONS } from "./frameworks.js";
+
 import {
   SDKSupportedBrowserAutomationFramework,
   SDKSupportedLanguage,
@@ -25,9 +26,7 @@ export function runPercyWeb(
 
   // Generate instructions for the supported configuration
   const instructions = frameworkConfig.instructions;
-
-  // Store instructions globally for use in add-percy-snapshots
-  percyWebSetupInstructions = instructions;
+  percyWebSetupInstructions = frameworkConfig.snapshotInstruction;
 
   // Prepend a step to set the Percy token in the environment
   steps.push({
