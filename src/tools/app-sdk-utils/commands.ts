@@ -5,6 +5,7 @@ import { AppSDKSupportedLanguage } from "./types.js";
 const JAVA_APP_FRAMEWORK_MAP: Record<string, string> = {
   testng: "browserstack-sdk-archetype-integrate",
   junit5: "browserstack-sdk-archetype-integrate",
+  selenide: "selenide-archetype-integrate",
   "cucumber-testng": "browserstack-sdk-archetype-integrate",
   "cucumber-junit4": "browserstack-sdk-archetype-integrate",
   "cucumber-junit5": "browserstack-sdk-archetype-integrate",

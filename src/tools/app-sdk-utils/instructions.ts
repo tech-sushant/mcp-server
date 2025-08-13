@@ -70,7 +70,7 @@ accessibility: false
 - You can upload your app using BrowserStack's App Upload API or manually through the dashboard
 - Set \`browserstackLocal: true\` if you need to test with local/staging servers
 - Adjust \`parallelsPerPlatform\` based on your subscription limits
-- you can modify the platform configurations as needed`;
+`;
 }
 
 export function getAppInstructionsForProjectConfiguration(
@@ -113,6 +113,14 @@ mvn test
 - TestNG is installed
 - Ensure you're using Java v8+
 - Maven is installed and configured in your system PATH`;
+  } else if (testingFramework === "selenide") {
+    return `${baseString}
+**Selenide Prerequisites:**
+- An existing Appium-based automated test suite
+- Selenide framework is installed
+- Ensure you're using Java v8+ (Java v9+ required for Gradle)
+- Maven is installed and configured in your system PATH
+- Looking for a starter project? Get started with our Selenide sample project`;
   }
   return baseString;
 }
