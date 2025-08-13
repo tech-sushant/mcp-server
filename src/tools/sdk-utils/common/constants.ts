@@ -14,7 +14,7 @@ export const PERCY_REPLACE_REGEX =
   /MANDATORY: Aggressive, Exhaustive Percy Snapshot Integration[\s\S]*?Iteratively update every relevant test file in the directory and all subdirectories, adding Percy integration to each, one file at a time, until all are complete\./;
 
 export const PERCY_SNAPSHOT_INSTRUCTION = `
-Call listTestFiles() to store all test files in memory and get the UUID ---STEP---
+Invoke listTestFiles() with the provided directories from user to gather all test files in memory and obtain the generated UUID ---STEP---
 Process files in STRICT sequential order using tool addPercySnapshotCommands() with below instructions as param:
 - Start with index 0
 - Then index 1  
