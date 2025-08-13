@@ -255,7 +255,12 @@ exports.config = {
 
 Example:
 \`\`\`javascript
-const { percy } = require('browsersstack-node-sdk');
+    const { percy } = require('browserstack-node-sdk');
+  2. Add the \`await percy.screenshot(driver, name)\` method at required points in your test script.
+
+Example:
+\`\`\`javascript
+const { percy } = require('browserstack-node-sdk');
 describe("WebdriverIO Test", () => {
   it("my test", async () => {
     // ....
