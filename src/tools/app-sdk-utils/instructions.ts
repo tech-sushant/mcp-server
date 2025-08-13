@@ -23,6 +23,7 @@ export function generateAppBrowserStackYMLInstructions(
   username: string,
   accessKey: string,
   appPath: string = "bs://sample.app",
+  framework: string = "testng",
 ): string {
   const platformConfigs = platforms
     .map((platform) => {
@@ -49,7 +50,7 @@ Create or update the browserstack.yml file in your project root with the followi
 \`\`\`yaml
 userName: ${username}
 accessKey: ${accessKey}
-framework: testng
+framework: ${framework}
 app: ${appPath}
 platforms:
 ${platformConfigs}
@@ -68,7 +69,8 @@ accessibility: false
 - Replace \`app: ${appPath}\` with the path to your actual app file (e.g., \`./SampleApp.apk\` for Android or \`./SampleApp.ipa\` for iOS)
 - You can upload your app using BrowserStack's App Upload API or manually through the dashboard
 - Set \`browserstackLocal: true\` if you need to test with local/staging servers
-- Adjust \`parallelsPerPlatform\` based on your subscription limits`;
+- Adjust \`parallelsPerPlatform\` based on your subscription limits
+- you can modify the platform configurations as needed`;
 }
 
 export function getAppInstructionsForProjectConfiguration(
@@ -90,16 +92,29 @@ export function getAppInstructionsForProjectConfiguration(
 function getJavaAppInstructions(
   testingFramework: AppSDKSupportedTestingFramework,
 ): string {
-  if (testingFramework === "testng") {
-    return `---STEP---
+  const baseString = `---STEP---
 Run your App Automate test suite:
 
 \`\`\`bash
 mvn test
 \`\`\``;
-  }
 
-  return "";
+  if (testingFramework === "junit5") {
+    return `${baseString}
+**JUnit 5 Prerequisites:**
+- An existing automated test suite
+- JUnit 5 is installed
+- Ensure you're using Java v8+
+- Maven is installed and configured in your system PATH`;
+  } else if (testingFramework === "testng") {
+    return `${baseString}
+**TestNG Prerequisites:**
+- An existing automated test suite
+- TestNG is installed
+- Ensure you're using Java v8+
+- Maven is installed and configured in your system PATH`;
+  }
+  return baseString;
 }
 
 // Utility function to format instructions with step numbers

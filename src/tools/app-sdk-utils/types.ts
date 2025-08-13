@@ -11,6 +11,7 @@ export type AppSDKSupportedFramework =
 
 export enum AppSDKSupportedTestingFrameworkEnum {
   testng = "testng",
+  junit5 = "junit5",
   "cucumber-testng" = "cucumber-testng",
   "cucumber-junit4" = "cucumber-junit4",
   "cucumber-junit5" = "cucumber-junit5",

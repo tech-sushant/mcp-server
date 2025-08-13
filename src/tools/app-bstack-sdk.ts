@@ -53,6 +53,7 @@ export async function bootstrapAppProjectWithSDK({
     detectedTestingFramework,
     username,
     accessKey,
+    appPath,
   );
 
   // Generate browserstack.yml instructions
@@ -61,6 +62,7 @@ export async function bootstrapAppProjectWithSDK({
     username,
     accessKey,
     appPath,
+    detectedTestingFramework,
   );
 
   // Get project configuration instructions
