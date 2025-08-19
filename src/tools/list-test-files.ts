@@ -1,8 +1,6 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { listTestFiles } from "./percy-snapshot-utils/detect-test-files.js";
 import { testFilePathsMap } from "../lib/inmemory-store.js";
 import crypto from "crypto";
-import { ListTestFilesParamsShape } from "./percy-snapshot-utils/constants.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
 export async function addListTestFiles(args: any): Promise<CallToolResult> {
@@ -38,33 +36,4 @@ export async function addListTestFiles(args: any): Promise<CallToolResult> {
       },
     ],
   };
-}
-
-export default function addListTestFilesTool(server: McpServer) {
-  const tools: Record<string, any> = {};
-
-  tools.listTestFiles = server.tool(
-    "listTestFiles",
-    "Lists all test files for a given set of directories.",
-    ListTestFilesParamsShape,
-    async (args) => {
-      try {
-        return await addListTestFiles(args);
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error during fetching self-heal suggestions: ${errorMessage}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
-  );
-
-  return tools;
 }

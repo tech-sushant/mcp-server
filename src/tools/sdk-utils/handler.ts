@@ -34,15 +34,7 @@ export async function runTestsOnBrowserStackHandler(
     const result = runBstackSDKOnly(input, config);
     return await formatToolResult(result);
   } catch (error) {
-    return {
-      content: [
-        {
-          type: "text",
-          text: getBootstrapFailedMessage(error, { config }),
-        },
-      ],
-      isError: true,
-    };
+    throw new Error(getBootstrapFailedMessage(error, { config }));
   }
 }
 
@@ -171,18 +163,7 @@ export async function setUpPercyHandler(
       };
     }
   } catch (error) {
-    return {
-      content: [
-        {
-          type: "text",
-          text: getBootstrapFailedMessage(error, {
-            config,
-            percyMode: (rawInput as any)?.integrationType,
-          }),
-        },
-      ],
-      isError: true,
-    };
+    throw new Error(getBootstrapFailedMessage(error, { config }));
   }
 }
 
@@ -218,14 +199,6 @@ export async function setUpSimulatePercyChangeHandler(
 
     return percyInstruction;
   } catch (error) {
-    return {
-      content: [
-        {
-          type: "text",
-          text: getBootstrapFailedMessage(error, { config }),
-        },
-      ],
-      isError: true,
-    };
+    throw new Error(getBootstrapFailedMessage(error, { config }));
   }
 }

@@ -1,11 +1,9 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { testFilePathsMap } from "../lib/inmemory-store.js";
-import { UpdateTestFileWithInstructionsParams } from "./percy-snapshot-utils/constants.js";
 import { updateFileAndStep } from "./percy-snapshot-utils/utils.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { percyWebSetupInstructions } from "../tools/sdk-utils/percy-web/handler.js";
 
-async function updateTestsWithPercyCommands(args: {
+export async function updateTestsWithPercyCommands(args: {
   uuid: string;
   index: number;
 }): Promise<CallToolResult> {
@@ -31,19 +29,4 @@ async function updateTestsWithPercyCommands(args: {
   return {
     content: result,
   };
-}
-
-export default function addPercySnapshotTools(server: McpServer) {
-  const tools: Record<string, any> = {};
-
-  tools.addPercySnapshotCommands = server.tool(
-    "addPercySnapshotCommands",
-    "Adds Percy snapshot commands to the specified test files.",
-    UpdateTestFileWithInstructionsParams,
-    async (args) => {
-      return await updateTestsWithPercyCommands(args);
-    },
-  );
-
-  return tools;
 }

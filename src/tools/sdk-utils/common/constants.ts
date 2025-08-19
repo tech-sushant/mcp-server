@@ -4,6 +4,12 @@ export const IMPORTANT_SETUP_WARNING =
 export const SETUP_PERCY_DESCRIPTION =
   "Set up Percy visual testing for your project. This supports both Percy Web Standalone and Percy Automate.";
 
+export const LIST_TEST_FILES_DESCRIPTION =
+  "Lists all test files for a given set of directories.";
+
+export const PERCY_SNAPSHOT_COMMANDS_DESCRIPTION =
+  "Adds Percy snapshot commands to the specified test files.";
+
 export const RUN_ON_BROWSERSTACK_DESCRIPTION =
   "Set up and run automated web-based tests on BrowserStack using the BrowserStack SDK. Use this tool for functional or integration test setup on BrowserStack only. For any visual testing or Percy integration, use the dedicated Percy setup tool. Example prompts: run this test on browserstack; set up this project for browserstack.";
 
