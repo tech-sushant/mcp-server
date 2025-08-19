@@ -10,6 +10,8 @@ export const getInstructionsForProjectConfiguration = (
   detectedBrowserAutomationFramework: SDKSupportedBrowserAutomationFramework,
   detectedTestingFramework: SDKSupportedTestingFramework,
   detectedLanguage: SDKSupportedLanguage,
+  username: string,
+  accessKey: string,
 ) => {
   const configuration = SUPPORTED_CONFIGURATIONS[detectedLanguage];
 
@@ -33,23 +35,25 @@ export const getInstructionsForProjectConfiguration = (
     );
   }
 
-  return configuration[detectedBrowserAutomationFramework][
-    detectedTestingFramework
-  ].instructions;
+  const instructionFunction =
+    configuration[detectedBrowserAutomationFramework][detectedTestingFramework]
+      .instructions;
+
+  return instructionFunction(username, accessKey);
 };
 
 export function generateBrowserStackYMLInstructions(
   desiredPlatforms: string[],
+  enablePercy: boolean = false,
 ) {
-  return `
-      Create a browserstack.yml file in the project root. The file should be in the following format:
-
-      \`\`\`yaml
+  let ymlContent = `
 # ======================
 # BrowserStack Reporting
 # ======================
-projectName: BrowserStack MCP Runs
-build: mcp-run
+# Project and build names help organize your test runs in BrowserStack dashboard and Percy.
+# TODO: Replace these sample values with your actual project details
+projectName: Sample Project
+buildName: Sample Build
 
 # =======================================
 # Platforms (Browsers / Devices to test)
@@ -74,13 +78,61 @@ platforms:
 # Example 2 - If you have configured 1 platform and set \`parallelsPerPlatform\` as 5, a total of 5 (1 * 5) parallel threads will be used on BrowserStack
 parallelsPerPlatform: 1
 
+# =================
+# Local Testing
+# =================
+# Set to true to test local
 browserstackLocal: true
 
 # ===================
 # Debugging features
 # ===================
-debug: true
-testObservability: true
+debug: true # Visual logs, text logs, etc.
+testObservability: true # For Test Observability`;
+
+  if (enablePercy) {
+    ymlContent += `
+
+# =====================
+# Percy Visual Testing
+# =====================
+# Set percy to true to enable visual testing.
+# Set percyCaptureMode to 'manual' to control when screenshots are taken.
+percy: true
+percyCaptureMode: manual`;
+  }
+  return `
+      Create a browserstack.yml file in the project root. The file should be in the following format:
+
+      \`\`\`yaml${ymlContent}
       \`\`\`
       \n`;
+}
+
+export function formatInstructionsWithNumbers(
+  instructionText: string,
+  separator: string = "---STEP---",
+): string {
+  // Split the instructions by the separator
+  const steps = instructionText
+    .split(separator)
+    .map((step) => step.trim())
+    .filter((step) => step.length > 0);
+
+  // If no separators found, treat the entire text as one step
+  if (steps.length === 1 && !instructionText.includes(separator)) {
+    return `**Step 1:**\n${instructionText.trim()}\n\n**✅ Verification:**\nPlease verify that you have completed all the steps above to ensure proper setup.`;
+  }
+
+  // Format each step with numbering
+  const formattedSteps = steps
+    .map((step, index) => {
+      return `**Step ${index + 1}:**\n${step.trim()}`;
+    })
+    .join("\n\n");
+
+  // Add verification statement at the end
+  const verificationText = `\n\n**✅ Verification:**\nPlease verify that you have completed all ${steps.length} steps above to ensure proper setup. If you encounter any issues, double-check each step and ensure all commands executed successfully.`;
+
+  return formattedSteps + verificationText;
 }

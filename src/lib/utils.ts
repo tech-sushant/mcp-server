@@ -1,6 +1,7 @@
 import sharp from "sharp";
 import path from "path";
 import { fileURLToPath } from "url";
+import type { ApiResponse } from "./apiClient.js";
 
 export function sanitizeUrlParam(param: string): string {
   // Remove any characters that could be used for command injection
@@ -26,7 +27,10 @@ export async function maybeCompressBase64(base64: string): Promise<string> {
   return compressedBuffer.toString("base64");
 }
 
-export async function assertOkResponse(response: Response, action: string) {
+export async function assertOkResponse(
+  response: Response | ApiResponse,
+  action: string,
+) {
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error(`Invalid session ID for ${action}`);

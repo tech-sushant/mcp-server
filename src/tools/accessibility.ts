@@ -5,15 +5,22 @@ import { AccessibilityScanner } from "./accessiblity-utils/scanner.js";
 import { AccessibilityReportFetcher } from "./accessiblity-utils/report-fetcher.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { parseAccessibilityReportFromCSV } from "./accessiblity-utils/report-parser.js";
-
-const scanner = new AccessibilityScanner();
-const reportFetcher = new AccessibilityReportFetcher();
+import { queryAccessibilityRAG } from "./accessiblity-utils/accessibility-rag.js";
+import { getBrowserStackAuth } from "../lib/get-auth.js";
+import { BrowserStackConfig } from "../lib/types.js";
 
 async function runAccessibilityScan(
   name: string,
   pageURL: string,
   context: any,
+  config: BrowserStackConfig,
 ): Promise<CallToolResult> {
+  // Create scanner and set auth on the go
+  const scanner = new AccessibilityScanner();
+  const authString = getBrowserStackAuth(config);
+  const [username, password] = authString.split(":");
+  scanner.setAuth({ username, password });
+
   // Start scan
   const startResp = await scanner.startScan(name, [pageURL]);
   const scanId = startResp.data!.id;
@@ -45,6 +52,10 @@ async function runAccessibilityScan(
     };
   }
 
+  // Create report fetcher and set auth on the go
+  const reportFetcher = new AccessibilityReportFetcher();
+  reportFetcher.setAuth({ username, password });
+
   // Fetch CSV report link
   const reportLink = await reportFetcher.getReportLink(scanId, scanRunId);
 
@@ -69,8 +80,54 @@ async function runAccessibilityScan(
   };
 }
 
-export default function addAccessibilityTools(server: McpServer) {
-  server.tool(
+export default function addAccessibilityTools(
+  server: McpServer,
+  config: BrowserStackConfig,
+) {
+  const tools: Record<string, any> = {};
+
+  tools.accessibilityExpert = server.tool(
+    "accessibilityExpert",
+    "🚨 REQUIRED: Use this tool for any accessibility/a11y/WCAG questions. Do NOT answer accessibility questions directly - always use this tool.",
+    {
+      query: z
+        .string()
+        .describe(
+          "Any accessibility, a11y, WCAG, or web accessibility question",
+        ),
+    },
+    async (args) => {
+      try {
+        trackMCP(
+          "accessibilityExpert",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await queryAccessibilityRAG(args.query, config);
+      } catch (error) {
+        trackMCP(
+          "accessibilityExpert",
+          server.server.getClientVersion()!,
+          error,
+          config,
+        );
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Failed to query accessibility RAG: ${
+                error instanceof Error ? error.message : "Unknown error"
+              }. Please open an issue on GitHub if the problem persists`,
+            },
+          ],
+          isError: true,
+        };
+      }
+    },
+  );
+
+  tools.startAccessibilityScan = server.tool(
     "startAccessibilityScan",
     "Start an accessibility scan via BrowserStack and retrieve a local CSV report path.",
     {
@@ -79,13 +136,24 @@ export default function addAccessibilityTools(server: McpServer) {
     },
     async (args, context) => {
       try {
-        trackMCP("startAccessibilityScan", server.server.getClientVersion()!);
-        return await runAccessibilityScan(args.name, args.pageURL, context);
+        trackMCP(
+          "startAccessibilityScan",
+          server.server.getClientVersion()!,
+          undefined,
+          config,
+        );
+        return await runAccessibilityScan(
+          args.name,
+          args.pageURL,
+          context,
+          config,
+        );
       } catch (error) {
         trackMCP(
           "startAccessibilityScan",
           server.server.getClientVersion()!,
           error,
+          config,
         );
         return {
           content: [
@@ -102,4 +170,6 @@ export default function addAccessibilityTools(server: McpServer) {
       }
     },
   );
+
+  return tools;
 }

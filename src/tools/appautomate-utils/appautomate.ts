@@ -1,8 +1,8 @@
 import fs from "fs";
-import axios from "axios";
-import config from "../../config.js";
 import FormData from "form-data";
+import { apiClient } from "../../lib/apiClient.js";
 import { customFuzzySearch } from "../../lib/fuzzy.js";
+import { BrowserStackConfig } from "../../lib/types.js";
 
 interface Device {
   device: string;
@@ -90,11 +90,17 @@ export function resolveVersion(
 export function validateArgs(args: {
   desiredPlatform: string;
   desiredPlatformVersion: string;
-  appPath: string;
+  appPath?: string;
   desiredPhone: string;
+  browserstackAppUrl?: string;
 }): void {
-  const { desiredPlatform, desiredPlatformVersion, appPath, desiredPhone } =
-    args;
+  const {
+    desiredPlatform,
+    desiredPlatformVersion,
+    appPath,
+    desiredPhone,
+    browserstackAppUrl,
+  } = args;
 
   if (!desiredPlatform || !desiredPhone) {
     throw new Error(
@@ -108,23 +114,30 @@ export function validateArgs(args: {
     );
   }
 
-  if (!appPath) {
-    throw new Error("You must provide an appPath.");
+  if (!appPath && !browserstackAppUrl) {
+    throw new Error("Either appPath or browserstackAppUrl must be provided");
   }
 
-  if (desiredPlatform === "android" && !appPath.endsWith(".apk")) {
-    throw new Error("You must provide a valid Android app path (.apk).");
-  }
+  // Only validate app path format if appPath is provided
+  if (appPath) {
+    if (desiredPlatform === "android" && !appPath.endsWith(".apk")) {
+      throw new Error("You must provide a valid Android app path (.apk).");
+    }
 
-  if (desiredPlatform === "ios" && !appPath.endsWith(".ipa")) {
-    throw new Error("You must provide a valid iOS app path (.ipa).");
+    if (desiredPlatform === "ios" && !appPath.endsWith(".ipa")) {
+      throw new Error("You must provide a valid iOS app path (.ipa).");
+    }
   }
 }
 
 /**
  * Uploads an application file to AppAutomate and returns the app URL
  */
-export async function uploadApp(appPath: string): Promise<string> {
+export async function uploadApp(
+  appPath: string,
+  username: string,
+  password: string,
+): Promise<string> {
   const filePath = appPath;
 
   if (!fs.existsSync(filePath)) {
@@ -134,23 +147,182 @@ export async function uploadApp(appPath: string): Promise<string> {
   const formData = new FormData();
   formData.append("file", fs.createReadStream(filePath));
 
-  const response = await axios.post<UploadResponse>(
-    "https://api-cloud.browserstack.com/app-automate/upload",
-    formData,
-    {
-      headers: {
-        ...formData.getHeaders(),
-      },
-      auth: {
-        username: config.browserstackUsername,
-        password: config.browserstackAccessKey,
-      },
+  const response = await apiClient.post<UploadResponse>({
+    url: "https://api-cloud.browserstack.com/app-automate/upload",
+    headers: {
+      ...formData.getHeaders(),
+      Authorization:
+        "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
     },
-  );
+    body: formData,
+  });
 
   if (response.data.app_url) {
     return response.data.app_url;
   } else {
-    throw new Error(`Failed to upload app: ${response.data}`);
+    throw new Error(`Failed to upload app: ${JSON.stringify(response.data)}`);
   }
+}
+
+// Helper to upload a file to a given BrowserStack endpoint and return a specific property from the response.
+async function uploadFileToBrowserStack(
+  filePath: string,
+  endpoint: string,
+  responseKey: string,
+  config: BrowserStackConfig,
+): Promise<string> {
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`File not found at path: ${filePath}`);
+  }
+
+  const formData = new FormData();
+  formData.append("file", fs.createReadStream(filePath));
+
+  const authHeader =
+    "Basic " +
+    Buffer.from(
+      `${config["browserstack-username"]}:${config["browserstack-access-key"]}`,
+    ).toString("base64");
+
+  const response = await apiClient.post({
+    url: endpoint,
+    headers: {
+      ...formData.getHeaders(),
+      Authorization: authHeader,
+    },
+    body: formData,
+  });
+
+  if (response.data[responseKey]) {
+    return response.data[responseKey];
+  }
+
+  throw new Error(`Failed to upload file: ${JSON.stringify(response.data)}`);
+}
+
+//Uploads an Android app (.apk or .aab) to BrowserStack Espresso endpoint and returns the app_url
+export async function uploadEspressoApp(
+  appPath: string,
+  config: BrowserStackConfig,
+): Promise<string> {
+  return uploadFileToBrowserStack(
+    appPath,
+    "https://api-cloud.browserstack.com/app-automate/espresso/v2/app",
+    "app_url",
+    config,
+  );
+}
+
+//Uploads an Espresso test suite (.apk) to BrowserStack and returns the test_suite_url
+export async function uploadEspressoTestSuite(
+  testSuitePath: string,
+  config: BrowserStackConfig,
+): Promise<string> {
+  return uploadFileToBrowserStack(
+    testSuitePath,
+    "https://api-cloud.browserstack.com/app-automate/espresso/v2/test-suite",
+    "test_suite_url",
+    config,
+  );
+}
+
+//Uploads an iOS app (.ipa) to BrowserStack XCUITest endpoint and returns the app_url
+export async function uploadXcuiApp(
+  appPath: string,
+  config: BrowserStackConfig,
+): Promise<string> {
+  return uploadFileToBrowserStack(
+    appPath,
+    "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/app",
+    "app_url",
+    config,
+  );
+}
+
+//Uploads an XCUITest test suite (.zip) to BrowserStack and returns the test_suite_url
+export async function uploadXcuiTestSuite(
+  testSuitePath: string,
+  config: BrowserStackConfig,
+): Promise<string> {
+  return uploadFileToBrowserStack(
+    testSuitePath,
+    "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/test-suite",
+    "test_suite_url",
+    config,
+  );
+}
+
+// Triggers an Espresso test run on BrowserStack and returns the build_id
+export async function triggerEspressoBuild(
+  app_url: string,
+  test_suite_url: string,
+  devices: string[],
+  project: string,
+): Promise<string> {
+  const auth = {
+    username: process.env.BROWSERSTACK_USERNAME || "",
+    password: process.env.BROWSERSTACK_ACCESS_KEY || "",
+  };
+
+  const response = await apiClient.post({
+    url: "https://api-cloud.browserstack.com/app-automate/espresso/v2/build",
+    headers: {
+      Authorization:
+        "Basic " +
+        Buffer.from(`${auth.username}:${auth.password}`).toString("base64"),
+      "Content-Type": "application/json",
+    },
+    body: {
+      app: app_url,
+      testSuite: test_suite_url,
+      devices,
+      project,
+    },
+  });
+
+  if (response.data.build_id) {
+    return response.data.build_id;
+  }
+
+  throw new Error(
+    `Failed to trigger Espresso build: ${JSON.stringify(response.data)}`,
+  );
+}
+
+// Triggers an XCUITest run on BrowserStack and returns the build_id
+export async function triggerXcuiBuild(
+  app_url: string,
+  test_suite_url: string,
+  devices: string[],
+  project: string,
+  config: BrowserStackConfig,
+): Promise<string> {
+  const auth = {
+    username: config["browserstack-username"],
+    password: config["browserstack-access-key"],
+  };
+
+  const response = await apiClient.post({
+    url: "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/build",
+    headers: {
+      Authorization:
+        "Basic " +
+        Buffer.from(`${auth.username}:${auth.password}`).toString("base64"),
+      "Content-Type": "application/json",
+    },
+    body: {
+      app: app_url,
+      testSuite: test_suite_url,
+      devices,
+      project,
+    },
+  });
+
+  if (response.data.build_id) {
+    return response.data.build_id;
+  }
+
+  throw new Error(
+    `Failed to trigger XCUITest build: ${JSON.stringify(response.data)}`,
+  );
 }

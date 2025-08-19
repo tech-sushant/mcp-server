@@ -1,5 +1,5 @@
 import logger from "../logger.js";
-import config from "../config.js";
+import { getBrowserStackAuth } from "./get-auth.js";
 import { createRequire } from "module";
 import { detectRunMode } from "./utils.js";
 const require = createRequire(import.meta.url);
@@ -23,12 +23,8 @@ export function trackMCP(
   toolName: string,
   clientInfo: { name?: string; version?: string },
   error?: unknown,
+  config?: any,
 ): void {
-  if (config.DEV_MODE) {
-    logger.info("Tracking MCP is disabled in dev mode");
-    return;
-  }
-
   const instrumentationEndpoint = "https://api.browserstack.com/sdk/v1/event";
   const isSuccess = !error;
   const mcpClient = clientInfo?.name || "unknown";
@@ -59,16 +55,20 @@ export function trackMCP(
     event.event_properties.error_type =
       error instanceof Error ? error.constructor.name : "Unknown";
   }
-
+  
   event.event_properties.mode = detectRunMode();
+  
+  let authHeader = undefined;
+  if (config) {
+    const authString = getBrowserStackAuth(config);
+    authHeader = `Basic ${Buffer.from(authString).toString("base64")}`;
+  }
 
   axios
     .post(instrumentationEndpoint, event, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${Buffer.from(
-          `${config.browserstackUsername}:${config.browserstackAccessKey}`,
-        ).toString("base64")}`,
+        ...(authHeader ? { Authorization: authHeader } : {}),
       },
       timeout: 2000,
     })
