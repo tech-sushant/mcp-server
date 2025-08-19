@@ -119,14 +119,18 @@ async function initializeReportFetcher(
   return reportFetcher;
 }
 
-
 async function executeAccessibilityRAG(
   args: { query: string },
   server: McpServer,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    trackMCP("accessibilityExpert", server.server.getClientVersion()!, undefined, config);
+    trackMCP(
+      "accessibilityExpert",
+      server.server.getClientVersion()!,
+      undefined,
+      config,
+    );
     return await queryAccessibilityRAG(args.query, config);
   } catch (error) {
     return handleMCPError("accessibilityExpert", server, config, error);
@@ -140,7 +144,12 @@ async function executeAccessibilityScan(
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    trackMCP("startAccessibilityScan", server.server.getClientVersion()!, undefined, config);
+    trackMCP(
+      "startAccessibilityScan",
+      server.server.getClientVersion()!,
+      undefined,
+      config,
+    );
     return await runAccessibilityScan(
       args.name,
       args.pageURL,
@@ -202,7 +211,12 @@ async function executeCreateAuthConfig(
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    trackMCP("createAccessibilityAuthConfig", server.server.getClientVersion()!, undefined, config);
+    trackMCP(
+      "createAccessibilityAuthConfig",
+      server.server.getClientVersion()!,
+      undefined,
+      config,
+    );
     logger.info(`Creating auth config: ${JSON.stringify(args)}`);
 
     const result = await createAuthConfig(args, config);
@@ -233,7 +247,12 @@ async function executeGetAuthConfig(
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    trackMCP("getAccessibilityAuthConfig", server.server.getClientVersion()!, undefined, config);
+    trackMCP(
+      "getAccessibilityAuthConfig",
+      server.server.getClientVersion()!,
+      undefined,
+      config,
+    );
 
     const authConfig = new AccessibilityAuthConfig();
     const auth = setupAuth(config);
