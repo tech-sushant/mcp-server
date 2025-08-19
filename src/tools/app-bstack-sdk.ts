@@ -135,7 +135,7 @@ export default function addAppSDKTools(
       detectedTestingFramework: z
         .nativeEnum(AppSDKSupportedTestingFrameworkEnum)
         .describe(
-          "The testing framework used in the project. Currently supports TestNG for Java projects. Example: 'testng'",
+          "The testing framework used in the project. Supports TestNG, JUnit 5, Selenide, JBehave, and Cucumber variants for Java projects. Example: 'testng', 'jbehave'",
         ),
 
       detectedLanguage: z

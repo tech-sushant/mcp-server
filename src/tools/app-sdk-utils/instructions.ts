@@ -121,6 +121,13 @@ mvn test
 - Ensure you're using Java v8+ (Java v9+ required for Gradle)
 - Maven is installed and configured in your system PATH
 - Looking for a starter project? Get started with our Selenide sample project`;
+  } else if (testingFramework === "jbehave") {
+    return `${baseString}
+**JBehave Prerequisites:**
+- An existing automated test suite
+- JBehave is installed
+- Ensure you're using Java v8+
+- Maven is installed and configured in your system PATH`;
   }
   return baseString;
 }
