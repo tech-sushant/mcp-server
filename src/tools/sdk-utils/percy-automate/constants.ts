@@ -250,7 +250,7 @@ exports.config = {
 ---STEP---
 (Optional) Manually capture screenshots
   1. Import the BrowserStack Percy SDK in your test script:
-    const { percy } = require('browsersstack-node-sdk');
+    const { percy } = require('browserstack-node-sdk');
   2. Add the \`await percy.screenshot(driver, name)\` method at required points in your test script.
 
 Example:
