@@ -538,7 +538,6 @@ class PercyPlaywrightExample
 \`\`\`
 `;
 
-
 export const pythonInstructions = `
 Install Percy dependencies
   - Install Percy CLI:

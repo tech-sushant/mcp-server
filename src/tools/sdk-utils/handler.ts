@@ -2,7 +2,10 @@ import {
   SetUpPercySchema,
   RunTestsOnBrowserStackSchema,
 } from "./common/schema.js";
-import { getBootstrapFailedMessage } from "./common/utils.js";
+import {
+  getBootstrapFailedMessage,
+  percyUnsupportedResult,
+} from "./common/utils.js";
 import { formatToolResult } from "./common/utils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -61,27 +64,23 @@ export async function setUpPercyHandler(
       folderPaths: input.folderPaths || [],
     };
 
+    // Check for Percy Web integration support
     if (input.integrationType === PercyIntegrationTypeEnum.WEB) {
       const supportCheck = checkPercyIntegrationSupport(percyInput);
       if (!supportCheck.supported) {
-        return {
-          content: [
-            {
-              type: "text",
-              text:
-                supportCheck.errorMessage ||
-                "Percy Web integration is not supported for this configuration.",
-            },
-          ],
-          isError: true,
-          shouldSkipFormatting: true,
-        };
+        return percyUnsupportedResult(
+          PercyIntegrationTypeEnum.WEB,
+          supportCheck,
+        );
       }
+
+      // Fetch the Percy token
       const percyToken = await fetchPercyToken(
         input.projectName,
         authorization,
         { type: PercyIntegrationTypeEnum.WEB },
       );
+
       const result = runPercyWeb(percyInput, percyToken);
       return await formatToolResult(result);
     } else if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
@@ -115,18 +114,10 @@ export async function setUpPercyHandler(
           integrationType: PercyIntegrationTypeEnum.AUTOMATE,
         });
         if (!supportCheck.supported) {
-          return {
-            content: [
-              {
-                type: "text",
-                text:
-                  supportCheck.errorMessage ||
-                  "Percy Automate integration is not supported for this configuration.",
-              },
-            ],
-            isError: true,
-            shouldSkipFormatting: true,
-          };
+          return percyUnsupportedResult(
+            PercyIntegrationTypeEnum.AUTOMATE,
+            supportCheck,
+          );
         }
         // SDK setup instructions (for Automate, without Percy)
         const sdkInput = {
@@ -148,6 +139,7 @@ export async function setUpPercyHandler(
           percyInput,
           percyToken,
         );
+
         // Combine steps: warning, SDK steps, Percy Automate steps
         const steps = [
           {
@@ -159,6 +151,8 @@ export async function setUpPercyHandler(
           ...(sdkResult.steps || []),
           ...(percyAutomateResult.steps || []),
         ];
+
+        // Combine all steps into the final result
         return await formatToolResult({
           ...percyAutomateResult,
           steps,

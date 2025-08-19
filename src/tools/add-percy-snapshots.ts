@@ -15,6 +15,7 @@ async function updateTestsWithPercyCommands(args: {
   if (!filePaths) {
     throw new Error(`No test files found in memory for UUID: ${uuid}`);
   }
+
   if (index < 0 || index >= filePaths.length) {
     throw new Error(
       `Invalid index: ${index}. There are ${filePaths.length} files for UUID: ${uuid}`,

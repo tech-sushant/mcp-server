@@ -108,3 +108,21 @@ Percy Mode: ${context.percyMode ?? "automate"}
 SDK Version: ${context.sdkVersion ?? "N/A"}
 Please open an issue on GitHub if the problem persists.`;
 }
+
+export function percyUnsupportedResult(
+  integrationType: PercyIntegrationTypeEnum,
+  supportCheck?: { errorMessage?: string },
+): CallToolResult {
+  const defaultMessage = `Percy ${integrationType} integration is not supported for this configuration.`;
+
+  return {
+    content: [
+      {
+        type: "text",
+        text: supportCheck?.errorMessage || defaultMessage,
+      },
+    ],
+    isError: true,
+    shouldSkipFormatting: true,
+  };
+}

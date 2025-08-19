@@ -8,14 +8,14 @@ export const RUN_ON_BROWSERSTACK_DESCRIPTION =
   "Set up and run automated web-based tests on BrowserStack using the BrowserStack SDK. Use this tool for functional or integration test setup on BrowserStack only. For any visual testing or Percy integration, use the dedicated Percy setup tool. Example prompts: run this test on browserstack; set up this project for browserstack.";
 
 export const SIMULATE_PERCY_CHANGE_DESCRIPTION =
-  "This tool helps new users simulate a Percy visual change by guiding them to make a visible UI modification, rerun Percy, and verify that the change is detected.";
+  "This tool helps new users simulate a Percy visual change by guiding them to make a visible UI modification, rerun Percy, and verify that the change is detected. Only Percy web is supported";
 
 export const PERCY_REPLACE_REGEX =
-  /MANDATORY: Aggressive, Exhaustive Percy Snapshot Integration[\s\S]*?Iteratively update every relevant test file in the directory and all subdirectories, adding Percy integration to each, one file at a time, until all are complete\./;
+  /Invoke listTestFiles\(\) with the provided directories[\s\S]*?- DO NOT STOP until you add commands in all the files or you reach end of the files\./;
 
 export const PERCY_SNAPSHOT_INSTRUCTION = `
 Invoke listTestFiles() with the provided directories from user to gather all test files in memory and obtain the generated UUID ---STEP---
-Process files in STRICT sequential order using tool addPercySnapshotCommands() with below instructions as param:
+Process files in STRICT sequential order using tool addPercySnapshotCommands() with below instructions:
 - Start with index 0
 - Then index 1  
 - Then index 2
@@ -77,6 +77,8 @@ STEP 4: Run a second Percy build.
 - Use the same build command you ran for the baseline.
 
 STEP 5: Compare the two Percy builds to see the detected visual difference.
+
+STEP 6: Now ask user if they want to setup percy for full project coverage? If yes, call the tool "setupPercyVisualTesting" tool to enable complete coverage for the entire project.
 
 CONSTRAINTS:
 - Do NOT run any builds until explicitly instructed in the steps.

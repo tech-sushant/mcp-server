@@ -18,7 +18,7 @@ export async function updateFileAndStep(
     type: "text",
     text: `Step 1 : You need to add percy snapshot commands in some key test cases in the file ${file} use the following instructions: \n${instruction}`,
   });
-    
+
   content.push({
     type: "text",
     text: `Step 2 : Confirm that Percy snapshot commands have been added at all key points of visual change in the file ${file}.`,
@@ -30,5 +30,13 @@ export async function updateFileAndStep(
       text: `Step 3 : Call the tool updateTestFileWithInstructions with index as ${nextIndex} out of ${total}`,
     });
   }
+
+  if (nextIndex === total) {
+    content.push({
+      type: "text",
+      text: `Step 4: Percy snapshot commands have been added to all files. You can now run the Percy build using the above command.`,
+    });
+  }
+
   return content;
 }
