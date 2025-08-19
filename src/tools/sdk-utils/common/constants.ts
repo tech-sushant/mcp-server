@@ -78,7 +78,7 @@ STEP 4: Run a second Percy build.
 
 STEP 5: Compare the two Percy builds to see the detected visual difference.
 
-STEP 6: Now ask user if they want to setup percy for full project coverage? If yes, call the tool "setupPercyVisualTesting" tool to enable complete coverage for the entire project.
+STEP 6: Now ask user if they want to setup percy for full project coverage? If yes, call the "setupPercyVisualTesting" tool to enable complete coverage for the entire project.
 
 CONSTRAINTS:
 - Do NOT run any builds until explicitly instructed in the steps.
