@@ -131,11 +131,7 @@ export function registerPercyTools(
     ListTestFilesParamsShape,
     async (args) => {
       try {
-        trackMCP(
-          "listTestFiles",
-          server.server.getClientVersion()!,
-          config,
-        );
+        trackMCP("listTestFiles", server.server.getClientVersion()!, config);
         return addListTestFiles(args);
       } catch (error) {
         trackMCP(
