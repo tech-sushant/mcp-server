@@ -497,9 +497,7 @@ export default function addAccessibilityTools(
       cursor: z
         .number()
         .optional()
-        .describe(
-          "Character offset for pagination (default: 0, use 1 for first page after initial scan results)",
-        ),
+        .describe("Character offset for pagination (default: 0)"),
     },
     async (args) => {
       return await executeFetchAccessibilityIssues(args, server, config);
