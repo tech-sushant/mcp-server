@@ -33,6 +33,71 @@ export function getAppSDKPrefixCommand(
   appPath?: string,
 ): string {
   switch (language) {
+    case "csharp": {
+      const isWindows = process.platform === "win32";
+      const isMac = process.platform === "darwin";
+      const isAppleSilicon = isMac && process.arch === "arm64";
+
+      const platformLabel = isWindows ? "Windows" : isMac ? "macOS" : "Linux";
+      const envSetupCommands = isWindows
+        ? `\`\`\`cmd
+set BROWSERSTACK_USERNAME=${username}
+set BROWSERSTACK_ACCESS_KEY=${accessKey}
+\`\`\``
+        : `\`\`\`bash
+export BROWSERSTACK_USERNAME="${username}"
+export BROWSERSTACK_ACCESS_KEY="${accessKey}"
+\`\`\``;
+
+      const installCommands = isWindows
+        ? `\`\`\`cmd
+dotnet add package BrowserStack.TestAdapter
+dotnet build
+dotnet browserstack-sdk setup --userName "${username}" --accessKey "${accessKey}"
+\`\`\``
+        : `\`\`\`bash
+dotnet add package BrowserStack.TestAdapter
+dotnet build
+dotnet browserstack-sdk setup --userName "${username}" --accessKey "${accessKey}"
+\`\`\``;
+
+      const appleSiliconNote = isAppleSilicon
+        ? `
+
+---STEP---
+[Only for Macs with Apple silicon] Install dotnet x64 on MacOS
+
+If you are using a Mac computer with Apple silicon chip (M1 or M2) architecture, use the given command:
+
+\`\`\`bash
+cd #(project folder Android or iOS)
+dotnet browserstack-sdk setup-dotnet --dotnet-path "<path>" --dotnet-version "<version>"
+\`\`\`
+
+- \`<path>\` - Mention the absolute path to the directory where you want to save dotnet x64
+- \`<version>\` - Mention the dotnet version which you want to use to run tests
+
+This command performs the following functions:
+- Installs dotnet x64
+- Installs the required version of dotnet x64 at an appropriate path
+- Sets alias for the dotnet installation location on confirmation (enter y option)`
+        : "";
+
+      return `---STEP---
+Set BrowserStack credentials as environment variables:
+
+**${platformLabel}:**
+${envSetupCommands}
+
+---STEP---
+Install BrowserStack SDK
+
+Run the following command to install the BrowserStack SDK and create a browserstack.yml file in the root directory of your project:
+
+**${platformLabel}:**
+${installCommands}${appleSiliconNote}`;
+    }
+
     case "java": {
       const mavenFramework = getJavaAppFrameworkForMaven(framework);
       const isWindows = process.platform === "win32";

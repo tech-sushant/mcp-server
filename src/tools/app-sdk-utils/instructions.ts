@@ -84,6 +84,8 @@ export function getAppInstructionsForProjectConfiguration(
   switch (language) {
     case "java":
       return getJavaAppInstructions(testingFramework);
+    case "csharp":
+      return getCSharpAppInstructions(testingFramework);
     default:
       return "";
   }
@@ -129,6 +131,95 @@ mvn test
 - Ensure you're using Java v8+
 - Maven is installed and configured in your system PATH`;
   }
+  return baseString;
+}
+
+function getCSharpAppInstructions(
+  testingFramework: AppSDKSupportedTestingFramework,
+): string {
+  const isWindows = process.platform === "win32";
+  const isMac = process.platform === "darwin";
+  const isAppleSilicon = isMac && process.arch === "arm64";
+
+  const platformLabel = isWindows ? "Windows" : isMac ? "macOS Intel" : "macOS Apple silicon";
+  
+  let runCommand = "";
+  if (isWindows) {
+    runCommand = `\`\`\`cmd
+dotnet build
+dotnet test --filter <EXPRESSION> [other_args]
+\`\`\``;
+  } else if (isAppleSilicon) {
+    runCommand = `\`\`\`bash
+dotnet build
+dotnet test --filter <EXPRESSION> [other_args]
+\`\`\`
+
+**Did not set the alias?**
+Use the absolute path to the dotnet installation to run your tests on Mac computers with Apple silicon chips:
+\`\`\`bash
+</absolute/path/to/location/of/dotnet/>/dotnet test
+\`\`\``;
+  } else {
+    runCommand = `\`\`\`bash
+dotnet build
+dotnet test --filter <EXPRESSION> [other_args]
+\`\`\``;
+  }
+
+  const baseString = `---STEP---
+Run your C# test suite:
+
+**${platformLabel}:**
+${runCommand}`;
+
+  if (testingFramework === "nunit") {
+    return `${baseString}
+
+**NUnit Prerequisites:**
+- An existing automated test suite
+- .NET v5.0+ and NUnit v3.0.0+
+- BrowserStack does not support .NET version 9 and above
+- Looking for a starter project? Get started with our NUnit sample project`;
+  } else if (testingFramework === "mstest") {
+    return `${baseString}
+
+**MSTest Prerequisites:**
+- An existing automated test suite
+- .NET v5.0+ and NUnit v3.0.0+
+- BrowserStack does not support .NET version 9 and above
+- Looking for a starter project? Get started with our MSTest sample project`;
+  } else if (testingFramework === "xunit") {
+    return `${baseString}
+
+**XUnit Prerequisites:**
+- An existing automated test suite
+- .NET v5.0+ and NUnit v3.0.0+
+- BrowserStack does not support .NET version 9 and above
+- Looking for a starter project? Get started with our XUnit sample project`;
+  } else if (testingFramework === "specflow") {
+    return `${baseString}
+
+**⚠️ IMPORTANT: SpecFlow End of Life Notice**
+BrowserStack no longer actively supports SpecFlow following its end of life (EOL) on December 31, 2024. Fixes or upgrades for SpecFlow are not planned.
+
+**SpecFlow Prerequisites:**
+- An existing automated test suite
+- .NET v5.0+ and NUnit v3.0.0+
+- BrowserStack does not support .NET version 9 and above
+- The Mac commands work only with the NUnit runner. They do not work with the MSTest or xUnit runners
+- Looking for a starter project? Get started with our SpecFlow sample project`;
+  } else if (testingFramework === "reqnroll") {
+    return `${baseString}
+
+**Reqnroll Prerequisites:**
+- An existing automated test suite
+- .NET v5.0+ and NUnit v3.0.0+
+- BrowserStack does not support .NET version 9 and above
+- The Mac commands work only with the NUnit runner. They do not work with the MSTest or xUnit runners
+- Looking for a starter project? Get started with our Reqnroll sample project`;
+  }
+  
   return baseString;
 }
 

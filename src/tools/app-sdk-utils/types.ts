@@ -1,5 +1,6 @@
 export enum AppSDKSupportedLanguageEnum {
   java = "java",
+  csharp = "csharp",
 }
 export type AppSDKSupportedLanguage = keyof typeof AppSDKSupportedLanguageEnum;
 
@@ -17,6 +18,11 @@ export enum AppSDKSupportedTestingFrameworkEnum {
   "cucumber-testng" = "cucumber-testng",
   "cucumber-junit4" = "cucumber-junit4",
   "cucumber-junit5" = "cucumber-junit5",
+  nunit = "nunit",
+  mstest = "mstest",
+  xunit = "xunit",
+  specflow = "specflow",
+  reqnroll = "reqnroll",
 }
 export type AppSDKSupportedTestingFramework =
   keyof typeof AppSDKSupportedTestingFrameworkEnum;
