@@ -30,19 +30,36 @@ jobs:
       - name: "Create build"
         run: npm run build
 
-      - name: "Get version from package.json and create beta version"
+      - name: "Get version and package name from package.json and create beta version"
         id: get_version
         run: |
+          PACKAGE_NAME=$(node -p 'require("./package.json").name')
           BASE_VERSION=$(node -p 'require("./package.json").version')
-          BETA_VERSION="$BASE_VERSION-beta"
+
+          # Fetch all published versions for this package
+          ALL_VERSIONS=$(npm view $PACKAGE_NAME versions --json 2>/dev/null || echo "[]")
+
+          # Get latest beta for this base version
+          LATEST_BETA=$(echo $ALL_VERSIONS | jq -r '.[] | select(startswith("'"$BASE_VERSION"'-beta."))' | sort -V | tail -n 1)
+
+          if [ -z "$LATEST_BETA" ]; then
+            COUNTER=1
+          else
+            COUNTER=$(echo $LATEST_BETA | sed -E 's/.*-beta\.([0-9]+)$/\1/')
+            COUNTER=$((COUNTER + 1))
+          fi
+
+          BETA_VERSION="$BASE_VERSION-beta.$COUNTER"
+
+          echo "package=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "version=$BETA_VERSION" >> $GITHUB_OUTPUT
-          echo "Beta version: $BETA_VERSION"
+          echo "Beta version: $BETA_VERSION for package: $PACKAGE_NAME"
 
       - name: "Check if beta version already exists on NPM"
         run: |
+          PACKAGE_NAME=${{ steps.get_version.outputs.package }}
           BETA_VERSION=${{ steps.get_version.outputs.version }}
-          # Check if version exists on npm
-          if npm view @browserstack/mcp-server@$BETA_VERSION version 2>/dev/null; then
+          if npm view $PACKAGE_NAME@$BETA_VERSION version 2>/dev/null; then
             echo "Error: Beta version $BETA_VERSION already exists on NPM!"
             exit 1
           fi
@@ -56,3 +73,4 @@ jobs:
         run: npm publish --tag beta --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
