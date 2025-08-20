@@ -138,7 +138,7 @@ async function executeAccessibilityRAG(
 }
 
 async function executeFetchAccessibilityIssues(
-  args: { scanId: string; scanRunId: string; nextPage?: number },
+  args: { scanId: string; scanRunId: string; cursor?: number },
   server: McpServer,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
@@ -153,7 +153,7 @@ async function executeFetchAccessibilityIssues(
       args.scanId,
       args.scanRunId,
       config,
-      args.nextPage,
+      args.cursor,
     );
   } catch (error) {
     return handleMCPError("fetchAccessibilityIssues", server, config, error);
@@ -164,29 +164,29 @@ async function fetchAccessibilityIssues(
   scanId: string,
   scanRunId: string,
   config: BrowserStackConfig,
-  nextPage = 0,
+  cursor = 0,
 ): Promise<CallToolResult> {
   const reportFetcher = await initializeReportFetcher(config);
   const reportLink = await reportFetcher.getReportLink(scanId, scanRunId);
 
   const { records, page_length, total_issues, next_page } =
-    await parseAccessibilityReportFromCSV(reportLink, { nextPage });
+    await parseAccessibilityReportFromCSV(reportLink, { nextPage: cursor });
 
   const currentlyShown =
-    nextPage === 0
+    cursor === 0
       ? page_length
-      : Math.floor(nextPage / JSON.stringify(records[0] || {}).length) +
+      : Math.floor(cursor / JSON.stringify(records[0] || {}).length) +
         page_length;
   const remainingIssues = total_issues - currentlyShown;
 
   const messages = [
-    `📊 Retrieved ${page_length} accessibility issues (Total: ${total_issues})`,
+    `Retrieved ${page_length} accessibility issues (Total: ${total_issues})`,
     `Issues: ${JSON.stringify(records, null, 2)}`,
   ];
 
   if (next_page !== null) {
     messages.push(
-      `📄 ${remainingIssues} more issues available. Use fetchAccessibilityIssues with nextPage: ${next_page} to get the next batch.`,
+      `${remainingIssues} more issues available. Use fetchAccessibilityIssues with cursor: ${next_page} to get the next batch.`,
     );
   } else {
     messages.push(`✅ All issues retrieved.`);
@@ -344,19 +344,19 @@ function createScanSuccessResponse(
   scanId: string,
   scanRunId: string,
   reportUrl: string,
-  nextPage: number | null,
+  cursor: number | null,
 ): CallToolResult {
   const messages = [
-    `✅ Accessibility scan "${name}" completed. check the BrowserStack dashboard for more details [https://scanner.browserstack.com/site-scanner/scan-details/${name}].`,
+    `Accessibility scan "${name}" completed. check the BrowserStack dashboard for more details [https://scanner.browserstack.com/site-scanner/scan-details/${name}].`,
     `Scan ID: ${scanId} and Scan Run ID: ${scanRunId}`,
     `You can also download the full report from the following link: ${reportUrl}`,
     `We found ${totalIssues} issues. Below are the details of the ${pageLength} most critical issues.`,
     `Scan results: ${JSON.stringify(records, null, 2)}`,
   ];
 
-  if (nextPage !== null) {
+  if (cursor !== null) {
     messages.push(
-      `📄 More issues available. Use fetchAccessibilityIssues tool with scanId: "${scanId}", scanRunId: "${scanRunId}", and nextPage: ${nextPage} to get the next batch.`,
+      `More issues available. Use fetchAccessibilityIssues tool with scanId: "${scanId}", scanRunId: "${scanRunId}", and cursor: ${cursor} to get the next batch.`,
     );
   }
 
@@ -486,7 +486,7 @@ export default function addAccessibilityTools(
 
   tools.fetchAccessibilityIssues = server.tool(
     "fetchAccessibilityIssues",
-    "Fetch accessibility issues from a completed scan with pagination support. Use nextPage parameter to get subsequent pages of results.",
+    "Fetch accessibility issues from a completed scan with pagination support. Use cursor parameter to get subsequent pages of results.",
     {
       scanId: z
         .string()
@@ -494,7 +494,7 @@ export default function addAccessibilityTools(
       scanRunId: z
         .string()
         .describe("The scan run ID from a completed accessibility scan"),
-      nextPage: z
+      cursor: z
         .number()
         .optional()
         .describe(
