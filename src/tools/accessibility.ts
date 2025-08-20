@@ -137,6 +137,64 @@ async function executeAccessibilityRAG(
   }
 }
 
+async function executeFetchAccessibilityIssues(
+  args: { scanId: string; scanRunId: string; nextPage?: number },
+  server: McpServer,
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
+  try {
+    trackMCP(
+      "fetchAccessibilityIssues",
+      server.server.getClientVersion()!,
+      undefined,
+      config,
+    );
+    return await fetchAccessibilityIssues(
+      args.scanId,
+      args.scanRunId,
+      config,
+      args.nextPage,
+    );
+  } catch (error) {
+    return handleMCPError("fetchAccessibilityIssues", server, config, error);
+  }
+}
+
+async function fetchAccessibilityIssues(
+  scanId: string,
+  scanRunId: string,
+  config: BrowserStackConfig,
+  nextPage = 0,
+): Promise<CallToolResult> {
+  const reportFetcher = await initializeReportFetcher(config);
+  const reportLink = await reportFetcher.getReportLink(scanId, scanRunId);
+
+  const { records, page_length, total_issues, next_page } =
+    await parseAccessibilityReportFromCSV(reportLink, { nextPage });
+
+  const currentlyShown =
+    nextPage === 0
+      ? page_length
+      : Math.floor(nextPage / JSON.stringify(records[0] || {}).length) +
+        page_length;
+  const remainingIssues = total_issues - currentlyShown;
+
+  const messages = [
+    `📊 Retrieved ${page_length} accessibility issues (Total: ${total_issues})`,
+    `Issues: ${JSON.stringify(records, null, 2)}`,
+  ];
+
+  if (next_page !== null) {
+    messages.push(
+      `📄 ${remainingIssues} more issues available. Use fetchAccessibilityIssues with nextPage: ${next_page} to get the next batch.`,
+    );
+  } else {
+    messages.push(`✅ All issues retrieved.`);
+  }
+
+  return createSuccessResponse(messages);
+}
+
 async function executeAccessibilityScan(
   args: { name: string; pageURL: string; authConfigId?: number },
   context: ScanProgressContext,
@@ -283,12 +341,26 @@ function createScanSuccessResponse(
   totalIssues: number,
   pageLength: number,
   records: any[],
+  scanId: string,
+  scanRunId: string,
+  reportUrl: string,
+  nextPage: number | null,
 ): CallToolResult {
-  return createSuccessResponse([
+  const messages = [
     `✅ Accessibility scan "${name}" completed. check the BrowserStack dashboard for more details [https://scanner.browserstack.com/site-scanner/scan-details/${name}].`,
+    `Scan ID: ${scanId} and Scan Run ID: ${scanRunId}`,
+    `You can also download the full report from the following link: ${reportUrl}`,
     `We found ${totalIssues} issues. Below are the details of the ${pageLength} most critical issues.`,
     `Scan results: ${JSON.stringify(records, null, 2)}`,
-  ]);
+  ];
+
+  if (nextPage !== null) {
+    messages.push(
+      `📄 More issues available. Use fetchAccessibilityIssues tool with scanId: "${scanId}", scanRunId: "${scanRunId}", and nextPage: ${nextPage} to get the next batch.`,
+    );
+  }
+
+  return createSuccessResponse(messages);
 }
 
 async function runAccessibilityScan(
@@ -314,10 +386,19 @@ async function runAccessibilityScan(
   const reportFetcher = await initializeReportFetcher(config);
   const reportLink = await reportFetcher.getReportLink(scanId, scanRunId);
 
-  const { records, page_length, total_issues } =
+  const { records, page_length, total_issues, next_page } =
     await parseAccessibilityReportFromCSV(reportLink);
 
-  return createScanSuccessResponse(name, total_issues, page_length, records);
+  return createScanSuccessResponse(
+    name,
+    total_issues,
+    page_length,
+    records,
+    scanId,
+    scanRunId,
+    reportLink,
+    next_page,
+  );
 }
 
 export default function addAccessibilityTools(
@@ -400,6 +481,28 @@ export default function addAccessibilityTools(
     },
     async (args) => {
       return await executeGetAuthConfig(args, server, config);
+    },
+  );
+
+  tools.fetchAccessibilityIssues = server.tool(
+    "fetchAccessibilityIssues",
+    "Fetch accessibility issues from a completed scan with pagination support. Use nextPage parameter to get subsequent pages of results.",
+    {
+      scanId: z
+        .string()
+        .describe("The scan ID from a completed accessibility scan"),
+      scanRunId: z
+        .string()
+        .describe("The scan run ID from a completed accessibility scan"),
+      nextPage: z
+        .number()
+        .optional()
+        .describe(
+          "Character offset for pagination (default: 0, use 1 for first page after initial scan results)",
+        ),
+    },
+    async (args) => {
+      return await executeFetchAccessibilityIssues(args, server, config);
     },
   );
 
