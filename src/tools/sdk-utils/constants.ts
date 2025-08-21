@@ -330,6 +330,12 @@ Add new scripts to package.json for running tests on BrowserStack:
 }
 \`\`\`
 
+Example : 
+\`\`\`json
+"scripts": {
+  "test:browserstack": "npx browserstack-node-sdk playwright test"
+}
+\`\`\`
 ---STEP---
 
 Export BrowserStack credentials as environment variables:
@@ -338,6 +344,10 @@ Set the following environment variables before running tests.
 export BROWSERSTACK_USERNAME=${username}
 export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\`
+
+---STEP---
+Run your tests:
+You can now run your tests on BrowserStack using your standard command or Use the commands defined in your package.json file to run the tests.
 `;
 
 /**
@@ -447,7 +457,7 @@ exports.config.capabilities.forEach(function (caps) {
 ---STEP---
 
 Run your tests:
-You can now run your tests on BrowserStack using your standard WebdriverIO command.
+You can now run your tests on BrowserStack using your standard WebdriverIO command or Use the commands defined in your package.json file to run the tests.
 `;
 
 const cypressInstructions = (username: string, accessKey: string) => `
@@ -577,6 +587,9 @@ export const SUPPORTED_CONFIGURATIONS: ConfigMapping = {
     },
     cypress: {
       cypress: { instructions: cypressInstructions },
+    },
+    webdriverio: {
+      mocha: { instructions: webdriverioInstructions },
     },
   },
 };

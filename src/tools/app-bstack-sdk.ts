@@ -53,6 +53,7 @@ export async function bootstrapAppProjectWithSDK({
     detectedTestingFramework,
     username,
     accessKey,
+    appPath,
   );
 
   let ymlInstructions = "";
@@ -147,7 +148,7 @@ export default function addAppSDKTools(
       detectedLanguage: z
         .nativeEnum(AppSDKSupportedLanguageEnum)
         .describe(
-          "The programming language used in the project. Example: 'nodejs', 'python', 'java'",
+          "The programming language used in the project. Supports Java and C#. Example: 'java', 'csharp'",
         ),
 
       desiredPlatforms: z

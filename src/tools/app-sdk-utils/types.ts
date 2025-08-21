@@ -3,6 +3,7 @@ export enum AppSDKSupportedLanguageEnum {
   nodejs = "nodejs",
   python = "python",
   ruby = "ruby",
+  csharp = "csharp",
 }
 export type AppSDKSupportedLanguage = keyof typeof AppSDKSupportedLanguageEnum;
 
@@ -23,6 +24,9 @@ export type AppSDKSupportedFramework =
 
 export enum AppSDKSupportedTestingFrameworkEnum {
   testng = "testng",
+  junit5 = "junit5",
+  selenide = "selenide",
+  jbehave = "jbehave",
   "cucumber-testng" = "cucumber-testng",
   "cucumber-junit4" = "cucumber-junit4",
   "cucumber-junit5" = "cucumber-junit5",
@@ -37,6 +41,11 @@ export enum AppSDKSupportedTestingFrameworkEnum {
   lettuce = "lettuce",
   rspec = "rspec",
   "cucumber-ruby" = "cucumber-ruby",
+  nunit = "nunit",
+  mstest = "mstest",
+  xunit = "xunit",
+  specflow = "specflow",
+  reqnroll = "reqnroll",
 }
 
 export type AppSDKSupportedTestingFramework =
