@@ -55,13 +55,21 @@ export async function bootstrapAppProjectWithSDK({
     accessKey,
   );
 
-  // Generate browserstack.yml instructions
-  const ymlInstructions = generateAppBrowserStackYMLInstructions(
-    desiredPlatforms,
-    username,
-    accessKey,
-    appPath,
-  );
+  let ymlInstructions = "";
+  if (
+    detectedFramework != "webdriverio" &&
+    detectedTestingFramework != "nightwatch" &&
+    detectedLanguage != "ruby"
+  ) {
+    // Generate browserstack.yml instructions
+    ymlInstructions = generateAppBrowserStackYMLInstructions(
+      desiredPlatforms,
+      username,
+      accessKey,
+      appPath,
+      detectedTestingFramework,
+    );
+  }
 
   // Get project configuration instructions
   const instructionsForProjectConfiguration =
@@ -133,13 +141,13 @@ export default function addAppSDKTools(
       detectedTestingFramework: z
         .nativeEnum(AppSDKSupportedTestingFrameworkEnum)
         .describe(
-          "The testing framework used in the project. Currently supports TestNG for Java projects. Example: 'testng'",
+          "The testing framework used in the project. Be precise with framework selection Example: 'testng', 'behave', 'pytest', 'robot'",
         ),
 
       detectedLanguage: z
         .nativeEnum(AppSDKSupportedLanguageEnum)
         .describe(
-          "The programming language used in the project. Currently supports Java. Example: 'java'",
+          "The programming language used in the project. Example: 'nodejs', 'python', 'java'",
         ),
 
       desiredPlatforms: z
