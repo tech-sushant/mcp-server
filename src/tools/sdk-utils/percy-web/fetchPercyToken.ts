@@ -21,8 +21,6 @@ export async function fetchPercyToken(
 
   const url = `${baseUrl}?${params.toString()}`;
   
-  return "newtoken";
-
   const response = await fetch(url, {
     headers: {
       Authorization: authHeader,
