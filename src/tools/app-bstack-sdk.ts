@@ -56,14 +56,21 @@ export async function bootstrapAppProjectWithSDK({
     appPath,
   );
 
-  // Generate browserstack.yml instructions
-  const ymlInstructions = generateAppBrowserStackYMLInstructions(
-    desiredPlatforms,
-    username,
-    accessKey,
-    appPath,
-    detectedTestingFramework,
-  );
+  let ymlInstructions = "";
+  if (
+    detectedFramework != "webdriverio" &&
+    detectedTestingFramework != "nightwatch" &&
+    detectedLanguage != "ruby"
+  ) {
+    // Generate browserstack.yml instructions
+    ymlInstructions = generateAppBrowserStackYMLInstructions(
+      desiredPlatforms,
+      username,
+      accessKey,
+      appPath,
+      detectedTestingFramework,
+    );
+  }
 
   // Get project configuration instructions
   const instructionsForProjectConfiguration =
@@ -135,7 +142,7 @@ export default function addAppSDKTools(
       detectedTestingFramework: z
         .nativeEnum(AppSDKSupportedTestingFrameworkEnum)
         .describe(
-          "The testing framework used in the project. Supports TestNG, JUnit 5, Selenide, JBehave, and Cucumber variants for Java projects, and NUnit/MSTest/XUnit/SpecFlow/Reqnroll for C# projects. Example: 'testng', 'jbehave', 'nunit', 'mstest', 'xunit', 'specflow', 'reqnroll'",
+          "The testing framework used in the project. Be precise with framework selection Example: 'testng', 'behave', 'pytest', 'robot'",
         ),
 
       detectedLanguage: z
