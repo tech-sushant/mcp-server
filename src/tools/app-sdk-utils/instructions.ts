@@ -141,8 +141,12 @@ function getCSharpAppInstructions(
   const isMac = process.platform === "darwin";
   const isAppleSilicon = isMac && process.arch === "arm64";
 
-  const platformLabel = isWindows ? "Windows" : isMac ? "macOS Intel" : "macOS Apple silicon";
-  
+  const platformLabel = isWindows
+    ? "Windows"
+    : isMac
+      ? "macOS Intel"
+      : "macOS Apple silicon";
+
   let runCommand = "";
   if (isWindows) {
     runCommand = `\`\`\`cmd
@@ -219,7 +223,7 @@ BrowserStack no longer actively supports SpecFlow following its end of life (EOL
 - The Mac commands work only with the NUnit runner. They do not work with the MSTest or xUnit runners
 - Looking for a starter project? Get started with our Reqnroll sample project`;
   }
-  
+
   return baseString;
 }
 
