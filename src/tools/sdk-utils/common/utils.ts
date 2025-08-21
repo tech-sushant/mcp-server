@@ -102,11 +102,12 @@ export function getBootstrapFailedMessage(
   error: unknown,
   context: { config: unknown; percyMode?: string; sdkVersion?: string },
 ): string {
+  const errorMsg = error instanceof Error ? error.message : String(error);
   return `Failed to bootstrap project with BrowserStack SDK.
-Error: ${error}
-Percy Mode: ${context.percyMode ?? "automate"}
-SDK Version: ${context.sdkVersion ?? "N/A"}
-Please open an issue on GitHub if the problem persists.`;
+  Error: ${errorMsg}
+  Percy Mode: ${context.percyMode ?? "N/A"}
+  SDK Version: ${context.sdkVersion ?? "N/A"}
+  Please open an issue on GitHub if the problem persists.`;
 }
 
 export function percyUnsupportedResult(
