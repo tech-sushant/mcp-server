@@ -2,8 +2,6 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { trackMCP } from "../lib/instrumentation.js";
-import { getAppSDKPrefixCommand } from "./app-sdk-utils/commands.js";
-
 import {
   AppSDKSupportedFramework,
   AppSDKSupportedLanguage,
@@ -13,13 +11,16 @@ import {
   AppSDKSupportedFrameworkEnum,
   AppSDKSupportedTestingFrameworkEnum,
   AppSDKSupportedPlatformEnum,
-} from "./app-sdk-utils/types.js";
+  formatAppInstructionsWithNumbers,
+  generateCompleteAppSDKInstructions,
+} from "./app-sdk-utils/index.js";
 
 import {
+  getAppSDKPrefixCommand,
   generateAppBrowserStackYMLInstructions,
-  getAppInstructionsForProjectConfiguration,
-  formatAppInstructionsWithNumbers,
-} from "./app-sdk-utils/instructions.js";
+} from "./app-sdk-utils/app-bstack/index.js";
+
+import { getAppInstructionsForProjectConfiguration } from "./app-sdk-utils/common/index.js";
 
 import { getBrowserStackAuth } from "../lib/get-auth.js";
 import { BrowserStackConfig } from "../lib/types.js";
@@ -47,6 +48,52 @@ export async function bootstrapAppProjectWithSDK({
   const authString = getBrowserStackAuth(config);
   const [username, accessKey] = authString.split(":");
 
+  try {
+    // Use the new handler to generate complete instructions
+    const fullInstructions = await generateCompleteAppSDKInstructions(
+      detectedLanguage,
+      detectedFramework,
+      detectedTestingFramework,
+      username,
+      accessKey,
+      desiredPlatforms,
+      appPath,
+    );
+
+    // Apply consistent formatting for all configurations
+    return formatFinalAppInstructions(fullInstructions);
+  } catch {
+    // Fallback to the old implementation if new handler fails
+    return await fallbackBootstrapAppProjectWithSDK({
+      detectedFramework,
+      detectedTestingFramework,
+      detectedLanguage,
+      desiredPlatforms,
+      appPath,
+      username,
+      accessKey,
+    });
+  }
+}
+
+// Fallback implementation using individual functions
+async function fallbackBootstrapAppProjectWithSDK({
+  detectedFramework,
+  detectedTestingFramework,
+  detectedLanguage,
+  desiredPlatforms,
+  appPath,
+  username,
+  accessKey,
+}: {
+  detectedFramework: AppSDKSupportedFramework;
+  detectedTestingFramework: AppSDKSupportedTestingFramework;
+  detectedLanguage: AppSDKSupportedLanguage;
+  desiredPlatforms: AppSDKSupportedPlatform[];
+  appPath: string;
+  username: string;
+  accessKey: string;
+}): Promise<CallToolResult> {
   // Get SDK setup command
   const sdkSetupCommand = getAppSDKPrefixCommand(
     detectedLanguage,
@@ -98,19 +145,21 @@ export async function bootstrapAppProjectWithSDK({
   }
 
   // Apply consistent formatting for all configurations
-  return formatFinalAppInstructions(combinedInstructions);
+  return formatFinalAppInstructions(
+    formatAppInstructionsWithNumbers(combinedInstructions),
+  );
 }
 
 // Helper function to apply consistent formatting to all instruction types
 function formatFinalAppInstructions(
-  combinedInstructions: string,
+  formattedInstructions: string,
 ): CallToolResult {
   const fullInstructions = `⚠️ IMPORTANT: DO NOT SKIP ANY STEP
 All the setup steps described in this file MUST be executed regardless of any existing configuration or setup.
 This ensures proper BrowserStack App Automate SDK setup.
 Each step is compulsory and sequence needs to be maintained.
 
-${formatAppInstructionsWithNumbers(combinedInstructions)}`;
+${formattedInstructions}`;
 
   return {
     content: [
@@ -179,7 +228,7 @@ export default function addAppSDKTools(
             args.detectedTestingFramework as AppSDKSupportedTestingFramework,
           detectedLanguage: args.detectedLanguage as AppSDKSupportedLanguage,
           desiredPlatforms: args.desiredPlatforms as AppSDKSupportedPlatform[],
-          appPath: args.appPath,
+          appPath: args.appPath as string,
           config,
         });
       } catch (error) {
