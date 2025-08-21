@@ -175,7 +175,14 @@ dotnet test --filter <EXPRESSION> [other_args]
 Run your C# test suite:
 
 **${platformLabel}:**
-${runCommand}`;
+${runCommand}
+
+**Debug Guidelines:**
+If you encounter the error: java.lang.IllegalArgumentException: Multiple entries with the same key,
+__Resolution:__
+- The app capability should only be set in one place: browserstack.yml.
+- Remove or comment out any code or configuration in your test setup (e.g., step definitions, runners, or capabilities setup) that sets the app path directly.
+`;
 
   if (testingFramework === "nunit") {
     return `${baseString}
