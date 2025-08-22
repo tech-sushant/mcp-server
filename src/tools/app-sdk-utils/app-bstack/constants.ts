@@ -4,7 +4,7 @@ import {
   AppSDKSupportedTestingFrameworkEnum,
   AppSDKSupportedLanguageEnum,
   AppSDKSupportedPlatformEnum,
-} from "../common/index.js";
+} from "../app-bstack/index.js";
 
 // App Automate specific device configurations
 export const APP_DEVICE_CONFIGS = {

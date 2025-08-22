@@ -5,7 +5,7 @@ import {
   combineInstructions,
   createEnvStep,
   PLATFORM_UTILS,
-} from "../../common/index.js";
+} from "../../app-bstack/index.js";
 
 // Java-specific constants and mappings
 export const MAVEN_ARCHETYPE_GROUP_ID = "com.browserstack";

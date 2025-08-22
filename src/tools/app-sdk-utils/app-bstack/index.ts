@@ -1,12 +1,8 @@
 // Barrel exports for App BrowserStack module
-export {
-  getAppSDKPrefixCommand,
-  getJavaAppFrameworkForMaven,
-} from "./prefix-commands.js";
+export { getAppSDKPrefixCommand } from "./prefix-commands.js";
 export {
   generateAppBrowserStackYMLInstructions,
   generateDeviceConfig,
-  generateBrowserStackConfig,
 } from "./configUtils.js";
 export {
   APP_FRAMEWORK_SUPPORT_MAP,
@@ -17,3 +13,10 @@ export {
   getDefaultTestingFramework,
   validateFrameworkCombination,
 } from "./frameworks.js";
+
+export * from "./types.js";
+export * from "./constants.js";
+export * from "./utils.js";
+export * from "./instructionUtils.js";
+export * from "./schema.js";
+export * from "./formatter.js";

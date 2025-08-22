@@ -1,9 +1,6 @@
-import { AppSDKSupportedLanguage } from "../common/index.js";
+import { AppSDKSupportedLanguage } from "../app-bstack/index.js";
 import { getCSharpSDKCommand } from "./languages/csharp.js";
-import {
-  getJavaSDKCommand,
-  getJavaAppFrameworkForMaven,
-} from "./languages/java.js";
+import { getJavaSDKCommand } from "./languages/java.js";
 import { getNodejsSDKCommand } from "./languages/nodejs.js";
 import { getPythonSDKCommand } from "./languages/python.js";
 import { getRubySDKCommand } from "./languages/ruby.js";
@@ -30,5 +27,3 @@ export function getAppSDKPrefixCommand(
       return "";
   }
 }
-
-export { getJavaAppFrameworkForMaven };

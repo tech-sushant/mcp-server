@@ -6,7 +6,7 @@ import {
   createEnvStep,
   combineInstructions,
   PLATFORM_UTILS,
-} from "../../common/index.js";
+} from "../../app-bstack/index.js";
 
 export function getPythonAppInstructions(
   testingFramework: AppSDKSupportedTestingFramework,

@@ -1,5 +1,5 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { STEP_DELIMITER } from "./constants.js";
+import { STEP_DELIMITER } from "../app-bstack/constants.js";
 
 export function formatFinalAppInstructions(
   formattedInstructions: string,

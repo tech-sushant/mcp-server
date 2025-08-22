@@ -4,7 +4,7 @@ import { BrowserStackConfig } from "../lib/types.js";
 import {
   SETUP_APP_BSTACK_DESCRIPTION,
   SetupAppBstackParamsShape,
-} from "./app-sdk-utils/common/constants.js";
+} from "./app-sdk-utils/app-bstack/constants.js";
 
 export function registerAppBstackTools(
   server: McpServer,

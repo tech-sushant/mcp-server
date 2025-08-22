@@ -4,7 +4,7 @@ import {
   createStep,
   createEnvStep,
   combineInstructions,
-} from "../../common/index.js";
+} from "../../app-bstack/index.js";
 
 export function getCSharpAppInstructions(): string {
   const { isWindows, isAppleSilicon, getPlatformLabel } = PLATFORM_UTILS;

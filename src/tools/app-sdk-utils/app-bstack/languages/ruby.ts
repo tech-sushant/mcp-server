@@ -6,7 +6,7 @@ import {
   combineInstructions,
   createEnvStep,
   PLATFORM_UTILS,
-} from "../../common/index.js";
+} from "../../app-bstack/index.js";
 
 export function getRubyAppInstructions(
   testingFramework: AppSDKSupportedTestingFramework,

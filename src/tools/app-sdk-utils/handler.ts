@@ -9,7 +9,7 @@ import {
   formatAppInstructionsWithNumbers,
   getAppInstructionsForProjectConfiguration,
   SetupAppBstackParamsShape,
-} from "./common/index.js";
+} from "./app-bstack/index.js";
 import {
   getAppSDKPrefixCommand,
   generateAppBrowserStackYMLInstructions,

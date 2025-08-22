@@ -3,7 +3,7 @@ import {
   AppSDKSupportedLanguage,
   AppSDKSupportedFramework,
   AppSDKSupportedTestingFramework,
-} from "../common/types.js";
+} from "./types.js";
 
 export const APP_FRAMEWORK_SUPPORT_MAP: Record<
   AppSDKSupportedLanguage,

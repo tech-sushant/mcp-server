@@ -3,7 +3,7 @@ import {
   APP_DEVICE_CONFIGS,
   DEFAULT_APP_PATH,
   createStep,
-} from "../common/index.js";
+} from "../app-bstack/index.js";
 
 export function generateAppBrowserStackYMLInstructions(
   platforms: string[],
@@ -74,60 +74,4 @@ export function generateDeviceConfig(
     platformVersion: "${device.platformVersion}"`,
     )
     .join("\n");
-}
-
-export function generateBrowserStackConfig(
-  username: string,
-  accessKey: string,
-  options: {
-    framework?: string;
-    appPath?: string;
-    platforms?: Array<{
-      platformName: string;
-      deviceName: string;
-      platformVersion: string;
-    }>;
-    buildName?: string;
-    projectName?: string;
-    parallelsPerPlatform?: number;
-    browserstackLocal?: boolean;
-    debug?: boolean;
-    networkLogs?: boolean;
-    percy?: boolean;
-    percyCaptureMode?: string;
-    accessibility?: boolean;
-  } = {},
-) {
-  const config = {
-    userName: username,
-    accessKey: accessKey,
-    framework: options.framework,
-    app: options.appPath || DEFAULT_APP_PATH,
-    platforms: options.platforms || [
-      ...APP_DEVICE_CONFIGS.android.map((device) => ({
-        platformName: "android",
-        deviceName: device.deviceName,
-        platformVersion: device.platformVersion,
-      })),
-      ...APP_DEVICE_CONFIGS.ios.map((device) => ({
-        platformName: "ios",
-        deviceName: device.deviceName,
-        platformVersion: device.platformVersion,
-      })),
-    ],
-    parallelsPerPlatform: options.parallelsPerPlatform || 1,
-    browserstackLocal: options.browserstackLocal ?? true,
-    buildName: options.buildName || "bstack-demo",
-    projectName: options.projectName || "BrowserStack Sample",
-    debug: options.debug ?? true,
-    networkLogs: options.networkLogs ?? true,
-    percy: options.percy ?? false,
-    percyCaptureMode: options.percyCaptureMode || "auto",
-    accessibility: options.accessibility ?? false,
-  };
-
-  // Remove undefined values
-  return Object.fromEntries(
-    Object.entries(config).filter(([, value]) => value !== undefined),
-  );
 }
