@@ -10,9 +10,6 @@ import {
   formatMultiLineCommand,
 } from "../common/index.js";
 
-/**
- * Get the language-dependent prefix command for BrowserStack App Automate SDK setup
- */
 export function getAppSDKPrefixCommand(
   language: AppSDKSupportedLanguage,
   framework: string,
@@ -36,9 +33,6 @@ export function getAppSDKPrefixCommand(
   }
 }
 
-/**
- * Get framework mapping for Java Maven archetype
- */
 export function getJavaAppFrameworkForMaven(framework: string): string {
   return JAVA_APP_FRAMEWORK_MAP[framework] || framework;
 }
@@ -108,9 +102,9 @@ function getJavaSDKCommand(
   const appParam = appPath ? `-DBROWSERSTACK_APP="${appPath}"` : "";
 
   const mavenCommand = isWindows
-    ? `mvn archetype:generate -B -DarchetypeGroupId="com.browserstack" -DarchetypeArtifactId="${mavenFramework}" -DarchetypeVersion="1.0" -DgroupId="com.browserstack" -DartifactId="junit-archetype-integrate" -Dversion="1.0" -DBROWSERSTACK_USERNAME="${username}" -DBROWSERSTACK_ACCESS_KEY="${accessKey}" ${frameworkParam} ${appParam}`.trim()
-    : formatMultiLineCommand(
-        `mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
+? `mvn archetype:generate -B -DarchetypeGroupId="com.browserstack" -DarchetypeArtifactId="${mavenFramework}" -DarchetypeVersion="1.0" -DgroupId="com.browserstack" -DartifactId="junit-archetype-integrate" -Dversion="1.0" -DBROWSERSTACK_USERNAME="${username}" -DBROWSERSTACK_ACCESS_KEY="${accessKey}" ${frameworkParam} ${appParam}`.trim()
+: formatMultiLineCommand(
+    `mvn archetype:generate -B -DarchetypeGroupId=com.browserstack \\
 -DarchetypeArtifactId=${mavenFramework} -DarchetypeVersion=1.0 \\
 -DgroupId=com.browserstack -DartifactId=junit-archetype-integrate -Dversion=1.0 \\
 -DBROWSERSTACK_USERNAME="${username}" \\

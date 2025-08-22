@@ -5,9 +5,6 @@ import {
   AppSDKSupportedTestingFramework,
 } from "../common/types.js";
 
-/**
- * Mapping of supported languages to their available frameworks and testing frameworks
- */
 export const APP_FRAMEWORK_SUPPORT_MAP: Record<
   AppSDKSupportedLanguage,
   {
@@ -51,9 +48,6 @@ export const APP_FRAMEWORK_SUPPORT_MAP: Record<
   },
 };
 
-/**
- * Check if a framework is supported for a given language
- */
 export function isFrameworkSupported(
   language: AppSDKSupportedLanguage,
   framework: AppSDKSupportedFramework,
@@ -63,9 +57,6 @@ export function isFrameworkSupported(
   );
 }
 
-/**
- * Check if a testing framework is supported for a given language
- */
 export function isTestingFrameworkSupported(
   language: AppSDKSupportedLanguage,
   testingFramework: AppSDKSupportedTestingFramework,
@@ -77,27 +68,18 @@ export function isTestingFrameworkSupported(
   );
 }
 
-/**
- * Get all supported frameworks for a language
- */
 export function getSupportedFrameworks(
   language: AppSDKSupportedLanguage,
 ): AppSDKSupportedFramework[] {
   return APP_FRAMEWORK_SUPPORT_MAP[language]?.frameworks || [];
 }
 
-/**
- * Get all supported testing frameworks for a language
- */
 export function getSupportedTestingFrameworks(
   language: AppSDKSupportedLanguage,
 ): AppSDKSupportedTestingFramework[] {
   return APP_FRAMEWORK_SUPPORT_MAP[language]?.testingFrameworks || [];
 }
 
-/**
- * Get the default testing framework for a language
- */
 export function getDefaultTestingFramework(
   language: AppSDKSupportedLanguage,
 ): AppSDKSupportedTestingFramework | null {
@@ -121,9 +103,6 @@ export function getDefaultTestingFramework(
   }
 }
 
-/**
- * Validate language, framework, and testing framework combination
- */
 export function validateFrameworkCombination(
   language: AppSDKSupportedLanguage,
   framework: AppSDKSupportedFramework,

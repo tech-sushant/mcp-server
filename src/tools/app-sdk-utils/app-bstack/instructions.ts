@@ -1,5 +1,4 @@
 // Instruction content and generators for App SDK utilities
-
 import {
   AppSDKSupportedTestingFramework,
   PLATFORM_UTILS,
@@ -8,22 +7,16 @@ import {
 } from "../common/index.js";
 import { AppSDKSupportedTestingFrameworkEnum } from "../common/types.js";
 
-/**
- * Generate Java-specific test running instructions
- */
 export function getJavaAppInstructions(): string {
   const baseRunStep = createStep(
-    "Run your App Automate test suite:",
-    `\`\`\`bash
+"Run your App Automate test suite:",
+`\`\`\`bash
 mvn test
 \`\`\``,
   );
   return baseRunStep;
 }
 
-/**
- * Generate C# specific test running instructions
- */
 export function getCSharpAppInstructions(): string {
   const { isWindows, isAppleSilicon, getPlatformLabel } = PLATFORM_UTILS;
 
@@ -66,9 +59,6 @@ __Resolution:__
   return runStep;
 }
 
-/**
- * Generate Node.js specific test running instructions
- */
 export function getNodejsAppInstructions(
   testingFramework: AppSDKSupportedTestingFramework,
 ): string {
@@ -112,38 +102,35 @@ npm run [your-test-script-name]
   }
 }
 
-/**
- * Generate Python specific test running instructions
- */
 export function getPythonAppInstructions(
   testingFramework: AppSDKSupportedTestingFramework,
 ): string {
   switch (testingFramework) {
     case AppSDKSupportedTestingFrameworkEnum.robot:
       return createStep(
-        "Run your App Automate test suite with Robot Framework:",
-        `\`\`\`bash
+"Run your App Automate test suite with Robot Framework:",
+`\`\`\`bash
 browserstack-sdk robot <path-to-test-files>
 \`\`\``,
       );
     case AppSDKSupportedTestingFrameworkEnum.pytest:
       return createStep(
-        "Run your App Automate test suite with Pytest:",
-        `\`\`\`bash
+"Run your App Automate test suite with Pytest:",
+`\`\`\`bash
 browserstack-sdk pytest -s <file-name.py>
 \`\`\``,
       );
     case AppSDKSupportedTestingFrameworkEnum.behave:
       return createStep(
-        "Run your App Automate test suite with Behave:",
-        `\`\`\`bash
+"Run your App Automate test suite with Behave:",
+`\`\`\`bash
 browserstack-sdk behave <path-to-test-files>
 \`\`\``,
       );
     case AppSDKSupportedTestingFrameworkEnum.lettuce:
       return createStep(
-        "Run your test with Lettuce:",
-        `\`\`\`bash
+"Run your test with Lettuce:",
+`\`\`\`bash
 # Run using paver
 paver run first_test
 \`\`\``,
@@ -153,9 +140,6 @@ paver run first_test
   }
 }
 
-/**
- * Generate Ruby specific test running and configuration instructions
- */
 export function getRubyAppInstructions(
   testingFramework: AppSDKSupportedTestingFramework,
 ): string {

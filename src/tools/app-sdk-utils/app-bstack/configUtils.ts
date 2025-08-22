@@ -5,9 +5,6 @@ import {
   createStep,
 } from "../common/index.js";
 
-/**
- * Generate browserstack.yml configuration instructions for App Automate
- */
 export function generateAppBrowserStackYMLInstructions(
   platforms: string[],
   username: string,
@@ -64,9 +61,6 @@ ${configContent}`,
   );
 }
 
-/**
- * Generate platform-specific device configuration
- */
 export function generateDeviceConfig(
   platform: "android" | "ios",
   customDevices?: Array<{ deviceName: string; platformVersion: string }>,
@@ -82,9 +76,6 @@ export function generateDeviceConfig(
     .join("\n");
 }
 
-/**
- * Generate complete browserstack.yml content as object
- */
 export function generateBrowserStackConfig(
   username: string,
   accessKey: string,
