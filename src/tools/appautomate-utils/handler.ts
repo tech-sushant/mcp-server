@@ -8,7 +8,7 @@ import {
   AppSDKInstruction,
   formatAppInstructionsWithNumbers,
   getAppInstructionsForProjectConfiguration,
-  SetupAppBstackParamsShape,
+  SETUP_APP_AUTOMATE_SCHEMA,
 } from "./appium-sdk/index.js";
 import {
   getAppSDKPrefixCommand,
@@ -19,7 +19,7 @@ export async function setupAppAutomateHandler(
   rawInput: unknown,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
-  const input = z.object(SetupAppBstackParamsShape).parse(rawInput);
+  const input = z.object(SETUP_APP_AUTOMATE_SCHEMA).parse(rawInput);
   const auth = getBrowserStackAuth(config);
   const [username, accessKey] = auth.split(":");
 

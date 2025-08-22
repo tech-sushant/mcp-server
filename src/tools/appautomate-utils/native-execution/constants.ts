@@ -14,7 +14,7 @@ export const RUN_APP_AUTOMATE_SCHEMA = {
         "  xcodebuild clean -scheme YOUR_SCHEME && \\\n" +
         "  xcodebuild archive -scheme YOUR_SCHEME -configuration Release -archivePath build/app.xcarchive && \\\n" +
         "  xcodebuild -exportArchive -archivePath build/app.xcarchive -exportPath build/ipa -exportOptionsPlist exportOptions.plist\n\n" +
-        "If in other directory, provide existing app path"
+        "If in other directory, provide existing app path",
     ),
   testSuitePath: z
     .string()
@@ -26,12 +26,12 @@ export const RUN_APP_AUTOMATE_SCHEMA = {
         "  xcodebuild test-without-building -scheme YOUR_SCHEME -destination 'generic/platform=iOS' && \\\n" +
         "  cd ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Debug-iphonesimulator/ && \\\n" +
         "  zip -r Tests.zip *.xctestrun *-Runner.app\n\n" +
-        "If in other directory, provide existing test file path"
+        "If in other directory, provide existing test file path",
     ),
   devices: z
     .array(z.string())
     .describe(
-      "List of devices to run the test on, e.g., ['Samsung Galaxy S20-10.0', 'iPhone 12 Pro-16.0']."
+      "List of devices to run the test on, e.g., ['Samsung Galaxy S20-10.0', 'iPhone 12 Pro-16.0'].",
     ),
   project: z
     .string()
@@ -41,6 +41,6 @@ export const RUN_APP_AUTOMATE_SCHEMA = {
   detectedAutomationFramework: z
     .nativeEnum(AppTestPlatform)
     .describe(
-      "The automation framework used in the project, such as 'espresso' (Android) or 'xcuitest' (iOS)."
+      "The automation framework used in the project, such as 'espresso' (Android) or 'xcuitest' (iOS).",
     ),
 };

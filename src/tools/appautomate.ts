@@ -38,7 +38,10 @@ import {
   uploadXcuiTestSuite,
   triggerXcuiBuild,
 } from "./appautomate-utils/native-execution/appautomate.js";
-import { RUN_APP_AUTOMATE_DESCRIPTION, RUN_APP_AUTOMATE_SCHEMA } from "./appautomate-utils/native-execution/constants.js";
+import {
+  RUN_APP_AUTOMATE_DESCRIPTION,
+  RUN_APP_AUTOMATE_SCHEMA,
+} from "./appautomate-utils/native-execution/constants.js";
 
 /**
  * Launches an app on a selected BrowserStack device and takes a screenshot.
