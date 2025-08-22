@@ -73,14 +73,8 @@ export type AppConfigMapping = Record<
   >
 >;
 
-// Result interfaces
+// App SDK instruction type
 export interface AppSDKInstruction {
   content: string;
-  type: "setup" | "config" | "run" | "info";
-}
-
-export interface AppSDKResult {
-  success: boolean;
-  instructions: AppSDKInstruction[];
-  error?: string;
+  type: "config" | "run" | "setup";
 }

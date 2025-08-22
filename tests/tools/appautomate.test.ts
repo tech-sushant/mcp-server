@@ -3,7 +3,7 @@ import {
   getDeviceVersions,
   resolveVersion,
   validateArgs,
-} from '../../src/tools/appautomate-utils/appautomate';
+} from '../../src/tools/appautomate-utils/run-tests/appautomate';
 import { beforeEach, it, expect, describe, vi } from 'vitest'
 
 

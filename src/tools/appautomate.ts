@@ -7,7 +7,18 @@ import { BrowserStackConfig } from "../lib/types.js";
 import { trackMCP } from "../lib/instrumentation.js";
 import { maybeCompressBase64 } from "../lib/utils.js";
 import { remote } from "webdriverio";
-import { AppTestPlatform } from "./appautomate-utils/types.js";
+import { AppTestPlatform } from "./appautomate-utils/run-tests/types.js";
+import { setupAppAutomateHandler } from "./appautomate-utils/handler.js";
+
+import {
+  SETUP_APP_BSTACK_DESCRIPTION,
+  SetupAppBstackParamsShape,
+} from "./appautomate-utils/setup-sdk/constants.js";
+
+import {
+  PlatformDevices,
+  Platform,
+} from "./appautomate-utils/run-tests/types.js";
 
 import {
   getDevicesAndBrowsers,
@@ -26,26 +37,7 @@ import {
   uploadXcuiApp,
   uploadXcuiTestSuite,
   triggerXcuiBuild,
-} from "./appautomate-utils/appautomate.js";
-
-// Types
-interface Device {
-  device: string;
-  display_name: string;
-  os_version: string;
-  real_mobile: boolean;
-}
-
-interface PlatformDevices {
-  os: string;
-  os_display_name: string;
-  devices: Device[];
-}
-
-enum Platform {
-  ANDROID = "android",
-  IOS = "ios",
-}
+} from "./appautomate-utils/run-tests/appautomate.js";
 
 /**
  * Launches an app on a selected BrowserStack device and takes a screenshot.
@@ -356,7 +348,7 @@ export default function addAppAutomationTools(
 
   tools.runAppTestsOnBrowserStack = server.tool(
     "runAppTestsOnBrowserStack",
-    "Run AppAutomate tests on BrowserStack by uploading app and test suite. If running from Android Studio or Xcode, the tool will help export app and test files automatically. For other environments, you'll need to provide the paths to your pre-built app and test files.",
+    "Execute pre-built native mobile test suites (Espresso for Android, XCUITest for iOS) by direct upload to BrowserStack. ONLY for compiled .apk/.ipa test files. This is NOT for SDK integration or Appium tests. For Appium-based testing with SDK setup, use 'setupBrowserStackAppAutomateTests' instead.",
     {
       appPath: z
         .string()
@@ -421,6 +413,28 @@ export default function addAppAutomationTools(
             {
               type: "text",
               text: `Error running App Automate test: ${errorMessage}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+    },
+  );
+
+  tools.setupBrowserStackAppAutomateTests = server.tool(
+    "setupBrowserStackAppAutomateTests",
+    SETUP_APP_BSTACK_DESCRIPTION,
+    SetupAppBstackParamsShape,
+    async (args) => {
+      try {
+        return await setupAppAutomateHandler(args, config);
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Failed to bootstrap project with BrowserStack App Automate SDK. Error: ${error}. Please open an issue on GitHub if the problem persists`,
+              isError: true,
             },
           ],
           isError: true,

@@ -9,11 +9,11 @@ import {
   formatAppInstructionsWithNumbers,
   getAppInstructionsForProjectConfiguration,
   SetupAppBstackParamsShape,
-} from "./app-bstack/index.js";
+} from "./setup-sdk/index.js";
 import {
   getAppSDKPrefixCommand,
   generateAppBrowserStackYMLInstructions,
-} from "./app-bstack/index.js";
+} from "./setup-sdk/index.js";
 
 export async function setupAppAutomateHandler(
   rawInput: unknown,

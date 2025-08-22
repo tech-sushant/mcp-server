@@ -1,10 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { setupAppAutomateHandler } from "./app-sdk-utils/handler.js";
+import { setupAppAutomateHandler } from "./appautomate-utils/handler.js";
 import { BrowserStackConfig } from "../lib/types.js";
 import {
   SETUP_APP_BSTACK_DESCRIPTION,
   SetupAppBstackParamsShape,
-} from "./app-sdk-utils/app-bstack/constants.js";
+} from "./appautomate-utils/setup-sdk/constants.js";
 
 export function registerAppBstackTools(
   server: McpServer,
