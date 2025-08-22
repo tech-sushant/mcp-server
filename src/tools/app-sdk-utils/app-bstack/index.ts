@@ -1,5 +1,8 @@
 // Barrel exports for App BrowserStack module
-export { getAppSDKPrefixCommand } from "./prefix-commands.js";
+export {
+  getAppSDKPrefixCommand,
+  getAppInstructionsForProjectConfiguration,
+} from "./app-instructions.js";
 export {
   generateAppBrowserStackYMLInstructions,
   generateDeviceConfig,
@@ -17,6 +20,6 @@ export {
 export * from "./types.js";
 export * from "./constants.js";
 export * from "./utils.js";
-export * from "./instructionUtils.js";
+export * from "./app-instructions.js";
 export * from "./schema.js";
 export * from "./formatter.js";
