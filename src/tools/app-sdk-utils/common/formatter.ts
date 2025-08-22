@@ -1,10 +1,10 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { STEP_DELIMITER } from "./constants.js";
+
 export function formatFinalAppInstructions(
   formattedInstructions: string,
 ): CallToolResult {
-
-const fullInstructions = `⚠️ IMPORTANT: DO NOT SKIP ANY STEP
+  const fullInstructions = `⚠️ IMPORTANT: DO NOT SKIP ANY STEP
 All the setup steps described in this file MUST be executed regardless of any existing configuration or setup.
 This ensures proper BrowserStack App Automate SDK setup.
 Each step is compulsory and sequence needs to be maintained.
@@ -48,6 +48,20 @@ setx BROWSERSTACK_ACCESS_KEY "${accessKey}"
 export BROWSERSTACK_USERNAME=${username}
 export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\``;
+}
+
+export function createEnvStep(
+  username: string,
+  accessKey: string,
+  isWindows: boolean,
+  platformLabel: string,
+  title: string = "Set BrowserStack credentials as environment variables:",
+): string {
+  return createStep(
+    title,
+    `**${platformLabel}:**
+${formatEnvCommands(username, accessKey, isWindows)}`,
+  );
 }
 
 export function formatMultiLineCommand(

@@ -26,3 +26,22 @@ export function createError(
   }
   return error;
 }
+
+// Platform utilities for cross-platform support
+export const PLATFORM_UTILS = {
+  isWindows: process.platform === "win32",
+  isMac: process.platform === "darwin",
+  isAppleSilicon: process.platform === "darwin" && process.arch === "arm64",
+  getPlatformLabel: () => {
+    switch (process.platform) {
+      case "win32":
+        return "Windows";
+      case "darwin":
+        return "macOS";
+      case "linux":
+        return "Linux";
+      default:
+        return process.platform;
+    }
+  },
+};

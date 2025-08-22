@@ -2,7 +2,7 @@
 export {
   getAppSDKPrefixCommand,
   getJavaAppFrameworkForMaven,
-} from "./commands.js";
+} from "./prefix-commands.js";
 export {
   generateAppBrowserStackYMLInstructions,
   generateDeviceConfig,

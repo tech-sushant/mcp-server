@@ -1,3 +1,11 @@
+import { z } from "zod";
+import {
+  AppSDKSupportedFrameworkEnum,
+  AppSDKSupportedTestingFrameworkEnum,
+  AppSDKSupportedLanguageEnum,
+  AppSDKSupportedPlatformEnum,
+} from "../common/index.js";
+
 // App Automate specific device configurations
 export const APP_DEVICE_CONFIGS = {
   android: [
@@ -12,60 +20,15 @@ export const APP_DEVICE_CONFIGS = {
   ],
 };
 
-// Framework mapping for Java Maven archetype generation for App Automate
-export const JAVA_APP_FRAMEWORK_MAP: Record<string, string> = {
-  testng: "browserstack-sdk-archetype-integrate",
-  junit5: "browserstack-sdk-archetype-integrate",
-  selenide: "selenide-archetype-integrate",
-  jbehave: "browserstack-sdk-archetype-integrate",
-  cucumberTestng: "browserstack-sdk-archetype-integrate",
-  cucumberJunit4: "browserstack-sdk-archetype-integrate",
-  cucumberJunit5: "browserstack-sdk-archetype-integrate",
-};
-
-// Common Gradle setup instructions for App Automate (platform-independent)
-export const GRADLE_APP_SETUP_INSTRUCTIONS = `
-**For Gradle setup:**
-1. Add browserstack-java-sdk to dependencies:
-   compileOnly 'com.browserstack:browserstack-java-sdk:latest.release'
-
-2. Add browserstackSDK path variable:
-   def browserstackSDKArtifact = configurations.compileClasspath.resolvedConfiguration.resolvedArtifacts.find { it.name == 'browserstack-java-sdk' }
-
-3. Add javaagent to gradle tasks:
-   jvmArgs "-javaagent:\${browserstackSDKArtifact.file}"
-`;
-
 // Step delimiter for parsing instructions
 export const STEP_DELIMITER = "---STEP---";
 
 // Default app path for examples
 export const DEFAULT_APP_PATH = "bs://sample.app";
 
-// Platform detection utilities
-export const PLATFORM_UTILS = {
-  isWindows: process.platform === "win32",
-  isMac: process.platform === "darwin",
-  isAppleSilicon: process.platform === "darwin" && process.arch === "arm64",
-  getPlatformLabel(): string {
-    if (this.isWindows) return "Windows";
-    if (this.isMac)
-      return this.isAppleSilicon ? "macOS Apple silicon" : "macOS Intel";
-    return "Linux";
-  },
-} as const;
-
 // Tool description and schema for setupBrowserStackAppAutomateTests
 export const SETUP_APP_BSTACK_DESCRIPTION =
   "Set up and run automated mobile app tests on BrowserStack using the BrowserStack App Automate SDK. Use for mobile app functional or integration tests on real Android and iOS devices. Example prompts: run this mobile app test on browserstack; set up this project for browserstack app automate; test my app on android devices. Integrate BrowserStack App Automate SDK into your project";
-
-import { z } from "zod";
-import {
-  AppSDKSupportedFrameworkEnum,
-  AppSDKSupportedTestingFrameworkEnum,
-  AppSDKSupportedLanguageEnum,
-  AppSDKSupportedPlatformEnum,
-} from "../index.js";
 
 export const SetupAppBstackParamsShape = {
   detectedFramework: z

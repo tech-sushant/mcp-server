@@ -1,3 +1,7 @@
+import { z } from "zod";
+import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { BrowserStackConfig } from "../../lib/types.js";
+import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import {
   AppSDKSupportedLanguage,
   AppSDKSupportedTestingFramework,
@@ -6,23 +10,15 @@ import {
   getAppInstructionsForProjectConfiguration,
   SetupAppBstackParamsShape,
 } from "./common/index.js";
-
 import {
   getAppSDKPrefixCommand,
   generateAppBrowserStackYMLInstructions,
 } from "./app-bstack/index.js";
 
-import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-
-import { BrowserStackConfig } from "../../lib/types.js";
-import { getBrowserStackAuth } from "../../lib/get-auth.js";
-import { z } from "zod";
-
 export async function setupAppAutomateHandler(
   rawInput: unknown,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
-
   const input = z.object(SetupAppBstackParamsShape).parse(rawInput);
   const auth = getBrowserStackAuth(config);
   const [username, accessKey] = auth.split(":");
@@ -81,4 +77,3 @@ export async function setupAppAutomateHandler(
     isError: false,
   };
 }
-

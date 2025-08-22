@@ -23,7 +23,7 @@ export function getAppInstructionsForProjectConfiguration(
 
   switch (language) {
     case "java":
-  return getJavaAppInstructions();
+      return getJavaAppInstructions();
     case "nodejs":
       return getNodejsAppInstructions(testingFramework);
     case "python":
@@ -31,7 +31,7 @@ export function getAppInstructionsForProjectConfiguration(
     case "ruby":
       return getRubyAppInstructions(testingFramework);
     case "csharp":
-  return getCSharpAppInstructions();
+      return getCSharpAppInstructions();
     default:
       return "";
   }
