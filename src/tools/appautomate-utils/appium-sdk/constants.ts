@@ -27,10 +27,10 @@ export const STEP_DELIMITER = "---STEP---";
 export const DEFAULT_APP_PATH = "bs://sample.app";
 
 // Tool description and schema for setupBrowserStackAppAutomateTests
-export const SETUP_APP_BSTACK_DESCRIPTION =
+export const SETUP_APP_AUTOMATE_DESCRIPTION =
   "Set up BrowserStack App Automate SDK integration for Appium-based mobile app testing. ONLY for Appium based framework . This tool configures SDK for various languages with appium. For pre-built Espresso or XCUITest test suites, use 'runAppTestsOnBrowserStack' instead.";
 
-export const SetupAppBstackParamsShape = {
+export const SETUP_APP_AUTOMATE_SCHEMA = {
   detectedFramework: z
     .nativeEnum(AppSDKSupportedFrameworkEnum)
     .describe(
@@ -58,6 +58,6 @@ export const SetupAppBstackParamsShape = {
   appPath: z
     .string()
     .describe(
-      "Path to the mobile app file (.apk for Android, .ipa for iOS). Can be a local file path or a BrowserStack app URL (bs://). This parameter is required.",
+      "Path to the mobile app file (.apk for Android, .ipa for iOS). Can be a local file path or a BrowserStack app URL (bs://)",
     ),
 };

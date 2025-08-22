@@ -9,11 +9,11 @@ import {
   formatAppInstructionsWithNumbers,
   getAppInstructionsForProjectConfiguration,
   SetupAppBstackParamsShape,
-} from "./setup-sdk/index.js";
+} from "./appium-sdk/index.js";
 import {
   getAppSDKPrefixCommand,
   generateAppBrowserStackYMLInstructions,
-} from "./setup-sdk/index.js";
+} from "./appium-sdk/index.js";
 
 export async function setupAppAutomateHandler(
   rawInput: unknown,
