@@ -1,10 +1,5 @@
 // Main entry point for App SDK utilities
-export {
-  runAppSDKOnlyHandler,
-  generateCompleteAppSDKInstructions,
-  validateAppSDKConfig,
-  getAppSDKSupportedOptions,
-} from "./handler.js";
+export { setupAppAutomateHandler } from "./handler.js";
 
 // Re-export types and enums for external usage
 export type {

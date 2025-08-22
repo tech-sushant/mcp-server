@@ -157,7 +157,7 @@ function getNodejsSDKCommand(
       return getJestCommand(username, accessKey);
     case "mocha":
       return getMochaCommand(username, accessKey);
-    case "cucumber-js":
+  case "cucumberJs":
       return getCucumberJSCommand(username, accessKey);
     default:
       return "";
@@ -497,7 +497,7 @@ function getRubySDKCommand(
 ): string {
   const { isWindows, getPlatformLabel } = PLATFORM_UTILS;
 
-  if (framework === "rspec" || framework === "cucumber-ruby") {
+  if (framework === "rspec" || framework === "cucumberRuby") {
     const envStep = createStep(
       "Set your BrowserStack credentials as environment variables:",
       `**${getPlatformLabel()}:**
@@ -514,7 +514,7 @@ gem install bundler
 gem install appium_lib
 
 # For Cucumber projects, also install cucumber
-${framework === "cucumber-ruby" ? "gem install cucumber" : ""}
+${framework === "cucumberRuby" ? "gem install cucumber" : ""}
 
 # For RSpec projects, also install rspec
 ${framework === "rspec" ? "gem install rspec" : ""}
@@ -528,7 +528,7 @@ ${framework === "rspec" ? "gem install rspec" : ""}
 source 'https://rubygems.org'
 
 gem 'appium_lib'
-${framework === "cucumber-ruby" ? "gem 'cucumber'" : ""}
+${framework === "cucumberRuby" ? "gem 'cucumber'" : ""}
 ${framework === "rspec" ? "gem 'rspec'" : ""}
 \`\`\`
 

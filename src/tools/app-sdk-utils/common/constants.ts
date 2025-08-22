@@ -1,5 +1,3 @@
-// Shared constants for App SDK utilities
-
 // App Automate specific device configurations
 export const APP_DEVICE_CONFIGS = {
   android: [
@@ -20,9 +18,9 @@ export const JAVA_APP_FRAMEWORK_MAP: Record<string, string> = {
   junit5: "browserstack-sdk-archetype-integrate",
   selenide: "selenide-archetype-integrate",
   jbehave: "browserstack-sdk-archetype-integrate",
-  "cucumber-testng": "browserstack-sdk-archetype-integrate",
-  "cucumber-junit4": "browserstack-sdk-archetype-integrate",
-  "cucumber-junit5": "browserstack-sdk-archetype-integrate",
+  cucumberTestng: "browserstack-sdk-archetype-integrate",
+  cucumberJunit4: "browserstack-sdk-archetype-integrate",
+  cucumberJunit5: "browserstack-sdk-archetype-integrate",
 };
 
 // Common Gradle setup instructions for App Automate (platform-independent)
@@ -56,3 +54,47 @@ export const PLATFORM_UTILS = {
     return "Linux";
   },
 } as const;
+
+// Tool description and schema for setupBrowserStackAppAutomateTests
+export const SETUP_APP_BSTACK_DESCRIPTION =
+  "Set up and run automated mobile app tests on BrowserStack using the BrowserStack App Automate SDK. Use for mobile app functional or integration tests on real Android and iOS devices. Example prompts: run this mobile app test on browserstack; set up this project for browserstack app automate; test my app on android devices. Integrate BrowserStack App Automate SDK into your project";
+
+import { z } from "zod";
+import {
+  AppSDKSupportedFrameworkEnum,
+  AppSDKSupportedTestingFrameworkEnum,
+  AppSDKSupportedLanguageEnum,
+  AppSDKSupportedPlatformEnum,
+} from "../index.js";
+
+export const SetupAppBstackParamsShape = {
+  detectedFramework: z
+    .nativeEnum(AppSDKSupportedFrameworkEnum)
+    .describe(
+      "The mobile automation framework configured in the project. Example: 'appium'",
+    ),
+
+  detectedTestingFramework: z
+    .nativeEnum(AppSDKSupportedTestingFrameworkEnum)
+    .describe(
+      "The testing framework used in the project. Be precise with framework selection Example: 'testng', 'behave', 'pytest', 'robot'",
+    ),
+
+  detectedLanguage: z
+    .nativeEnum(AppSDKSupportedLanguageEnum)
+    .describe(
+      "The programming language used in the project. Supports Java and C#. Example: 'java', 'csharp'",
+    ),
+
+  desiredPlatforms: z
+    .array(z.nativeEnum(AppSDKSupportedPlatformEnum))
+    .describe(
+      "The mobile platforms the user wants to test on. Always ask this to the user, do not try to infer this. Example: ['android', 'ios']",
+    ),
+
+  appPath: z
+    .string()
+    .describe(
+      "Path to the mobile app file (.apk for Android, .ipa for iOS). Can be a local file path or a BrowserStack app URL (bs://). This parameter is required.",
+    ),
+};

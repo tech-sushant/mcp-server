@@ -22,19 +22,19 @@ export const APP_FRAMEWORK_SUPPORT_MAP: Record<
       "junit5",
       "selenide",
       "jbehave",
-      "cucumber-testng",
-      "cucumber-junit4",
-      "cucumber-junit5",
+      "cucumberTestng",
+      "cucumberJunit4",
+      "cucumberJunit5",
     ],
   },
   nodejs: {
-    frameworks: ["webdriverio", "nightwatch", "jest", "mocha", "cucumber-js"],
+    frameworks: ["webdriverio", "nightwatch", "jest", "mocha", "cucumberJs"],
     testingFrameworks: [
       "webdriverio",
       "nightwatch",
       "jest",
       "mocha",
-      "cucumber-js",
+      "cucumberJs",
     ],
   },
   python: {
@@ -42,8 +42,8 @@ export const APP_FRAMEWORK_SUPPORT_MAP: Record<
     testingFrameworks: ["robot", "pytest", "behave", "lettuce"],
   },
   ruby: {
-    frameworks: ["rspec", "cucumber-ruby"],
-    testingFrameworks: ["rspec", "cucumber-ruby"],
+    frameworks: ["rspec", "cucumberRuby"],
+    testingFrameworks: ["rspec", "cucumberRuby"],
   },
   csharp: {
     frameworks: ["appium"],

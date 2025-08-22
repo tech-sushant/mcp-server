@@ -1,178 +1,14 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { z } from "zod";
-import { trackMCP } from "../lib/instrumentation.js";
-import {
-  AppSDKSupportedFramework,
-  AppSDKSupportedLanguage,
-  AppSDKSupportedTestingFramework,
-  AppSDKSupportedPlatform,
-  AppSDKSupportedLanguageEnum,
-  AppSDKSupportedFrameworkEnum,
-  AppSDKSupportedTestingFrameworkEnum,
-  AppSDKSupportedPlatformEnum,
-  formatAppInstructionsWithNumbers,
-  generateCompleteAppSDKInstructions,
-} from "./app-sdk-utils/index.js";
+
+import { setupAppAutomateHandler } from "./app-sdk-utils/index.js";
 
 import {
-  getAppSDKPrefixCommand,
-  generateAppBrowserStackYMLInstructions,
-} from "./app-sdk-utils/app-bstack/index.js";
-
-import { getAppInstructionsForProjectConfiguration } from "./app-sdk-utils/common/index.js";
-
-import { getBrowserStackAuth } from "../lib/get-auth.js";
+  SETUP_APP_BSTACK_DESCRIPTION,
+  SetupAppBstackParamsShape,
+} from "./app-sdk-utils/common/constants.js";
 import { BrowserStackConfig } from "../lib/types.js";
 
-/**
- * BrowserStack App Automate SDK hooks into your mobile test framework to seamlessly run tests on BrowserStack.
- * This tool gives instructions to setup a browserstack.yml file in the project root and installs the necessary dependencies.
- */
-export async function bootstrapAppProjectWithSDK({
-  detectedFramework,
-  detectedTestingFramework,
-  detectedLanguage,
-  desiredPlatforms,
-  appPath,
-  config,
-}: {
-  detectedFramework: AppSDKSupportedFramework;
-  detectedTestingFramework: AppSDKSupportedTestingFramework;
-  detectedLanguage: AppSDKSupportedLanguage;
-  desiredPlatforms: AppSDKSupportedPlatform[];
-  appPath: string;
-  config: BrowserStackConfig;
-}): Promise<CallToolResult> {
-  // Get credentials from config
-  const authString = getBrowserStackAuth(config);
-  const [username, accessKey] = authString.split(":");
-
-  try {
-    // Use the new handler to generate complete instructions
-    const fullInstructions = await generateCompleteAppSDKInstructions(
-      detectedLanguage,
-      detectedFramework,
-      detectedTestingFramework,
-      username,
-      accessKey,
-      desiredPlatforms,
-      appPath,
-    );
-
-    // Apply consistent formatting for all configurations
-    return formatFinalAppInstructions(fullInstructions);
-  } catch {
-    // Fallback to the old implementation if new handler fails
-    return await fallbackBootstrapAppProjectWithSDK({
-      detectedFramework,
-      detectedTestingFramework,
-      detectedLanguage,
-      desiredPlatforms,
-      appPath,
-      username,
-      accessKey,
-    });
-  }
-}
-
-// Fallback implementation using individual functions
-async function fallbackBootstrapAppProjectWithSDK({
-  detectedFramework,
-  detectedTestingFramework,
-  detectedLanguage,
-  desiredPlatforms,
-  appPath,
-  username,
-  accessKey,
-}: {
-  detectedFramework: AppSDKSupportedFramework;
-  detectedTestingFramework: AppSDKSupportedTestingFramework;
-  detectedLanguage: AppSDKSupportedLanguage;
-  desiredPlatforms: AppSDKSupportedPlatform[];
-  appPath: string;
-  username: string;
-  accessKey: string;
-}): Promise<CallToolResult> {
-  // Get SDK setup command
-  const sdkSetupCommand = getAppSDKPrefixCommand(
-    detectedLanguage,
-    detectedTestingFramework,
-    username,
-    accessKey,
-    appPath,
-  );
-
-  let ymlInstructions = "";
-  if (
-    detectedFramework != "webdriverio" &&
-    detectedTestingFramework != "nightwatch" &&
-    detectedLanguage != "ruby"
-  ) {
-    // Generate browserstack.yml instructions
-    ymlInstructions = generateAppBrowserStackYMLInstructions(
-      desiredPlatforms,
-      username,
-      accessKey,
-      appPath,
-      detectedTestingFramework,
-    );
-  }
-
-  // Get project configuration instructions
-  const instructionsForProjectConfiguration =
-    getAppInstructionsForProjectConfiguration(
-      detectedFramework,
-      detectedTestingFramework,
-      detectedLanguage,
-    );
-
-  let combinedInstructions = "";
-
-  // Step 1: Add SDK setup command
-  if (sdkSetupCommand) {
-    combinedInstructions += sdkSetupCommand;
-  }
-
-  // Step 2: Add browserstack.yml setup
-  if (ymlInstructions) {
-    combinedInstructions += "\n\n" + ymlInstructions;
-  }
-
-  // Step 3: Add language/framework-specific setup
-  if (instructionsForProjectConfiguration) {
-    combinedInstructions += "\n\n" + instructionsForProjectConfiguration;
-  }
-
-  // Apply consistent formatting for all configurations
-  return formatFinalAppInstructions(
-    formatAppInstructionsWithNumbers(combinedInstructions),
-  );
-}
-
-// Helper function to apply consistent formatting to all instruction types
-function formatFinalAppInstructions(
-  formattedInstructions: string,
-): CallToolResult {
-  const fullInstructions = `⚠️ IMPORTANT: DO NOT SKIP ANY STEP
-All the setup steps described in this file MUST be executed regardless of any existing configuration or setup.
-This ensures proper BrowserStack App Automate SDK setup.
-Each step is compulsory and sequence needs to be maintained.
-
-${formattedInstructions}`;
-
-  return {
-    content: [
-      {
-        type: "text",
-        text: fullInstructions,
-        isError: false,
-      },
-    ],
-  };
-}
-
-export default function addAppSDKTools(
+export function registerAppBstackTools(
   server: McpServer,
   config: BrowserStackConfig,
 ) {
@@ -180,65 +16,12 @@ export default function addAppSDKTools(
 
   tools.setupBrowserStackAppAutomateTests = server.tool(
     "setupBrowserStackAppAutomateTests",
-    "Set up and run automated mobile app tests on BrowserStack using the BrowserStack App Automate SDK. Use for mobile app functional or integration tests on real Android and iOS devices. Example prompts: run this mobile app test on browserstack; set up this project for browserstack app automate; test my app on android devices. Integrate BrowserStack App Automate SDK into your project",
-    {
-      detectedFramework: z
-        .nativeEnum(AppSDKSupportedFrameworkEnum)
-        .describe(
-          "The mobile automation framework configured in the project. Example: 'appium'",
-        ),
-
-      detectedTestingFramework: z
-        .nativeEnum(AppSDKSupportedTestingFrameworkEnum)
-        .describe(
-          "The testing framework used in the project. Be precise with framework selection Example: 'testng', 'behave', 'pytest', 'robot'",
-        ),
-
-      detectedLanguage: z
-        .nativeEnum(AppSDKSupportedLanguageEnum)
-        .describe(
-          "The programming language used in the project. Supports Java and C#. Example: 'java', 'csharp'",
-        ),
-
-      desiredPlatforms: z
-        .array(z.nativeEnum(AppSDKSupportedPlatformEnum))
-        .describe(
-          "The mobile platforms the user wants to test on. Always ask this to the user, do not try to infer this. Example: ['android', 'ios']",
-        ),
-
-      appPath: z
-        .string()
-        .describe(
-          "Path to the mobile app file (.apk for Android, .ipa for iOS). Can be a local file path or a BrowserStack app URL (bs://). This parameter is required.",
-        ),
-    },
-
+    SETUP_APP_BSTACK_DESCRIPTION,
+    SetupAppBstackParamsShape,
     async (args) => {
       try {
-        trackMCP(
-          "setupBrowserStackAppAutomateTests",
-          server.server.getClientVersion()!,
-          undefined,
-          config,
-        );
-
-        return await bootstrapAppProjectWithSDK({
-          detectedFramework: args.detectedFramework as AppSDKSupportedFramework,
-          detectedTestingFramework:
-            args.detectedTestingFramework as AppSDKSupportedTestingFramework,
-          detectedLanguage: args.detectedLanguage as AppSDKSupportedLanguage,
-          desiredPlatforms: args.desiredPlatforms as AppSDKSupportedPlatform[],
-          appPath: args.appPath as string,
-          config,
-        });
+        return await setupAppAutomateHandler(args, config);
       } catch (error) {
-        trackMCP(
-          "setupBrowserStackAppAutomateTests",
-          server.server.getClientVersion()!,
-          error,
-          config,
-        );
-
         return {
           content: [
             {
@@ -255,3 +38,5 @@ export default function addAppSDKTools(
 
   return tools;
 }
+
+export default registerAppBstackTools;
