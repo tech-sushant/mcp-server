@@ -4,7 +4,7 @@ import {
   createStep,
   createEnvStep,
   combineInstructions,
-} from "../../app-bstack/index.js";
+} from "../index.js";
 
 export function getCSharpAppInstructions(): string {
   const { isWindows, isAppleSilicon, getPlatformLabel } = PLATFORM_UTILS;
@@ -99,7 +99,7 @@ dotnet browserstack-sdk setup-dotnet --dotnet-path "<path>" --dotnet-version "<v
 \`\`\`
 
 - \`<path>\` - Mention the absolute path to the directory where you want to save dotnet x64
-- \`<version\` - Mention the dotnet version which you want to use to run tests
+- \`<version>\` - Mention the dotnet version which you want to use to run tests
 
 This command performs the following functions:
 - Installs dotnet x64

@@ -17,7 +17,6 @@ import { getNodejsSDKCommand } from "./languages/nodejs.js";
 import { getPythonSDKCommand } from "./languages/python.js";
 import { getRubySDKCommand } from "./languages/ruby.js";
 
-
 export function getAppInstructionsForProjectConfiguration(
   framework: string,
   testingFramework: AppSDKSupportedTestingFramework,
@@ -42,7 +41,6 @@ export function getAppInstructionsForProjectConfiguration(
       return "";
   }
 }
-
 
 export function getAppSDKPrefixCommand(
   language: AppSDKSupportedLanguage,

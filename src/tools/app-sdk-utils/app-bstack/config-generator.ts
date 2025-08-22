@@ -1,9 +1,5 @@
 // Configuration utilities for BrowserStack App SDK
-import {
-  APP_DEVICE_CONFIGS,
-  DEFAULT_APP_PATH,
-  createStep,
-} from "../app-bstack/index.js";
+import { APP_DEVICE_CONFIGS, DEFAULT_APP_PATH, createStep } from "./index.js";
 
 export function generateAppBrowserStackYMLInstructions(
   platforms: string[],
@@ -59,19 +55,4 @@ accessibility: false
 
 ${configContent}`,
   );
-}
-
-export function generateDeviceConfig(
-  platform: "android" | "ios",
-  customDevices?: Array<{ deviceName: string; platformVersion: string }>,
-): string {
-  const devices = customDevices || APP_DEVICE_CONFIGS[platform];
-
-  return devices
-    .map(
-      (device) => `  - platformName: ${platform}
-    deviceName: ${device.deviceName}
-    platformVersion: "${device.platformVersion}"`,
-    )
-    .join("\n");
 }

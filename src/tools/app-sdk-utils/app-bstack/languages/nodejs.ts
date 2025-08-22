@@ -4,7 +4,7 @@ import {
   AppSDKSupportedTestingFrameworkEnum,
   createStep,
   combineInstructions,
-} from "../../app-bstack/index.js";
+} from "../index.js";
 
 export function getNodejsSDKCommand(
   framework: string,

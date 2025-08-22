@@ -5,7 +5,7 @@ import {
   combineInstructions,
   createEnvStep,
   PLATFORM_UTILS,
-} from "../../app-bstack/index.js";
+} from "../index.js";
 
 // Java-specific constants and mappings
 export const MAVEN_ARCHETYPE_GROUP_ID = "com.browserstack";
@@ -129,13 +129,14 @@ export function getJavaSDKCommand(
   const mavenStep = createStep(
     "Install BrowserStack SDK using Maven Archetype for App Automate",
     `**Maven command for ${framework} (${getPlatformLabel()}):**
-      \`\`\`bash
-      ${mavenCommand}
-      \`\`\`
+\`\`\`bash
+${mavenCommand}
+\`\`\`
 
-    Alternative setup for Gradle users:
-    ${GRADLE_APP_SETUP_INSTRUCTIONS}`,
+Alternative setup for Gradle users:
+${GRADLE_APP_SETUP_INSTRUCTIONS}`,
   );
+
   logger.info("Java SDK command generated successfully");
   return combineInstructions(envStep, mavenStep);
 }
