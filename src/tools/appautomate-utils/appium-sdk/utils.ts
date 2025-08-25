@@ -1,11 +1,8 @@
-export function getShellPrefix(): string {
-  return process.platform === "win32" ? "cmd" : "bash";
-}
-
-export function sanitizeInput(input: string): string {
-  // Basic sanitization - remove potentially dangerous characters
-  return input.replace(/[;&|`$(){}[\]]/g, "");
-}
+import {
+  AppSDKSupportedTestingFramework,
+  AppSDKSupportedTestingFrameworkEnum,
+  createStep,
+} from "./index.js";
 
 export function isBrowserStackAppUrl(appPath: string): boolean {
   return appPath.startsWith("bs://");
@@ -38,10 +35,29 @@ export const PLATFORM_UTILS = {
         return "Windows";
       case "darwin":
         return "macOS";
-      case "linux":
-        return "Linux";
       default:
-        return process.platform;
+        return "macOS";
     }
   },
 };
+
+export async function getAppUploadInstruction(
+  appPath: string,
+  username: string,
+  accessKey: string,
+  detectedTestingFramework: AppSDKSupportedTestingFramework,
+): Promise<string> {
+  if (
+    detectedTestingFramework === AppSDKSupportedTestingFrameworkEnum.nightwatch ||
+    detectedTestingFramework === AppSDKSupportedTestingFrameworkEnum.webdriverio
+  ) {
+    const app_url = "bs://ff4e358328a3e914fe4f0e46ec7af73f9c08cd55";
+    if (app_url) {
+      return createStep(
+        "Updating app_path with app_url",
+        `Replace the value of app_path in your configuration with: ${app_url}`,
+      );
+    }
+  }
+  return "";
+}

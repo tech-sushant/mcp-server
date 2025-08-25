@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { BrowserStackConfig } from "../../lib/types.js";
-import { getBrowserStackAuth } from "../../lib/get-auth.js";
+import { BrowserStackConfig } from "../../../lib/types.js";
+import { getBrowserStackAuth } from "../../../lib/get-auth.js";
 import {
   AppSDKSupportedLanguage,
   AppSDKSupportedTestingFramework,
@@ -9,11 +9,13 @@ import {
   formatAppInstructionsWithNumbers,
   getAppInstructionsForProjectConfiguration,
   SETUP_APP_AUTOMATE_SCHEMA,
-} from "./appium-sdk/index.js";
+} from "./index.js";
 import {
   getAppSDKPrefixCommand,
   generateAppBrowserStackYMLInstructions,
-} from "./appium-sdk/index.js";
+} from "./index.js";
+import { getAppUploadInstruction } from "./utils.js";
+import logger from "../../../logger.js";
 
 export async function setupAppAutomateHandler(
   rawInput: unknown,
@@ -25,13 +27,24 @@ export async function setupAppAutomateHandler(
 
   const instructions: AppSDKInstruction[] = [];
 
+  // Use variables for all major input properties
+  const testingFramework =
+    input.detectedTestingFramework as AppSDKSupportedTestingFramework;
+  const language = input.detectedLanguage as AppSDKSupportedLanguage;
+  const platforms = (input.desiredPlatforms as string[]) ?? ["android"];
+  const appPath = input.appPath as string;
+  const framework = input.detectedFramework as string;
+
+  logger.info("Generating SDK setup command...");
+  logger.debug(`Input: ${JSON.stringify(input)}`);
+
   // Step 1: Generate SDK setup command
   const sdkCommand = getAppSDKPrefixCommand(
-    input.detectedLanguage as AppSDKSupportedLanguage,
-    input.detectedFramework as string,
+    language,
+    testingFramework,
     username,
     accessKey,
-    input.appPath as string | undefined,
+    appPath,
   );
 
   if (sdkCommand) {
@@ -40,22 +53,34 @@ export async function setupAppAutomateHandler(
 
   // Step 2: Generate browserstack.yml configuration
   const configInstructions = generateAppBrowserStackYMLInstructions(
-    (input.desiredPlatforms as string[]) ?? ["android"],
+    platforms,
     username,
     accessKey,
-    input.appPath as string | undefined,
-    input.detectedTestingFramework as AppSDKSupportedTestingFramework,
+    appPath,
+    testingFramework,
   );
 
   if (configInstructions) {
     instructions.push({ content: configInstructions, type: "config" });
   }
 
-  // Step 3: Generate project configuration and run instructions
+  // Step 3: Generate app upload instruction
+  const appUploadInstruction = await getAppUploadInstruction(
+    appPath,
+    username,
+    accessKey,
+    testingFramework,
+  );
+
+  if (appUploadInstruction) {
+    instructions.push({ content: appUploadInstruction, type: "setup" });
+  }
+
+  // Step 4: Generate project configuration and run instructions
   const projectInstructions = getAppInstructionsForProjectConfiguration(
-    input.detectedFramework as string,
-    input.detectedTestingFramework as AppSDKSupportedTestingFramework,
-    input.detectedLanguage as AppSDKSupportedLanguage,
+    framework,
+    testingFramework,
+    language,
   );
 
   if (projectInstructions) {

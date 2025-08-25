@@ -1,13 +1,26 @@
 // Configuration utilities for BrowserStack App SDK
-import { APP_DEVICE_CONFIGS, DEFAULT_APP_PATH, createStep } from "./index.js";
+import {
+  APP_DEVICE_CONFIGS,
+  AppSDKSupportedTestingFrameworkEnum,
+  DEFAULT_APP_PATH,
+  createStep,
+} from "./index.js";
 
 export function generateAppBrowserStackYMLInstructions(
   platforms: string[],
   username: string,
   accessKey: string,
   appPath: string = DEFAULT_APP_PATH,
-  testingFramework?: string,
+  testingFramework: string,
 ): string {
+  if (
+    testingFramework === AppSDKSupportedTestingFrameworkEnum.nightwatch ||
+    testingFramework === AppSDKSupportedTestingFrameworkEnum.webdriverio
+  ) {
+    return "";
+  }
+
+  // Generate platform and device configurations
   const platformConfigs = platforms
     .map((platform) => {
       const devices =
@@ -25,10 +38,10 @@ export function generateAppBrowserStackYMLInstructions(
     .filter(Boolean)
     .join("\n");
 
+  // Construct YAML content
   const configContent = `\`\`\`yaml
 userName: ${username}
 accessKey: ${accessKey}
-framework: ${testingFramework}
 app: ${appPath}
 platforms:
 ${platformConfigs}
@@ -49,6 +62,7 @@ accessibility: false
 - Set \`browserstackLocal: true\` if you need to test with local/staging servers
 - Adjust \`parallelsPerPlatform\` based on your subscription limits`;
 
+  // Return formatted step for instructions
   return createStep(
     "Update browserstack.yml file with App Automate configuration:",
     `Create or update the browserstack.yml file in your project root with the following content:

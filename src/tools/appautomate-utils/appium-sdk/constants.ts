@@ -60,4 +60,9 @@ export const SETUP_APP_AUTOMATE_SCHEMA = {
     .describe(
       "Path to the mobile app file (.apk for Android, .ipa for iOS). Can be a local file path or a BrowserStack app URL (bs://)",
     ),
+  project: z
+    .string()
+    .optional()
+    .default("BStack-AppAutomate-Suite")
+    .describe("Project name for organizing test runs on BrowserStack."),
 };

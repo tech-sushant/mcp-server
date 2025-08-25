@@ -7,11 +7,11 @@ import {
 } from "../index.js";
 
 export function getNodejsSDKCommand(
-  framework: string,
+  testingFramework: string,
   username: string,
   accessKey: string,
 ): string {
-  switch (framework) {
+  switch (testingFramework) {
     case "webdriverio":
       return getWebDriverIOCommand(username, accessKey);
     case "nightwatch":
@@ -50,20 +50,19 @@ export function getNodejsAppInstructions(
       );
     case AppSDKSupportedTestingFrameworkEnum.jest:
       return createStep(
-        "Run your App Automate test suite with Jest:",
-        "npm run [your-test-script-name]",
+        "Run your Jest test suite with BrowserStack SDK:",
+        `Use the npm script defined in your package.json. For example:\n\n\`\`\`bash\nnpx run browserstack-node-sdk jest specs/single_test.js\n\`\`\``,
       );
     case AppSDKSupportedTestingFrameworkEnum.mocha:
       return createStep(
-        "Run your App Automate test suite with Mocha:",
-        "npm run [your-test-script-name]",
+        "Run your Mocha test suite with BrowserStack SDK:",
+        `Use the npm script defined in your package.json. For example:\n\n\`\`\`bash\nnpx run browserstack-node-sdk mocha specs/single_test.js\n\`\`\``,
       );
+
     case AppSDKSupportedTestingFrameworkEnum.cucumberJs:
       return createStep(
-        "Run your App Automate test suite with CucumberJS:",
-        `\`\`\`bash
-        npm run [your-test-script-name]
-        \`\`\``,
+        "Run your Cucumber JS test suite with BrowserStack SDK:",
+        `Use the npm script defined in your package.json. For example:\n\n\`\`\`bash\nnpx run browserstack-node-sdk cucumber-js specs/single_test.js\n\`\`\``,
       );
     default:
       return "";
@@ -71,6 +70,14 @@ export function getNodejsAppInstructions(
 }
 
 function getWebDriverIOCommand(username: string, accessKey: string): string {
+  const prerequisiteStep = createStep(
+    "Prerequisite Setup:",
+    `a. Ensure you do not modify or replace any existing local driver code, 
+    as it will be automatically managed and overwritten by the BrowserStack SDK/Driver.
+    b. Do not create any YML file in this integration as it is not required.
+    c. Ensure you create the WDIO config file as per the instructions below.`,
+  );
+
   const envStep = createStep(
     "Set your BrowserStack credentials as environment variables:",
     `\`\`\`bash
@@ -82,7 +89,7 @@ export BROWSERSTACK_ACCESS_KEY=${accessKey}
   const installStep = createStep(
     "Install BrowserStack WDIO service:",
     `\`\`\`bash
-npm install @wdio/browserstack-service --save-dev
+npm install @wdio/browserstack-service@^7 --save-dev
 \`\`\``,
   );
 
@@ -129,13 +136,26 @@ exports.config = {
 \`\`\``,
   );
 
-  return combineInstructions(envStep, installStep, configStep);
+  return combineInstructions(
+    prerequisiteStep,
+    envStep,
+    installStep,
+    configStep,
+  );
 }
 
 function getNightwatchCommand(username: string, accessKey: string): string {
+    const prerequisiteStep = createStep(
+    "Prerequisite Setup:",
+    ` a. Ensure you do not modify or replace any existing local driver code, 
+      as it will be automatically managed and overwritten by the BrowserStack SDK/Driver.
+      b. Do not create any YML file in this integration as it is not required.
+      c. Ensure you create the WDIO config file as per the instructions below.`,
+  );
+
   const envStep = createStep(
     "Set your BrowserStack credentials as environment variables:",
-    `\`\`\`bash
+`\`\`\`bash 
 export BROWSERSTACK_USERNAME=${username}
 export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\``,
@@ -143,8 +163,8 @@ export BROWSERSTACK_ACCESS_KEY=${accessKey}
 
   const installStep = createStep(
     "Install Nightwatch and BrowserStack integration:",
-    `\`\`\`bash
-npm install nightwatch nightwatch-browserstack --save-dev
+`\`\`\`bash
+npm install --save-dev @nightwatch/browserstack
 \`\`\``,
   );
 
@@ -212,7 +232,7 @@ npm install nightwatch nightwatch-browserstack --save-dev
 \`\`\``,
   );
 
-  return combineInstructions(envStep, installStep, configStep);
+  return combineInstructions(prerequisiteStep, envStep, installStep, configStep);
 }
 
 function getJestCommand(username: string, accessKey: string): string {
@@ -227,7 +247,7 @@ export BROWSERSTACK_ACCESS_KEY=${accessKey}
   const installStep = createStep(
     "Install Jest and BrowserStack SDK:",
     `\`\`\`bash
-npm install --save-dev jest @browserstack/sdk
+npm install --save-dev browserstack-node-sdk
 \`\`\``,
   );
 
@@ -246,39 +266,11 @@ export BROWSERSTACK_ACCESS_KEY=${accessKey}
   const installStep = createStep(
     "Install Mocha and BrowserStack SDK:",
     `\`\`\`bash
-npm install --save-dev mocha @browserstack/sdk
+npm install --save-dev browserstack-node-sdk
 \`\`\``,
   );
 
-  const configStep = createStep(
-    "Create a \\`browserstack.yml\\` file at the root of your project with the following content:",
-    `\`\`\`yaml
-userName: ${username}
-accessKey: ${accessKey}
-app: bs://sample.app
-platforms:
-  - platformName: android
-    deviceName: Samsung Galaxy S22 Ultra
-    platformVersion: '12.0'
-  - platformName: android
-    deviceName: Google Pixel 7 Pro
-    platformVersion: '13.0'
-  - platformName: android
-    deviceName: OnePlus 9
-    platformVersion: '11.0'
-parallelsPerPlatform: 1
-browserstackLocal: true
-buildName: bstack-demo
-projectName: BrowserStack Sample
-CUSTOM_TAG_1: "You can set a custom Build Tag here"
-debug: true
-networkLogs: true
-percy: false
-percyCaptureMode: auto
-\`\`\``,
-  );
-
-  return combineInstructions(envStep, installStep, configStep);
+  return combineInstructions(envStep, installStep);
 }
 
 function getCucumberJSCommand(username: string, accessKey: string): string {

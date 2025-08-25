@@ -1,5 +1,4 @@
 // Java instructions and commands for App SDK utilities
-import logger from "../../../../logger.js";
 import {
   createStep,
   combineInstructions,
@@ -68,19 +67,22 @@ function getMavenCommandForWindows(
   );
 }
 
-// Generates Maven archetype command for Unix-like platforms (macOS/Linux)
 function getMavenCommandForUnix(
-  username: string,
-  accessKey: string,
-  mavenFramework: string,
   framework: string,
+  mavenFramework: string,
 ): string {
-  return `mvn archetype:generate -B -DarchetypeGroupId=${MAVEN_ARCHETYPE_GROUP_ID} \\
--DarchetypeArtifactId=${mavenFramework} -DarchetypeVersion=${MAVEN_ARCHETYPE_VERSION} \\
--DgroupId=${MAVEN_ARCHETYPE_GROUP_ID} -DartifactId=${MAVEN_ARCHETYPE_ARTIFACT_ID} -Dversion=${MAVEN_ARCHETYPE_VERSION} \\
--DBROWSERSTACK_USERNAME="${username}" \\
--DBROWSERSTACK_ACCESS_KEY="${accessKey}" \\
--DBROWSERSTACK_FRAMEWORK="${framework}"`;
+  return (
+    `mvn archetype:generate -B ` +
+    `-DarchetypeGroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
+    `-DarchetypeArtifactId="${mavenFramework}" ` +
+    `-DarchetypeVersion="${MAVEN_ARCHETYPE_VERSION}" ` +
+    `-DgroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
+    `-DartifactId="${MAVEN_ARCHETYPE_ARTIFACT_ID}" ` +
+    `-Dversion="${MAVEN_ARCHETYPE_VERSION}" ` +
+    `-DBROWSERSTACK_USERNAME="${process.env.BROWSERSTACK_USERNAME}" ` +
+    `-DBROWSERSTACK_ACCESS_KEY="${process.env.BROWSERSTACK_ACCESS_KEY}" ` +
+    `-DBROWSERSTACK_FRAMEWORK="${framework}"`
+  );
 }
 
 export function getJavaSDKCommand(
@@ -89,33 +91,21 @@ export function getJavaSDKCommand(
   accessKey: string,
   appPath?: string,
 ): string {
-  logger.info("Generating Java SDK command");
-  const { isWindows = false, getPlatformLabel = () => "Unknown" } =
-    PLATFORM_UTILS || {};
-  if (!PLATFORM_UTILS) {
-    console.warn("PLATFORM_UTILS is undefined. Defaulting platform values.");
-  }
+  const { isWindows = false, getPlatformLabel } = PLATFORM_UTILS || {};
 
   const mavenFramework = getJavaAppFrameworkForMaven(framework);
 
   let mavenCommand: string;
-  logger.info(
-    `Maven command for ${framework} (${getPlatformLabel()}): ${isWindows}`,
-  );
+
   if (isWindows) {
     mavenCommand = getMavenCommandForWindows(framework, mavenFramework);
     if (appPath) {
       mavenCommand += ` -DBROWSERSTACK_APP="${appPath}"`;
     }
   } else {
-    mavenCommand = getMavenCommandForUnix(
-      username,
-      accessKey,
-      mavenFramework,
-      framework,
-    );
+    mavenCommand = getMavenCommandForUnix(framework, mavenFramework);
     if (appPath) {
-      mavenCommand += ` \\\n-DBROWSERSTACK_APP="${appPath}"`;
+      mavenCommand += ` -DBROWSERSTACK_APP="${appPath}"`;
     }
   }
 
@@ -128,7 +118,7 @@ export function getJavaSDKCommand(
 
   const mavenStep = createStep(
     "Install BrowserStack SDK using Maven Archetype for App Automate",
-    `**Maven command for ${framework} (${getPlatformLabel()}):**
+    `Maven command for ${framework} (${getPlatformLabel()}):
 \`\`\`bash
 ${mavenCommand}
 \`\`\`
@@ -137,6 +127,5 @@ Alternative setup for Gradle users:
 ${GRADLE_APP_SETUP_INSTRUCTIONS}`,
   );
 
-  logger.info("Java SDK command generated successfully");
   return combineInstructions(envStep, mavenStep);
 }

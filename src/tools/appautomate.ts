@@ -8,7 +8,7 @@ import { trackMCP } from "../lib/instrumentation.js";
 import { maybeCompressBase64 } from "../lib/utils.js";
 import { remote } from "webdriverio";
 import { AppTestPlatform } from "./appautomate-utils/native-execution/types.js";
-import { setupAppAutomateHandler } from "./appautomate-utils/handler.js";
+import { setupAppAutomateHandler } from "./appautomate-utils/appium-sdk/handler.js";
 
 import {
   SETUP_APP_AUTOMATE_DESCRIPTION,
