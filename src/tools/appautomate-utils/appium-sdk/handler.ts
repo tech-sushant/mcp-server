@@ -2,6 +2,14 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
+import { getAppUploadInstruction, validateSupportforAppAutomate, SupportedFramework } from "./utils.js";
+import logger from "../../../logger.js";
+
+import {
+  getAppSDKPrefixCommand,
+  generateAppBrowserStackYMLInstructions,
+} from "./index.js";
+
 import {
   AppSDKSupportedLanguage,
   AppSDKSupportedTestingFramework,
@@ -10,17 +18,12 @@ import {
   getAppInstructionsForProjectConfiguration,
   SETUP_APP_AUTOMATE_SCHEMA,
 } from "./index.js";
-import {
-  getAppSDKPrefixCommand,
-  generateAppBrowserStackYMLInstructions,
-} from "./index.js";
-import { getAppUploadInstruction } from "./utils.js";
-import logger from "../../../logger.js";
 
 export async function setupAppAutomateHandler(
   rawInput: unknown,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
+  
   const input = z.object(SETUP_APP_AUTOMATE_SCHEMA).parse(rawInput);
   const auth = getBrowserStackAuth(config);
   const [username, accessKey] = auth.split(":");
@@ -33,10 +36,10 @@ export async function setupAppAutomateHandler(
   const language = input.detectedLanguage as AppSDKSupportedLanguage;
   const platforms = (input.desiredPlatforms as string[]) ?? ["android"];
   const appPath = input.appPath as string;
-  const framework = input.detectedFramework as string;
+  const framework = input.detectedFramework as SupportedFramework;
 
-  logger.info("Generating SDK setup command...");
-  logger.debug(`Input: ${JSON.stringify(input)}`);
+  //Validating if supported framework or not
+  validateSupportforAppAutomate(framework, language, testingFramework);
 
   // Step 1: Generate SDK setup command
   const sdkCommand = getAppSDKPrefixCommand(

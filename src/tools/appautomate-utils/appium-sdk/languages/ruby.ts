@@ -26,9 +26,9 @@ browser_caps:
   -
     "deviceName": "Google Pixel 3"
     "os_version": "9.0"
-    "app": "bs://<app-id>"
+    "app": "<replace with the APK path from the upload step>"
     "name": "first_test"
-\`\`\``,
+\`\`\``
   );
 
   const envStep = createStep(
@@ -46,7 +46,7 @@ password = "${accessKey}"
 desired_caps = {
   caps: caps,
   appium_lib: {
-    server_url = "https://#{username}:#{password}@#{caps['server']}/wd/hub"
+    server_url: "https://#{username}:#{password}@#{caps['server']}/wd/hub"
   }
 }
 
@@ -63,14 +63,14 @@ end
 at_exit do
   $driver.quit if $driver
 end
-\`\`\``,
+\`\`\``
   );
 
   const runStep = createStep(
     "Run the test:",
     `\`\`\`bash
 bundle exec cucumber
-\`\`\``,
+\`\`\``
   );
 
   return combineInstructions(configStep, envStep, runStep);
@@ -79,22 +79,21 @@ bundle exec cucumber
 export function getRubySDKCommand(
   framework: string,
   username: string,
-  accessKey: string,
+  accessKey: string
 ): string {
   const { isWindows, getPlatformLabel } = PLATFORM_UTILS;
 
-  if (framework === "cucumberRuby") {
-    const envStep = createEnvStep(
-      username,
-      accessKey,
-      isWindows,
-      getPlatformLabel(),
-      "Set your BrowserStack credentials as environment variables:",
-    );
+  const envStep = createEnvStep(
+    username,
+    accessKey,
+    isWindows,
+    getPlatformLabel(),
+    "Set your BrowserStack credentials as environment variables:"
+  );
 
-    const installStep = createStep(
-      "Install required Ruby gems:",
-      `\`\`\`bash
+  const installStep = createStep(
+    "Install required Ruby gems:",
+    `\`\`\`bash
 # Install Bundler if not already installed
 gem install bundler
 
@@ -103,12 +102,12 @@ gem install appium_lib
 
 # Install Cucumber
 gem install cucumber
-\`\`\``,
-    );
+\`\`\``
+  );
 
-    const gemfileStep = createStep(
-      "Create a Gemfile for dependency management:",
-      `\`\`\`ruby
+  const gemfileStep = createStep(
+    "Create a Gemfile for dependency management:",
+    `\`\`\`ruby
 # Gemfile
 source 'https://rubygems.org'
 
@@ -119,11 +118,8 @@ gem 'cucumber'
 Then run:
 \`\`\`bash
 bundle install
-\`\`\``,
-    );
+\`\`\``
+  );
 
-    return combineInstructions(envStep, installStep, gemfileStep);
-  }
-
-  return "";
+  return combineInstructions(envStep, installStep, gemfileStep);
 }

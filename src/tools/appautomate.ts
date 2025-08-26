@@ -393,11 +393,12 @@ export default function addAppAutomationTools(
       try {
         return await setupAppAutomateHandler(args, config);
       } catch (error) {
+        const error_message = error instanceof Error ? error.message : "Unknown error";
         return {
           content: [
             {
               type: "text",
-              text: `Failed to bootstrap project with BrowserStack App Automate SDK. Error: ${error}. Please open an issue on GitHub if the problem persists`,
+              text: `Failed to bootstrap project with BrowserStack App Automate SDK. Error: ${error_message}. Please open an issue on GitHub if the problem persists`,
               isError: true,
             },
           ],

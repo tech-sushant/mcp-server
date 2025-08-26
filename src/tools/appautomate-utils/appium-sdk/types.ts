@@ -9,15 +9,7 @@ export enum AppSDKSupportedLanguageEnum {
 export type AppSDKSupportedLanguage = keyof typeof AppSDKSupportedLanguageEnum;
 
 export enum AppSDKSupportedFrameworkEnum {
-  appium = "appium",
-  webdriverio = "webdriverio",
-  nightwatch = "nightwatch",
-  jest = "jest",
-  mocha = "mocha",
-  cucumberJs = "cucumberJs",
-  pytest = "pytest",
-  rspec = "rspec",
-  cucumberRuby = "cucumberRuby",
+  appium = "appium"
 }
 
 export type AppSDKSupportedFramework =
@@ -26,6 +18,7 @@ export type AppSDKSupportedFramework =
 export enum AppSDKSupportedTestingFrameworkEnum {
   testng = "testng",
   junit5 = "junit5",
+  junit4 = "junit4",
   selenide = "selenide",
   jbehave = "jbehave",
   cucumberTestng = "cucumberTestng",
@@ -58,23 +51,18 @@ export enum AppSDKSupportedPlatformEnum {
 }
 export type AppSDKSupportedPlatform = keyof typeof AppSDKSupportedPlatformEnum;
 
-export type AppConfigMapping = Record<
-  AppSDKSupportedLanguageEnum,
-  Partial<
-    Record<
-      AppSDKSupportedFrameworkEnum,
-      Partial<
-        Record<
-          AppSDKSupportedTestingFrameworkEnum,
-          { instructions: (username: string, accessKey: string) => string }
-        >
-      >
-    >
-  >
->;
-
 // App SDK instruction type
 export interface AppSDKInstruction {
   content: string;
   type: "config" | "run" | "setup";
 }
+
+export const SUPPORTED_CONFIGURATIONS = {
+  appium: {
+    ruby: ["cucumberRuby"],
+    java: ["junit5", "junit4", "testng", "cucumberTestng", "selenide", "jbehave"],
+    csharp: ["nunit", "xunit", "mstest", "specflow", "reqnroll"],
+    python: ["pytest", "robot", "behave", "lettuce"],
+    nodejs: ["jest", "mocha", "cucumberJs", "webdriverio", "nightwatch"],
+  },
+};
