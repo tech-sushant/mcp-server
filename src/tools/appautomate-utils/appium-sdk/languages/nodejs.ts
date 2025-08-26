@@ -145,7 +145,7 @@ exports.config = {
 }
 
 function getNightwatchCommand(username: string, accessKey: string): string {
-    const prerequisiteStep = createStep(
+  const prerequisiteStep = createStep(
     "Prerequisite Setup:",
     ` a. Ensure you do not modify or replace any existing local driver code, 
       as it will be automatically managed and overwritten by the BrowserStack SDK/Driver.
@@ -155,7 +155,7 @@ function getNightwatchCommand(username: string, accessKey: string): string {
 
   const envStep = createStep(
     "Set your BrowserStack credentials as environment variables:",
-`\`\`\`bash 
+    `\`\`\`bash 
 export BROWSERSTACK_USERNAME=${username}
 export BROWSERSTACK_ACCESS_KEY=${accessKey}
 \`\`\``,
@@ -163,7 +163,7 @@ export BROWSERSTACK_ACCESS_KEY=${accessKey}
 
   const installStep = createStep(
     "Install Nightwatch and BrowserStack integration:",
-`\`\`\`bash
+    `\`\`\`bash
 npm install --save-dev @nightwatch/browserstack
 \`\`\``,
   );
@@ -232,7 +232,12 @@ npm install --save-dev @nightwatch/browserstack
 \`\`\``,
   );
 
-  return combineInstructions(prerequisiteStep, envStep, installStep, configStep);
+  return combineInstructions(
+    prerequisiteStep,
+    envStep,
+    installStep,
+    configStep,
+  );
 }
 
 function getJestCommand(username: string, accessKey: string): string {

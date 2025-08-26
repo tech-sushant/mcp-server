@@ -48,7 +48,8 @@ export async function getAppUploadInstruction(
   detectedTestingFramework: AppSDKSupportedTestingFramework,
 ): Promise<string> {
   if (
-    detectedTestingFramework === AppSDKSupportedTestingFrameworkEnum.nightwatch ||
+    detectedTestingFramework ===
+      AppSDKSupportedTestingFrameworkEnum.nightwatch ||
     detectedTestingFramework === AppSDKSupportedTestingFrameworkEnum.webdriverio
   ) {
     const app_url = "bs://ff4e358328a3e914fe4f0e46ec7af73f9c08cd55";

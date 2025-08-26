@@ -15,7 +15,8 @@ export function generateAppBrowserStackYMLInstructions(
 ): string {
   if (
     testingFramework === AppSDKSupportedTestingFrameworkEnum.nightwatch ||
-    testingFramework === AppSDKSupportedTestingFrameworkEnum.webdriverio
+    testingFramework === AppSDKSupportedTestingFrameworkEnum.webdriverio ||
+    testingFramework === AppSDKSupportedTestingFrameworkEnum.cucumberRuby
   ) {
     return "";
   }

@@ -34,7 +34,7 @@ export function getAppInstructionsForProjectConfiguration(
     case "python":
       return getPythonAppInstructions(testingFramework);
     case "ruby":
-      return getRubyAppInstructions(testingFramework);
+      return getRubyAppInstructions();
     case "csharp":
       return getCSharpAppInstructions();
     default:
