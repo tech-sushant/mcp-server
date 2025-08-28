@@ -9,7 +9,7 @@ export enum AppSDKSupportedLanguageEnum {
 export type AppSDKSupportedLanguage = keyof typeof AppSDKSupportedLanguageEnum;
 
 export enum AppSDKSupportedFrameworkEnum {
-  appium = "appium"
+  appium = "appium",
 }
 
 export type AppSDKSupportedFramework =
@@ -60,7 +60,14 @@ export interface AppSDKInstruction {
 export const SUPPORTED_CONFIGURATIONS = {
   appium: {
     ruby: ["cucumberRuby"],
-    java: ["junit5", "junit4", "testng", "cucumberTestng", "selenide", "jbehave"],
+    java: [
+      "junit5",
+      "junit4",
+      "testng",
+      "cucumberTestng",
+      "selenide",
+      "jbehave",
+    ],
     csharp: ["nunit", "xunit", "mstest", "specflow", "reqnroll"],
     python: ["pytest", "robot", "behave", "lettuce"],
     nodejs: ["jest", "mocha", "cucumberJs", "webdriverio", "nightwatch"],

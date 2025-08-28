@@ -1,9 +1,10 @@
+import { uploadApp } from "../native-execution/appautomate.js";
 import {
   AppSDKSupportedTestingFramework,
   AppSDKSupportedTestingFrameworkEnum,
   createStep,
 } from "./index.js";
-import {SUPPORTED_CONFIGURATIONS} from "./types.js"
+import { SUPPORTED_CONFIGURATIONS } from "./types.js";
 
 export function isBrowserStackAppUrl(appPath: string): boolean {
   return appPath.startsWith("bs://");
@@ -51,10 +52,12 @@ export async function getAppUploadInstruction(
   if (
     detectedTestingFramework ===
       AppSDKSupportedTestingFrameworkEnum.nightwatch ||
-    detectedTestingFramework === AppSDKSupportedTestingFrameworkEnum.webdriverio ||
-    detectedTestingFramework === AppSDKSupportedTestingFrameworkEnum.cucumberRuby
+    detectedTestingFramework ===
+      AppSDKSupportedTestingFrameworkEnum.webdriverio ||
+    detectedTestingFramework ===
+      AppSDKSupportedTestingFrameworkEnum.cucumberRuby
   ) {
-    const app_url = "bs://ff4e358328a3e914fe4f0e46ec7af73f9c08cd55";
+    const app_url = await uploadApp(appPath, username, accessKey);
     if (app_url) {
       return createStep(
         "Updating app_path with app_url",
@@ -66,32 +69,37 @@ export async function getAppUploadInstruction(
 }
 
 export type SupportedFramework = keyof typeof SUPPORTED_CONFIGURATIONS;
-type SupportedLanguage = keyof typeof SUPPORTED_CONFIGURATIONS[SupportedFramework];
+type SupportedLanguage =
+  keyof (typeof SUPPORTED_CONFIGURATIONS)[SupportedFramework];
 type SupportedTestingFramework = string;
 
 export function validateSupportforAppAutomate(
   framework: SupportedFramework,
   language: SupportedLanguage,
-  testingFramework: SupportedTestingFramework
+  testingFramework: SupportedTestingFramework,
 ) {
-  const frameworks = Object.keys(SUPPORTED_CONFIGURATIONS) as SupportedFramework[];
+  const frameworks = Object.keys(
+    SUPPORTED_CONFIGURATIONS,
+  ) as SupportedFramework[];
   if (!SUPPORTED_CONFIGURATIONS[framework]) {
     throw new Error(
-      `Unsupported framework '${framework}'. Supported frameworks: ${frameworks.join(", ")}`
+      `Unsupported framework '${framework}'. Supported frameworks: ${frameworks.join(", ")}`,
     );
   }
 
-  const languages = Object.keys(SUPPORTED_CONFIGURATIONS[framework]) as SupportedLanguage[];
+  const languages = Object.keys(
+    SUPPORTED_CONFIGURATIONS[framework],
+  ) as SupportedLanguage[];
   if (!SUPPORTED_CONFIGURATIONS[framework][language]) {
     throw new Error(
-      `Unsupported language '${language}' for framework '${framework}'. Supported languages: ${languages.join(", ")}`
+      `Unsupported language '${language}' for framework '${framework}'. Supported languages: ${languages.join(", ")}`,
     );
   }
 
   const testingFrameworks = SUPPORTED_CONFIGURATIONS[framework][language];
   if (!testingFrameworks.includes(testingFramework)) {
     throw new Error(
-      `Unsupported testing framework '${testingFramework}' for language '${language}' and framework '${framework}'. Supported testing frameworks: ${testingFrameworks.join(", ")}`
+      `Unsupported testing framework '${testingFramework}' for language '${language}' and framework '${framework}'. Supported testing frameworks: ${testingFrameworks.join(", ")}`,
     );
   }
 }

@@ -393,7 +393,8 @@ export default function addAppAutomationTools(
       try {
         return await setupAppAutomateHandler(args, config);
       } catch (error) {
-        const error_message = error instanceof Error ? error.message : "Unknown error";
+        const error_message =
+          error instanceof Error ? error.message : "Unknown error";
         return {
           content: [
             {

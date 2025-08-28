@@ -28,7 +28,7 @@ browser_caps:
     "os_version": "9.0"
     "app": "<replace with the APK path from the upload step>"
     "name": "first_test"
-\`\`\``
+\`\`\``,
   );
 
   const envStep = createStep(
@@ -63,14 +63,14 @@ end
 at_exit do
   $driver.quit if $driver
 end
-\`\`\``
+\`\`\``,
   );
 
   const runStep = createStep(
     "Run the test:",
     `\`\`\`bash
 bundle exec cucumber
-\`\`\``
+\`\`\``,
   );
 
   return combineInstructions(configStep, envStep, runStep);
@@ -79,7 +79,7 @@ bundle exec cucumber
 export function getRubySDKCommand(
   framework: string,
   username: string,
-  accessKey: string
+  accessKey: string,
 ): string {
   const { isWindows, getPlatformLabel } = PLATFORM_UTILS;
 
@@ -88,7 +88,7 @@ export function getRubySDKCommand(
     accessKey,
     isWindows,
     getPlatformLabel(),
-    "Set your BrowserStack credentials as environment variables:"
+    "Set your BrowserStack credentials as environment variables:",
   );
 
   const installStep = createStep(
@@ -102,7 +102,7 @@ gem install appium_lib
 
 # Install Cucumber
 gem install cucumber
-\`\`\``
+\`\`\``,
   );
 
   const gemfileStep = createStep(
@@ -118,7 +118,7 @@ gem 'cucumber'
 Then run:
 \`\`\`bash
 bundle install
-\`\`\``
+\`\`\``,
   );
 
   return combineInstructions(envStep, installStep, gemfileStep);

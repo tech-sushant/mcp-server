@@ -2,8 +2,11 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
-import { getAppUploadInstruction, validateSupportforAppAutomate, SupportedFramework } from "./utils.js";
-import logger from "../../../logger.js";
+import {
+  getAppUploadInstruction,
+  validateSupportforAppAutomate,
+  SupportedFramework,
+} from "./utils.js";
 
 import {
   getAppSDKPrefixCommand,
@@ -23,7 +26,6 @@ export async function setupAppAutomateHandler(
   rawInput: unknown,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
-  
   const input = z.object(SETUP_APP_AUTOMATE_SCHEMA).parse(rawInput);
   const auth = getBrowserStackAuth(config);
   const [username, accessKey] = auth.split(":");
