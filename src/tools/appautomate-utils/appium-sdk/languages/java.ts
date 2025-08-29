@@ -52,6 +52,8 @@ export function getJavaAppFrameworkForMaven(framework: string): string {
 function getMavenCommandForWindows(
   framework: string,
   mavenFramework: string,
+  username: string,
+  accessKey: string,
 ): string {
   return (
     `mvn archetype:generate -B ` +
@@ -61,8 +63,8 @@ function getMavenCommandForWindows(
     `-DgroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
     `-DartifactId="${MAVEN_ARCHETYPE_ARTIFACT_ID}" ` +
     `-Dversion="${MAVEN_ARCHETYPE_VERSION}" ` +
-    `-DBROWSERSTACK_USERNAME="${process.env.BROWSERSTACK_USERNAME}" ` +
-    `-DBROWSERSTACK_ACCESS_KEY="${process.env.BROWSERSTACK_ACCESS_KEY}" ` +
+    `-DBROWSERSTACK_USERNAME="${username}" ` +
+    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}" ` +
     `-DBROWSERSTACK_FRAMEWORK="${framework}"`
   );
 }
@@ -70,6 +72,8 @@ function getMavenCommandForWindows(
 function getMavenCommandForUnix(
   framework: string,
   mavenFramework: string,
+  username: string,
+  accessKey: string,
 ): string {
   return (
     `mvn archetype:generate -B ` +
@@ -79,8 +83,8 @@ function getMavenCommandForUnix(
     `-DgroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
     `-DartifactId="${MAVEN_ARCHETYPE_ARTIFACT_ID}" ` +
     `-Dversion="${MAVEN_ARCHETYPE_VERSION}" ` +
-    `-DBROWSERSTACK_USERNAME="${process.env.BROWSERSTACK_USERNAME}" ` +
-    `-DBROWSERSTACK_ACCESS_KEY="${process.env.BROWSERSTACK_ACCESS_KEY}" ` +
+    `-DBROWSERSTACK_USERNAME="${username}" ` +
+    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}" ` +
     `-DBROWSERSTACK_FRAMEWORK="${framework}"`
   );
 }
@@ -98,12 +102,22 @@ export function getJavaSDKCommand(
   let mavenCommand: string;
 
   if (isWindows) {
-    mavenCommand = getMavenCommandForWindows(framework, mavenFramework);
+    mavenCommand = getMavenCommandForWindows(
+      framework,
+      mavenFramework,
+      username,
+      accessKey,
+    );
     if (appPath) {
       mavenCommand += ` -DBROWSERSTACK_APP="${appPath}"`;
     }
   } else {
-    mavenCommand = getMavenCommandForUnix(framework, mavenFramework);
+    mavenCommand = getMavenCommandForUnix(
+      framework,
+      mavenFramework,
+      username,
+      accessKey,
+    );
     if (appPath) {
       mavenCommand += ` -DBROWSERSTACK_APP="${appPath}"`;
     }
