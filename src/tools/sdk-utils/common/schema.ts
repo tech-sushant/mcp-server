@@ -50,3 +50,35 @@ export type SetUpPercyInput = z.infer<typeof SetUpPercySchema>;
 export type RunTestsOnBrowserStackInput = z.infer<
   typeof RunTestsOnBrowserStackSchema
 >;
+
+export const RunPercyScanParamsShape = {
+  projectName: z.string().describe("The name of the project to run Percy on."),
+  percyRunCommand: z
+    .string()
+    .optional()
+    .describe(
+      "The test command to run with Percy. Optional — the LLM should try to infer it first from project context.",
+    ),
+  integrationType: z
+    .nativeEnum(PercyIntegrationTypeEnum)
+    .describe(
+      "Specifies whether to integrate with Percy Web or Percy Automate. If not explicitly provided, prompt the user to select the desired integration type.",
+    ),
+};
+
+export const FetchPercyChangesParamsShape = {
+  project_name: z
+    .string()
+    .describe(
+      "The name of the BrowserStack project. If not found, ask user directly.",
+    ),
+};
+
+export const ManagePercyBuildApprovalParamsShape = {
+  buildId: z
+    .string()
+    .describe("The ID of the Percy build to approve or reject."),
+  action: z
+    .enum(["approve", "unapprove", "reject"])
+    .describe("The action to perform on the Percy build."),
+};

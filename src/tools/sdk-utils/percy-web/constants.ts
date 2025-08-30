@@ -544,22 +544,13 @@ Install Percy dependencies
     npm install --save-dev @percy/cli
   - Install Percy Selenium Python package:
     pip install percy-selenium
-
+If faced any issue create a virtual environment and proceed.
 Update your Python Selenium script
 ${PERCY_SNAPSHOT_INSTRUCTION}
 ${pythonInstructionsSnapshot}
 
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- <your command to run tests>
-  
-Example output:
-  [percy] Percy has started!
-  [percy] Created build #1: https://percy.io/your-project
-  [percy] Snapshot taken "Home page"
-  [percy] Finalized build #1: https://percy.io/your-project
-  [percy] Done!
-
+---STEP---
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- python tests.py').
 ${percyReviewSnapshotsStep}
 `;
 
@@ -576,9 +567,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- node scripts/test.js
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- node script.js').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -603,9 +592,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${javaInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- mvn test
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- mvn test').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -624,9 +611,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${rubyInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- <your command to run tests>
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- bundle exec rspec').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -646,9 +631,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${rubyCapybaraInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- bundle exec rspec
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- bundle exec rspec').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -667,9 +650,8 @@ Update your C# Selenium test
 ${PERCY_SNAPSHOT_INSTRUCTION}
 ${csharpInstructionsSnapshot}
 
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- <your command to run tests>
+---STEP---
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- dotnet test').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -689,9 +671,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${javaPlaywrightInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- <command to run the test script file>
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g. npx percy exec -- <command to run the test script file>).
 
 ${percyReviewSnapshotsStep}
 `;
@@ -707,9 +687,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsPlaywrightInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- <command to run the test script file>
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., npx percy exec -- <command to run the test script file>).
 ${percyReviewSnapshotsStep}
 `;
 
@@ -728,9 +706,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsWebdriverioInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- wdio run wdio.conf.js
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- wdio run wdio.conf.js').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -748,9 +724,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsEmberInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- ember test
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- ember test').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -768,9 +742,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsCypressInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- cypress run
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- cypress run').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -788,9 +760,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsPuppeteerInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- mocha
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- <command to run the test script file>').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -808,9 +778,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsNightmareInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- node script.js
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- node script.js').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -828,9 +796,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsNightwatchInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- nightwatch
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- nightwatch').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -848,9 +814,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsProtractorInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- protractor conf.js
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- protractor conf.js').
 
 ${percyReviewSnapshotsStep}
 `;
@@ -868,10 +832,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsTestcafeInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- testcafe chrome:headless tests
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- testcafe chrome:headless tests').
 ${percyReviewSnapshotsStep}
 `;
 
@@ -888,10 +849,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${nodejsGatsbyInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your Gatsby build
-  - Use the following command:
-    npx percy exec -- gatsby build
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- gatsby build').
 ${percyReviewSnapshotsStep}
 `;
 
@@ -915,17 +873,7 @@ Run Percy with your Storybook
     percy storybook http://localhost:9009
     percy storybook https://storybook.foobar.com
   - Automatically run start-storybook:
-    percy storybook:start --port=9009 --static-dir=./public
-
-  - Example output:
-    [percy] Snapshot found: My snapshot
-    [percy] - url: [...]?id=component--my-story
-    [percy] Snapshot found: [Dark mode] My snapshot
-    [percy] - url: [...]?id=component--my-story&args=colorScheme:dark
-    [percy] Snapshot found: My snapshot with globals
-    [percy] - url: [...]?id=component--my-story&globals=textDirection:rtl
-    [percy] Snapshot found: Search snapshot
-    [percy] - url: [...]?id=component--my-story&search=foobar
+    Run this scan using tool runPercyScan with 'npx percy exec -- percy storybook:start --port=9009'.
 
 ${percyReviewSnapshotsStep}
 `;
@@ -955,10 +903,7 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${pythonPlaywrightInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- python your_test_script.py
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g. npx percy exec -- <command to run the test script file>).
 ${percyReviewSnapshotsStep}
 `;
 
@@ -973,9 +918,6 @@ ${PERCY_SNAPSHOT_INSTRUCTION}
 ${csharpPlaywrightInstructionsSnapshot}
 
 ---STEP---
-Run Percy with your tests
-  - Use the following command:
-    npx percy exec -- dotnet test
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g. npx percy exec -- <command to run the test script file>).
 ${percyReviewSnapshotsStep}
 `;

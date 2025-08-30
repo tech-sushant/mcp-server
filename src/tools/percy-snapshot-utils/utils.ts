@@ -34,7 +34,7 @@ export async function updateFileAndStep(
   if (nextIndex === total) {
     content.push({
       type: "text",
-      text: `Step 4: Percy snapshot commands have been added to all files. You can now run the Percy build using the above command.`,
+      text: `Step 3: Percy snapshot commands have been added to all files. You can now run the tool runPercyScan to run the percy scan.`,
     });
   }
 
