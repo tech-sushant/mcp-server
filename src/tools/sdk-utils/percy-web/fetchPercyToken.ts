@@ -13,15 +13,26 @@ async function fetchTokenFromAPI(
     "https://api.browserstack.com/api/app_percy/get_project_token";
   const params = new URLSearchParams({ name: projectName });
 
+  if (!projectName) {
+    throw new Error("Project name is required for setting up the Percy");
+  }
+
   if (options.type) {
     params.append("type", options.type);
   }
 
   const url = `${baseUrl}?${params.toString()}`;
-  const response = await fetch(url, { headers: { Authorization: authHeader } });
+  
+  const response = await fetch(url, {
+    headers: {
+      Authorization: authHeader,
+    },
+  });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch Percy token (status: ${response.status})`);
+    throw new Error(
+      `Failed to fetch Percy token (status: ${response.status})`,
+    );
   }
 
   const data = await response.json();
@@ -53,3 +64,4 @@ export async function fetchPercyToken(
   globalPercyToken = token;
   return token;
 }
+x

@@ -78,6 +78,7 @@ percy_snapshot(self.driver, "Before Adding to Cart")  # (Do NOT change the snaps
 \`\`\`
 
 STEP 4: Run a second Percy build.
+- Strictly use the same build command you ran for the baseline.
 - The snapshot names must remain the same as in the baseline.
 - The visual change should now appear in the same snapshot as before.
 - Strictly use the same build command you ran for the baseline.
