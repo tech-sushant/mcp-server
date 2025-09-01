@@ -64,7 +64,7 @@ export async function fetchPercyChanges(
       content: [
         {
           type: "text",
-          text: "AI Summary is not yet available for this build/framework. There may still be visual changes—please review the build on the dashboard. Support for AI Summary will be added soon.",
+          text: "AI Summary is not yet available for this build/framework. There may still be visual changes—please review the build on the dashboard.",
         },
       ],
     };
