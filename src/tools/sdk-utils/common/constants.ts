@@ -100,3 +100,6 @@ VALIDATION CHECKPOINTS (before proceeding to the next step):
 CRITICAL: 
 Do NOT run tests separately or create multiple builds during baseline establishment. The goal is to have exactly TWO builds total: (1) baseline build with all original snapshots, (2) modified build with the same tests but visual changes injected.
 `;
+
+export const PERCY_VERIFICATION_REGEX =
+  /\*\*✅ Verification:\*\*\nPlease verify that you have completed all[\s\S]*?double-check each step and ensure all commands executed successfully\./s;

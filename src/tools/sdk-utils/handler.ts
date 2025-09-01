@@ -21,6 +21,7 @@ import {
   PERCY_SIMULATE_INSTRUCTION,
   PERCY_REPLACE_REGEX,
   PERCY_SIMULATION_DRIVER_INSTRUCTION,
+  PERCY_VERIFICATION_REGEX,
 } from "./common/constants.js";
 
 export async function runTestsOnBrowserStackHandler(
@@ -172,23 +173,27 @@ export async function setUpSimulatePercyChangeHandler(
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    const percyInstruction = await setUpPercyHandler(rawInput, config);
+    let percyInstruction;
+
+    try {
+      percyInstruction = await setUpPercyHandler(rawInput, config);
+    } catch {
+      throw new Error("Failed to set up Percy");
+    }
 
     if (percyInstruction.isError) {
       return percyInstruction;
     }
 
     if (Array.isArray(percyInstruction.content)) {
-      percyInstruction.content.forEach((item) => {
-        if (
-          typeof item.text === "string" &&
-          PERCY_REPLACE_REGEX.test(item.text)
-        ) {
-          item.text = item.text.replace(
-            PERCY_REPLACE_REGEX,
-            PERCY_SIMULATE_INSTRUCTION,
-          );
+      percyInstruction.content = percyInstruction.content.map((item) => {
+        if (typeof item.text === "string") {
+          const updatedText = item.text
+            .replace(PERCY_REPLACE_REGEX, PERCY_SIMULATE_INSTRUCTION)
+            .replace(PERCY_VERIFICATION_REGEX, "");
+          return { ...item, text: updatedText };
         }
+        return item;
       });
     }
 
