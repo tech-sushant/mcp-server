@@ -1,5 +1,5 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { PercyIntegrationTypeEnum } from "../common/types.js";
+import { PercyIntegrationTypeEnum } from "./types.js";
 import { isPercyAutomateFrameworkSupported } from "../percy-automate/frameworks.js";
 import { isPercyWebFrameworkSupported } from "../percy-web/frameworks.js";
 import {

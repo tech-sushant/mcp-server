@@ -40,10 +40,7 @@ def test_homepage(driver):
 \`\`\`
 
 ---STEP---
-Run Percy Automate with your tests
-  - Use the following command:
-    npx percy exec -- browserstack-sdk pytest
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- browserstack-sdk pytest').
 ${percyAutomateReviewSnapshotsStep}
 `;
 
@@ -81,10 +78,7 @@ def test_visual_regression():
 \`\`\`
 
 ---STEP---
-Run Percy Automate with your tests
-  - Use the following command:
-    npx percy exec -- <command to run the automate script file>
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- <command to run the script file>').
 ${percyAutomateReviewSnapshotsStep}
 `;
 
@@ -116,10 +110,7 @@ describe('Percy Automate Cypress Example', () => {
 \`\`\`  
 
 ---STEP---
-Run Percy Automate with your tests
-  - Use the following command:
-    npx percy exec -- cypress run
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- cypress run').
 ${percyAutomateReviewSnapshotsStep}
 `;
 
@@ -140,10 +131,7 @@ Update your Mocha Automate test script
     await percyScreenshot(driver, 'Screenshot 2', options);
 
 ---STEP---
-Run Percy Automate with your tests
-  - Use the following command:
-    npx percy exec -- <command to run the automate script file>
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- mocha').
 ${percyAutomateReviewSnapshotsStep}
 `;
 
@@ -170,10 +158,7 @@ await percyScreenshot(page, "Screenshot 2", { percyCSS: "h1{color:green;}" });
 \`\`\`
 
 ---STEP---
-Run Percy Automate with your tests
-  - Use the following command:
-    npx percy exec -- <command to run the automate script file>
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- <command to run the tests>').
 ${percyAutomateReviewSnapshotsStep}
 `;
 
@@ -213,10 +198,7 @@ describe("JestJS test", () => {
 \`\`\`
 
 ---STEP---
-Run your test script:
-  - Use the following command:
-    npm run [your-test-script-name]-browserstack
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npm run [your-test-script-name]-browserstack').
 ${percyAutomateReviewSnapshotsStep}
 `;
 
@@ -271,9 +253,7 @@ describe("WebdriverIO Test", () => {
 \`\`\`
 
 ---STEP---
-Run your test script
-  - Use the commands defined in your package.json file to run the tests on BrowserStack.
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command as defined in your package.json file.
 ${percyAutomateReviewSnapshotsStep}
 `;
 
@@ -299,10 +279,7 @@ test('Test1', async t => {
 \`\`\`
 
 ---STEP---
-Run Percy
-  - Use the following command to run your tests with Percy:
-    npx percy exec -- testcafe chrome:headless tests
-
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- testcafe chrome:headless tests').
 ${percyAutomateReviewSnapshotsStep}
 `;
 
@@ -335,9 +312,7 @@ percy.screenshot("screenshot_2", options);
 \`\`\`
 
 ---STEP---
-Run Percy Automate with your tests
-  - Use the following command:
-    npx percy exec -- <command to run the automate script file>
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- <command to run the automate script file>').
 
 ${percyAutomateReviewSnapshotsStep}
 `;
@@ -367,9 +342,7 @@ Percy.Screenshot(page, "example_screenshot_2", options);
 \`\`\`
 
 ---STEP---
-Run Percy Automate with your tests
-  - Use the following command:
-    npx percy exec -- <command to run the automate script file>
+To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g., 'npx percy exec -- <command to run the automate script file>').
 
 ${percyAutomateReviewSnapshotsStep}
 `;
