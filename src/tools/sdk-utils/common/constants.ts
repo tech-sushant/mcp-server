@@ -35,7 +35,7 @@ Process files in STRICT sequential order using tool addPercySnapshotCommands() w
 export const PERCY_SIMULATE_INSTRUCTION = `
 MANDATORY: Aggressive, Accurate Percy Snapshots Integration
 
-Prerequisite: Before making any code changes in the user's repo, switch to a branch named temp-percy (run git init first if the repo is not yet initialized).
+Prerequisite: Before making any code changes in the user's repository, create and switch to a new branch named browserstack-simulation. Stage all changes but do not commit them. If the repository has not been initialized yet, run git init first.
 
 You MUST follow these steps with NO EXCEPTIONS:
 1. Identify 4-5 key test files in the project that are critical for visual testing.
@@ -80,11 +80,11 @@ percy_snapshot(self.driver, "Before Adding to Cart")  # (Do NOT change the snaps
 STEP 4: Run a second Percy build.
 - The snapshot names must remain the same as in the baseline.
 - The visual change should now appear in the same snapshot as before.
-- Use the same build command you ran for the baseline.
+- Strictly use the same build command you ran for the baseline.
 
 STEP 5: Compare the two Percy builds to see the detected visual difference.
 
-STEP 6: Now ask user if they want to setup percy for full project coverage? If yes, call the "setupPercyVisualTesting" tool to enable complete coverage for the entire project.
+STEP 6: Now ask user if they want to setup percy for full project coverage? If yes, discard all the unstaged changes and call the "setupPercyVisualTesting" tool to enable complete coverage for the entire project.
 
 CONSTRAINTS:
 - Do NOT run any builds until explicitly instructed in the steps.
