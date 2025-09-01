@@ -1,12 +1,13 @@
 import { apiClient } from "../../lib/apiClient.js";
 import { randomUUID } from "node:crypto";
 import logger from "../../logger.js";
+import config from "../../config.js";
+import { ScanType } from "../accessibility.js";
 import {
   isLocalURL,
   ensureLocalBinarySetup,
   killExistingBrowserStackLocalProcesses,
 } from "../../lib/local.js";
-import config from "../../config.js";
 
 export interface AccessibilityScanResponse {
   success: boolean;
@@ -27,11 +28,126 @@ export class AccessibilityScanner {
     this.auth = auth;
   }
 
+  public buildScanRequestBody(
+    name: string,
+    urlList: string[],
+    scanTypes: ScanType[],
+    authConfigId?: number,
+  ) {
+    if (!this.auth?.username || !this.auth?.password) {
+      throw new Error(
+        "BrowserStack credentials are not set for AccessibilityScanner.",
+      );
+    }
+    const hasLocal = urlList.some(isLocalURL);
+    const localIdentifier = randomUUID();
+    const localHosts = new Set(["127.0.0.1", "localhost", "0.0.0.0"]);
+    const BS_LOCAL_DOMAIN = "bs-local.com";
+
+    if (config.USE_OWN_LOCAL_BINARY_PROCESS && hasLocal) {
+      throw new Error(
+        "Cannot start scan with local URLs when using own BrowserStack Local binary process. Please set USE_OWN_LOCAL_BINARY_PROCESS to false.",
+      );
+    }
+
+    if (config.REMOTE_MCP && hasLocal) {
+      throw new Error(
+        "Local URLs are not supported in this remote mcp. Please use a public URL.",
+      );
+    }
+
+    const transformedUrlList = urlList.map((url) => {
+      try {
+        const parsed = new URL(url);
+        if (localHosts.has(parsed.hostname)) {
+          parsed.hostname = BS_LOCAL_DOMAIN;
+          return parsed.toString();
+        }
+        return url;
+      } catch (e) {
+        logger.warn(`[AccessibilityScan] Invalid URL skipped: ${e}`);
+        return url;
+      }
+    });
+
+    let scanData: Record<string, any> = {};
+
+    if (scanTypes.includes(ScanType.Accessibility)) {
+      scanData = {
+        ...scanData,
+        a11yConfig: {
+          wcagVersion: {
+            label: "WCAG 2.1 AA",
+            value: "wcag21aa",
+          },
+          advanced: true,
+          needsReview: true,
+          bestPractices: false,
+        },
+      };
+    }
+    if (scanTypes.includes(ScanType.Performance)) {
+      scanData = {
+        ...scanData,
+        performanceConfig: { enabled: true },
+      };
+    }
+    if (scanTypes.includes(ScanType.Visual)) {
+      scanData = {
+        ...scanData,
+        visualConfig: {
+          scannerDelay: { id: "5 seconds", label: "5 seconds", value: 5 },
+          enableLayout: false,
+        },
+      };
+    }
+    
+    if (scanTypes.includes(ScanType.Responsive)) {
+      scanData = {
+        ...scanData,
+        responsiveConfig: {
+          viewportSettings: ["1920", "1280", "375"].map((v) => ({
+            label: `viewport-${v}`,
+            value: [v],
+          })),
+        },
+      };
+    }
+
+    if (scanTypes.includes(ScanType.BrokenLink)) {
+      scanData = {
+        ...scanData,
+        brokenLinkConfig: {
+          enabled: true,
+          checkExternalLinks: false,
+          maxDepth: 3,
+        },
+      };
+    }
+
+    const requestBody = {
+      name,
+      urlList: transformedUrlList,
+      recurring: false,
+      ...(authConfigId && { authConfigId }),
+      ...(Object.keys(scanData).length > 0 ? { scanData } : {}),
+      ...(hasLocal && {
+        localTestingInfo: {
+          localIdentifier,
+          localEnabled: true,
+        },
+      }),
+    };
+
+    return requestBody;
+  }
+
   async startScan(
     name: string,
     urlList: string[],
+    scanTypes: ScanType[],
     authConfigId?: number,
-  ): Promise<AccessibilityScanResponse> {
+  ) {
     if (!this.auth?.username || !this.auth?.password) {
       throw new Error(
         "BrowserStack credentials are not set for AccessibilityScanner.",
@@ -40,8 +156,6 @@ export class AccessibilityScanner {
     // Check if any URL is local
     const hasLocal = urlList.some(isLocalURL);
     const localIdentifier = randomUUID();
-    const localHosts = new Set(["127.0.0.1", "localhost", "0.0.0.0"]);
-    const BS_LOCAL_DOMAIN = "bs-local.com";
 
     if (config.USE_OWN_LOCAL_BINARY_PROCESS && hasLocal) {
       throw new Error(
@@ -65,37 +179,12 @@ export class AccessibilityScanner {
       await killExistingBrowserStackLocalProcesses();
     }
 
-    const transformedUrlList = urlList.map((url) => {
-      try {
-        const parsed = new URL(url);
-        if (localHosts.has(parsed.hostname)) {
-          parsed.hostname = BS_LOCAL_DOMAIN;
-          return parsed.toString();
-        }
-        return url;
-      } catch (e) {
-        logger.warn(`[AccessibilityScan] Invalid URL skipped: ${e}`);
-        return url;
-      }
-    });
-
-    const baseRequestBody = {
+    const requestBody = this.buildScanRequestBody(
       name,
-      urlList: transformedUrlList,
-      recurring: false,
-      ...(authConfigId && { authConfigId }),
-    };
-
-    let requestBody = baseRequestBody;
-    if (hasLocal) {
-      const localConfig = {
-        localTestingInfo: {
-          localIdentifier,
-          localEnabled: true,
-        },
-      };
-      requestBody = { ...baseRequestBody, ...localConfig };
-    }
+      urlList,
+      scanTypes,
+      authConfigId
+    );
 
     try {
       const response = await apiClient.post<AccessibilityScanResponse>({

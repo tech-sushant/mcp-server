@@ -11,6 +11,14 @@ import { getBrowserStackAuth } from "../lib/get-auth.js";
 import { BrowserStackConfig } from "../lib/types.js";
 import logger from "../logger.js";
 
+export enum ScanType {
+  Accessibility = "accessibility",
+  Performance = "performance",
+  Visual = "visual",
+  Responsive = "responsive",
+  BrokenLink = "broken-link",
+}
+
 interface AuthCredentials {
   username: string;
   password: string;
@@ -196,7 +204,12 @@ async function fetchAccessibilityIssues(
 }
 
 async function executeAccessibilityScan(
-  args: { name: string; pageURL: string; authConfigId?: number },
+  args: {
+    name: string;
+    pageURL: string;
+    authConfigId?: number;
+    scanTypes: ScanType[];
+  },
   context: ScanProgressContext,
   server: McpServer,
   config: BrowserStackConfig,
@@ -213,6 +226,7 @@ async function executeAccessibilityScan(
       args.pageURL,
       context,
       config,
+      args.scanTypes,
       args.authConfigId,
     );
   } catch (error) {
@@ -368,11 +382,17 @@ async function runAccessibilityScan(
   pageURL: string,
   context: ScanProgressContext,
   config: BrowserStackConfig,
+  scanTypes: ScanType[],
   authConfigId?: number,
-): Promise<CallToolResult> {
+  ): Promise<CallToolResult> {
   const scanner = await initializeScanner(config);
 
-  const startResp = await scanner.startScan(name, [pageURL], authConfigId);
+  const startResp = await scanner.startScan(
+    name,
+    [pageURL],
+    scanTypes,
+    authConfigId,
+  );
   const scanId = startResp.data!.id;
   const scanRunId = startResp.data!.scanRunId;
 
@@ -432,6 +452,10 @@ export default function addAccessibilityTools(
         .number()
         .optional()
         .describe("Optional auth config ID for authenticated scans"),
+      scanTypes: z
+        .array(z.nativeEnum(ScanType))
+        .default([ScanType.Accessibility])
+        .describe("List of scan types to run."),
     },
     async (args, context) => {
       return await executeAccessibilityScan(args, context, server, config);
