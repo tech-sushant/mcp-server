@@ -7,15 +7,10 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SetUpPercyParamsShape } from "./sdk-utils/common/schema.js";
 import { updateTestsWithPercyCommands } from "./add-percy-snapshots.js";
 import { approveOrDeclinePercyBuild } from "./review-agent-utils/percy-approve-reject.js";
-
-import {
-  setUpPercyHandler,
-  setUpSimulatePercyChangeHandler,
-} from "./sdk-utils/handler.js";
+import { setUpPercyHandler } from "./sdk-utils/handler.js";
 
 import {
   SETUP_PERCY_DESCRIPTION,
-  SIMULATE_PERCY_CHANGE_DESCRIPTION,
   LIST_TEST_FILES_DESCRIPTION,
   PERCY_SNAPSHOT_COMMANDS_DESCRIPTION,
 } from "./sdk-utils/common/constants.js";
@@ -53,39 +48,6 @@ export function registerPercyTools(
       } catch (error) {
         trackMCP(
           "setupPercyVisualTesting",
-          server.server.getClientVersion()!,
-          error,
-          config,
-        );
-        return {
-          content: [
-            {
-              type: "text",
-              text: error instanceof Error ? error.message : String(error),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
-  );
-
-  // Register simulatePercyChange
-  tools.simulatePercyChange = server.tool(
-    "simulatePercyChange",
-    SIMULATE_PERCY_CHANGE_DESCRIPTION,
-    SetUpPercyParamsShape,
-    async (args) => {
-      try {
-        trackMCP(
-          "simulatePercyChange",
-          server.server.getClientVersion()!,
-          config,
-        );
-        return setUpSimulatePercyChangeHandler(args, config);
-      } catch (error) {
-        trackMCP(
-          "simulatePercyChange",
           server.server.getClientVersion()!,
           error,
           config,
@@ -167,7 +129,7 @@ export function registerPercyTools(
 
   tools.runPercyScan = server.tool(
     "runPercyScan",
-    "Run a Percy visual test scan. Example prompts : Run this Percy build/scan.Never run percy scan/build without this tool",
+    "Run a Percy visual test scan. Example prompts : Run this Percy build/scan. Never run percy scan/build without this tool",
     RunPercyScanParamsShape,
     async (args) => {
       return runPercyScan(args, config);

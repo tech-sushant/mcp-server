@@ -17,11 +17,6 @@ import { runPercyAutomateOnly } from "./percy-automate/handler.js";
 import { runBstackSDKOnly } from "./bstack/sdkHandler.js";
 import { runPercyWithBrowserstackSDK } from "./percy-bstack/handler.js";
 import { checkPercyIntegrationSupport } from "./common/utils.js";
-import {
-  PERCY_SIMULATE_INSTRUCTION,
-  PERCY_REPLACE_REGEX,
-  PERCY_SIMULATION_DRIVER_INSTRUCTION,
-} from "./common/constants.js";
 
 export async function runTestsOnBrowserStackHandler(
   rawInput: unknown,
@@ -162,42 +157,6 @@ export async function setUpPercyHandler(
         shouldSkipFormatting: true,
       };
     }
-  } catch (error) {
-    throw new Error(getBootstrapFailedMessage(error, { config }));
-  }
-}
-
-export async function setUpSimulatePercyChangeHandler(
-  rawInput: unknown,
-  config: BrowserStackConfig,
-): Promise<CallToolResult> {
-  try {
-    const percyInstruction = await setUpPercyHandler(rawInput, config);
-
-    if (percyInstruction.isError) {
-      return percyInstruction;
-    }
-
-    if (Array.isArray(percyInstruction.content)) {
-      percyInstruction.content.forEach((item) => {
-        if (
-          typeof item.text === "string" &&
-          PERCY_REPLACE_REGEX.test(item.text)
-        ) {
-          item.text = item.text.replace(
-            PERCY_REPLACE_REGEX,
-            PERCY_SIMULATE_INSTRUCTION,
-          );
-        }
-      });
-    }
-
-    percyInstruction.content?.push({
-      type: "text" as const,
-      text: PERCY_SIMULATION_DRIVER_INSTRUCTION,
-    });
-
-    return percyInstruction;
   } catch (error) {
     throw new Error(getBootstrapFailedMessage(error, { config }));
   }

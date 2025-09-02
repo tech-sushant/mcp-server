@@ -3,7 +3,7 @@ import { BrowserStackConfig } from "../lib/types.js";
 import { getBrowserStackAuth } from "../lib/get-auth.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { getPercyBuildCount } from "./review-agent-utils/build-counts.js";
-import { getPercySnapshotIds } from "./review-agent-utils/percy-snapshots.js";
+import { getChangedPercySnapshotIds } from "./review-agent-utils/percy-snapshots.js";
 import { PercyIntegrationTypeEnum } from "./sdk-utils/common/types.js";
 import { fetchPercyToken } from "./sdk-utils/percy-web/fetchPercyToken.js";
 
@@ -25,7 +25,7 @@ export async function fetchPercyChanges(
   });
 
   // Get build info (noBuilds, isFirstBuild, lastBuildId)
-  const { noBuilds, isFirstBuild, lastBuildId } =
+  const { noBuilds, isFirstBuild, lastBuildId, orgId } =
     await getPercyBuildCount(percyToken);
 
   if (noBuilds) {
@@ -51,7 +51,11 @@ export async function fetchPercyChanges(
   }
 
   // Get snapshot IDs for the latest build
-  const snapshotIds = await getPercySnapshotIds(lastBuildId, percyToken);
+  const snapshotIds = await getChangedPercySnapshotIds(
+    lastBuildId,
+    config,
+    orgId,
+  );
   logger.info(
     `Fetched ${snapshotIds.length} snapshot IDs for build: ${lastBuildId} as ${snapshotIds.join(", ")}`,
   );

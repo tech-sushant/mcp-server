@@ -1,7 +1,3 @@
-/**
- * Utility for fetching and aggregating Percy snapshot diffs.
- */
-
 export interface PercySnapshotDiff {
   id: string;
   name: string | null;
@@ -10,18 +6,12 @@ export interface PercySnapshotDiff {
   coordinates: any;
 }
 
-/**
- * Fetches diffs for a single Percy snapshot.
- * @param snapshotId - The Percy snapshot ID.
- * @param percyToken - The Percy API token.
- * @returns Array of PercySnapshotDiff objects.
- */
 export async function getPercySnapshotDiff(
   snapshotId: string,
   percyToken: string,
 ): Promise<PercySnapshotDiff[]> {
   const apiUrl = `https://percy.io/api/v1/snapshots/${snapshotId}`;
-
+  
   const response = await fetch(apiUrl, {
     headers: {
       Authorization: `Token token=${percyToken}`,
@@ -59,12 +49,6 @@ export async function getPercySnapshotDiff(
   return changes;
 }
 
-/**
- * Fetches and flattens all diffs for an array of Percy snapshot IDs.
- * @param snapshotIds - Array of Percy snapshot IDs.
- * @param percyToken - The Percy API token.
- * @returns Flat array of PercySnapshotDiff objects.
- */
 export async function getPercySnapshotDiffs(
   snapshotIds: string[],
   percyToken: string,
