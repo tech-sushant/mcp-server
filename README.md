@@ -189,9 +189,9 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
      }
    }
    ```
-   - To setup Remote BrowserStack MCP instead of local BrowserStack MCP you can add the following JSON content instead :
+   - To setup Remote BrowserStack MCP you can add the following JSON content instead of the above :
      <div align="center">
-     <img src="assets/remotemcp_json_file.png" alt="Remote MCP JSON file" height="100" width="100">
+     <img src="assets/remotemcp_json_file.png" alt="Remote MCP JSON file" height="200" width="200">
      </div>
 
    - In VSCode, make sure to click on `Start` button in the MCP Server to start the server.
@@ -474,40 +474,47 @@ As of now we support 20 tools.
          </div>
          
 ### Alternative way to Setup Remote MCP
+
       -  Step 1.Click on the gear icon to Select Tools
+      
           <div align="center">
-          <img src="assets/select_tools.png" alt="Select Tools" height="100"> 
+          <img src="assets/select_tools.png" alt="Select Tools" height="200" width="200"> 
           </div>
           
       -  Step 2. A tool menu would appear at the top-centre, scroll down on the menu at the top and then Click on Add MCP Server
+      
         <div align="center">
-        <img src="assets/add_mcp_server.png" alt="Add MCP Server" height="100"> 
+        <img src="assets/add_mcp_server.png" alt="Add MCP Server" height="200" width="200"> 
         </div>
 
       - Step 3. Click on HTTP option
          <div align="center">
-         <img src="assets/http_option.png" alt="HTTP Option" height="100" width="100">
+         <img src="assets/http_option.png" alt="HTTP Option" height="200" width="200">
          </div>
          
       - Step 4. Paste Remote MCP Server URL
          <div align="center">
-         <img src="assets/server_url.png" alt="Remote MCP Server URL" height="100" width="100">
+         <img src="assets/server_url.png" alt="Remote MCP Server URL" height="200" width="200">
          </div>
          
       - Step 5. Give server id as browserstack
+      
           <div align="center">
-          <img src="assets/server_id.png" alt="Remote MCP Server ID" height="100" width="100">
+          <img src="assets/server_id.png" alt="Remote MCP Server ID" height="200" width="200">
           </div>
           
       - Step 6. In VSCode Click on start MCP Server and then click on "Allow"
+      
           <div align="center">
-          <img src="assets/authentication1.png" alt="authentication1" height="100" width="100">
+          <img src="assets/authentication1.png" alt="authentication1" height="200" width="200">
           </div>
+          
           <div align="center">
-          <img src="assets/authentication2.png" alt="authentication2" height="100" width="100">
+          <img src="assets/authentication2.png" alt="authentication2" height="200" width="200">
           </div>
+          
           <div align="center">
-          <img src="assets/signin_success.png" alt="Sign_in_success" height="100" width="100">
+          <img src="assets/signin_success.png" alt="Sign_in_success" height="200" width="200">
           </div>
 
      
