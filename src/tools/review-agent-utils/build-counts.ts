@@ -20,6 +20,7 @@ export async function getPercyBuildCount(percyToken: string) {
   let isFirstBuild = false;
   let lastBuildId: string | undefined;
   let orgId: string | undefined;
+  let browserIds: string[] = [];
 
   if (builds.length === 0) {
     return {
@@ -27,13 +28,16 @@ export async function getPercyBuildCount(percyToken: string) {
       isFirstBuild: false,
       lastBuildId: undefined,
       orgId,
+      browserIds: [],
     };
-  } else if (builds.length === 1) {
-    isFirstBuild = true;
-    lastBuildId = builds[0].id;
   } else {
-    isFirstBuild = false;
+    isFirstBuild = builds.length === 1;
     lastBuildId = builds[0].id;
+
+    browserIds =
+      builds[0]?.relationships?.browsers?.data
+        ?.map((b: any) => b.id)
+        ?.filter((id: any) => typeof id === "string") ?? [];
   }
 
   // Extract orgId from the `included` projects block
@@ -42,5 +46,5 @@ export async function getPercyBuildCount(percyToken: string) {
     orgId = project.relationships.organization.data.id;
   }
 
-  return { noBuilds: false, isFirstBuild, lastBuildId, orgId };
+  return { noBuilds: false, isFirstBuild, lastBuildId, orgId, browserIds };
 }

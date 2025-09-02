@@ -25,7 +25,7 @@ export async function fetchPercyChanges(
   });
 
   // Get build info (noBuilds, isFirstBuild, lastBuildId)
-  const { noBuilds, isFirstBuild, lastBuildId, orgId } =
+  const { noBuilds, isFirstBuild, lastBuildId, orgId, browserIds } =
     await getPercyBuildCount(percyToken);
 
   if (noBuilds) {
@@ -55,6 +55,7 @@ export async function fetchPercyChanges(
     lastBuildId,
     config,
     orgId,
+    browserIds,
   );
   logger.info(
     `Fetched ${snapshotIds.length} snapshot IDs for build: ${lastBuildId} as ${snapshotIds.join(", ")}`,

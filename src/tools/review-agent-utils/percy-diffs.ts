@@ -11,7 +11,7 @@ export async function getPercySnapshotDiff(
   percyToken: string,
 ): Promise<PercySnapshotDiff[]> {
   const apiUrl = `https://percy.io/api/v1/snapshots/${snapshotId}`;
-  
+
   const response = await fetch(apiUrl, {
     headers: {
       Authorization: `Token token=${percyToken}`,

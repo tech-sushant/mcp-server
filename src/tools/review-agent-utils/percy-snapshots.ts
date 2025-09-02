@@ -7,6 +7,7 @@ export async function getChangedPercySnapshotIds(
   buildId: string,
   config: BrowserStackConfig,
   orgId: string | undefined,
+  browserIds: string[],
 ): Promise<string[]> {
   
   if (!buildId || !orgId) {
@@ -19,10 +20,10 @@ export async function getChangedPercySnapshotIds(
     buildId,
     orgId,
     category: ["changed"],
-    subcategories: ["unreviewed","approved","changes_requested"],
+    subcategories: ["unreviewed", "approved", "changes_requested"],
     groupSnapshotsBy: "similar_diff",
-    browserIds: ["63", "64", "69", "70", "71"],
-    widths: ["375","1280","1920"],
+    browserIds,
+    widths: ["375", "1280", "1920"],
   });
 
   const authString = getBrowserStackAuth(config);
@@ -77,26 +78,29 @@ export function constructPercyBuildItemsUrl({
 
   if (category && category.length > 0) {
     category.forEach((cat) =>
-      url.searchParams.append("filter[category][]", sanitizeUrlParam(cat))
+      url.searchParams.append("filter[category][]", sanitizeUrlParam(cat)),
     );
   }
   if (subcategories && subcategories.length > 0) {
     subcategories.forEach((sub) =>
-      url.searchParams.append("filter[subcategories][]", sanitizeUrlParam(sub))
+      url.searchParams.append("filter[subcategories][]", sanitizeUrlParam(sub)),
     );
   }
   if (browserIds && browserIds.length > 0) {
     browserIds.forEach((id) =>
-      url.searchParams.append("filter[browser_ids][]", sanitizeUrlParam(id))
+      url.searchParams.append("filter[browser_ids][]", sanitizeUrlParam(id)),
     );
   }
   if (widths && widths.length > 0) {
     widths.forEach((w) =>
-      url.searchParams.append("filter[widths][]", sanitizeUrlParam(w))
+      url.searchParams.append("filter[widths][]", sanitizeUrlParam(w)),
     );
   }
   if (groupSnapshotsBy) {
-    url.searchParams.set("filter[group_snapshots_by]", sanitizeUrlParam(groupSnapshotsBy));
+    url.searchParams.set(
+      "filter[group_snapshots_by]",
+      sanitizeUrlParam(groupSnapshotsBy),
+    );
   }
   return url.toString();
 }
