@@ -9,7 +9,6 @@ export async function getChangedPercySnapshotIds(
   orgId: string | undefined,
   browserIds: string[],
 ): Promise<string[]> {
-  
   if (!buildId || !orgId) {
     throw new Error(
       "Failed to fetch AI Summary: Missing build ID or organization ID",

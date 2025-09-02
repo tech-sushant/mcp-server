@@ -16,8 +16,13 @@ import {
 
 import { DetectionConfig } from "../percy-snapshot-utils/types.js";
 
-async function walkDir(dir: string, extensions: string[]): Promise<string[]> {
+async function walkDir(
+  dir: string,
+  extensions: string[],
+  depth: number = 6,
+): Promise<string[]> {
   const result: string[] = [];
+  if (depth < 0) return result;
   try {
     const entries = await fs.promises.readdir(dir, { withFileTypes: true });
 
@@ -26,7 +31,7 @@ async function walkDir(dir: string, extensions: string[]): Promise<string[]> {
 
       if (entry.isDirectory()) {
         if (!EXCLUDED_DIRS.has(entry.name) && !entry.name.startsWith(".")) {
-          result.push(...(await walkDir(fullPath, extensions)));
+          result.push(...(await walkDir(fullPath, extensions, depth - 1)));
         }
       } else if (extensions.some((ext) => entry.name.endsWith(ext))) {
         result.push(fullPath);
@@ -112,7 +117,7 @@ export async function listTestFiles(
   // Step 1: Collect all files with matching extensions
   let files: string[] = [];
   try {
-    files = await walkDir(baseDir, config.extensions);
+    files = await walkDir(baseDir, config.extensions, 6);
   } catch {
     return [];
   }
@@ -151,7 +156,7 @@ export async function listTestFiles(
   // Step 4: Handle SpecFlow .feature files for C# + SpecFlow
   if (language === "csharp" && framework === "specflow") {
     try {
-      const featureFiles = await walkDir(baseDir, [".feature"]);
+      const featureFiles = await walkDir(baseDir, [".feature"], 6);
       featureFiles.forEach((file) => candidateFiles.set(file, 2));
       logger.info(`Added ${featureFiles.length} SpecFlow .feature files`);
     } catch {
