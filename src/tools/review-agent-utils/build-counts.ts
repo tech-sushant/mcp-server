@@ -33,12 +33,13 @@ export async function getPercyBuildCount(percyToken: string) {
   } else {
     isFirstBuild = builds.length === 1;
     lastBuildId = builds[0].id;
-
-    browserIds =
-      builds[0]?.relationships?.browsers?.data
-        ?.map((b: any) => b.id)
-        ?.filter((id: any) => typeof id === "string") ?? [];
   }
+
+  // Extract browserIds from the latest build if available
+  browserIds =
+    builds[0]?.relationships?.browsers?.data
+      ?.map((b: any) => b.id)
+      ?.filter((id: any) => typeof id === "string") ?? [];
 
   // Extract orgId from the `included` projects block
   const project = included.find((item: any) => item.type === "projects");

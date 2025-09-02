@@ -9,8 +9,8 @@ export async function approveOrDeclinePercyBuild(
   const { buildId, action } = args;
 
   // Get Basic Auth credentials
-  const [username, accessKey] = getBrowserStackAuth(config).split(":");
-  const authHeader = `Basic ${Buffer.from(`${username}:${accessKey}`).toString("base64")}`;
+  const authString = getBrowserStackAuth(config);
+  const auth = Buffer.from(authString).toString("base64");
 
   // Prepare request body
   const body = {
@@ -28,7 +28,7 @@ export async function approveOrDeclinePercyBuild(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: authHeader,
+      Authorization: `Basic ${auth}`,
     },
     body: JSON.stringify(body),
   });
