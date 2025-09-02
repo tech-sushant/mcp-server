@@ -189,10 +189,6 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
      }
    }
    ```
-   - To setup Remote BrowserStack MCP you can add the following JSON content instead of the above :
-     <div align="center">
-     <img src="assets/remotemcp_json_file.png" alt="Remote MCP JSON file" height="200" width="200">
-     </div>
 
    - In VSCode, make sure to click on `Start` button in the MCP Server to start the server.
      ![Start MCP Server](assets/vscode_install.png)
@@ -470,10 +466,10 @@ As of now we support 20 tools.
       - Inside the .vscode folder, create a new file named mcp.json
       - To setup Remote BrowserStack MCP instead of local BrowserStack MCP you can add the following JSON content :
          <div align="center">
-         <img src="assets/remotemcp_json_file.png" alt="Remote MCP JSON file" height="100" width="100">
+         <img src="assets/remotemcp_json_file.png" alt="Remote MCP JSON file" height="200" width="200">
          </div>
-         
-### Alternative way to Setup Remote MCP
+        
+        ### Alternative way to Setup Remote MCP
 
       -  Step 1.Click on the gear icon to Select Tools
       
