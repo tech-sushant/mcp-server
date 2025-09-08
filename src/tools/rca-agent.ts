@@ -5,22 +5,23 @@ import logger from "../logger.js";
 import { BrowserStackConfig } from "../lib/types.js";
 import { getBrowserStackAuth } from "../lib/get-auth.js";
 import { getBuildId } from "./rca-agent-utils/get-build-id.js";
-import { getFailedTestIds } from "./rca-agent-utils/get-failed-test-id.js";
+import { getTestIds } from "./rca-agent-utils/get-failed-test-id.js";
 import { getRCAData } from "./rca-agent-utils/rca-data.js";
 import { formatRCAData } from "./rca-agent-utils/format-rca.js";
+import { TestStatus } from "./rca-agent-utils/types.js";
 
-// wTool function that fetches RCA data
+// Tool function that fetches RCA data
 export async function fetchRCADataTool(
-  args: { projectName: string; buildName: string; buildId?: string },
+  args: { testId: string[] },
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    let { projectName, buildName, buildId } = args;
     const authString = getBrowserStackAuth(config);
-    const [username, accessKey] = authString.split(":");
-    buildId = buildId || await getBuildId(projectName, buildName, username, accessKey);
-    const testInfos = await getFailedTestIds(buildId, authString);
-    const rcaData = await getRCAData(testInfos.slice(0, 3), authString);
+
+    // Limit to first 3 test IDs for performance
+    const testIds = args.testId.slice(0, 3);
+
+    const rcaData = await getRCAData(testIds, authString);
 
     const formattedData = formatRCAData(rcaData);
 
@@ -38,6 +39,52 @@ export async function fetchRCADataTool(
   }
 }
 
+export async function listTestIdsTool(
+  args: {
+    projectName: string;
+    buildName: string;
+    buildId?: string;
+    status?: TestStatus;
+  },
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
+  try {
+    const { projectName, buildName, status } = args;
+    let { buildId } = args;
+    const authString = getBrowserStackAuth(config);
+    const [username, accessKey] = authString.split(":");
+
+    // Get build ID if not provided
+    buildId =
+      buildId ||
+      (await getBuildId(projectName, buildName, username, accessKey));
+
+    // Get test IDs
+    const testIds = await getTestIds(buildId, authString, status);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(testIds, null, 2),
+        },
+      ],
+    };
+  } catch (error) {
+    logger.error("Error listing test IDs", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Error listing test IDs: ${errorMessage}`,
+        },
+      ],
+    };
+  }
+}
+
 // Registers the fetchRCA tool with the MCP server
 export default function addRCATools(
   server: McpServer,
@@ -49,22 +96,9 @@ export default function addRCATools(
     "fetchRCA",
     "Retrieves AI-RCA (Root Cause Analysis) data for a BrowserStack Automate session and provides insights into test failures.",
     {
-      projectName: z
-        .string()
-        .describe(
-          "The project name of the test run can be available in browsrestack yml or ask it from user",
-        ),
-      buildName: z
-        .string()
-        .describe(
-          "The build name of the test run can be available in browsrestack yml or ask it from user",
-        ),
-      buildId: z
-        .string()
-        .optional()
-        .describe(
-          "The build ID of the test run.",
-        ),
+      testId: z
+        .array(z.string())
+        .describe("Array of test IDs to fetch RCA data for"),
     },
     async (args) => {
       try {
@@ -77,6 +111,43 @@ export default function addRCATools(
             {
               type: "text",
               text: `Error during fetching RCA data: ${errorMessage}`,
+            },
+          ],
+        };
+      }
+    },
+  );
+
+  tools.listTestIds = server.tool(
+    "listTestIds",
+    "List test IDs from a BrowserStack Automate build, optionally filtered by status (e.g., 'failed', 'passed').",
+    {
+      projectName: z.string().describe("The project name of the test run"),
+      buildName: z.string().describe("The build name of the test run"),
+      buildId: z
+        .string()
+        .optional()
+        .describe(
+          "The build ID of the test run (will be auto-detected if not provided)",
+        ),
+      status: z
+        .nativeEnum(TestStatus)
+        .optional()
+        .describe(
+          "Filter tests by status. If not provided, all tests are returned.",
+        ),
+    },
+    async (args) => {
+      try {
+        return await listTestIdsTool(args, config);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error during listing test IDs: ${errorMessage}`,
             },
           ],
         };

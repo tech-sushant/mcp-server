@@ -1,22 +1,5 @@
-import { FailedTestInfo } from "./get-failed-test-id.js";
-
-export enum RCAState {
-  PENDING = "pending",
-  COMPLETED = "completed",
-  FAILED = "failed",
-}
-
-export interface RCATestCase {
-  id: string;
-  testRunId: string;
-  displayName?: string;
-  state: RCAState;
-  rcaData?: any;
-}
-
-export interface RCAResponse {
-  testCases: RCATestCase[];
-}
+import { FailedTestInfo } from "./types.js";
+import { RCAState, RCATestCase, RCAResponse } from "./types.js";
 
 interface ScanProgressContext {
   sendNotification: (notification: any) => Promise<void>;
@@ -25,9 +8,26 @@ interface ScanProgressContext {
   };
 }
 
-// --- Utility functions ---
-
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function isInProgressState(state: RCAState): boolean {
+  return [
+    RCAState.PENDING,
+    RCAState.FETCHING_LOGS,
+    RCAState.GENERATING_RCA,
+    RCAState.GENERATED_RCA,
+  ].includes(state);
+}
+
+function isFailedState(state: RCAState): boolean {
+  return [
+    RCAState.FAILED,
+    RCAState.LLM_SERVICE_ERROR,
+    RCAState.LOG_FETCH_ERROR,
+    RCAState.UNKNOWN_ERROR,
+    RCAState.TIMEOUT,
+  ].includes(state);
+}
 
 function calculateProgress(
   resolvedCount: number,
@@ -57,27 +57,24 @@ async function notifyProgress(
   });
 }
 
-// Helper to send progress based on current test cases
 async function updateProgress(
   context: ScanProgressContext | undefined,
   testCases: RCATestCase[],
   message?: string,
 ) {
-  const pending = testCases.filter((tc) => tc.state === RCAState.PENDING);
-  const resolvedCount = testCases.length - pending.length;
+  const inProgressCases = testCases.filter((tc) => isInProgressState(tc.state));
+  const resolvedCount = testCases.length - inProgressCases.length;
+
   await notifyProgress(
     context,
     message ??
-      (pending.length === 0
-        ? "RCA analysis completed for all test cases"
-        : `RCA analysis in progress (${resolvedCount}/${testCases.length} resolved)`),
-    pending.length === 0
+      `RCA analysis in progress (${resolvedCount}/${testCases.length} resolved)`,
+    inProgressCases.length === 0
       ? 100
       : calculateProgress(resolvedCount, testCases.length),
   );
 }
 
-// --- Fetch initial RCA for a test case ---
 async function fetchInitialRCA(
   testInfo: FailedTestInfo,
   headers: Record<string, string>,
@@ -87,12 +84,12 @@ async function fetchInitialRCA(
 
   try {
     const response = await fetch(url, { headers });
+
     if (!response.ok) {
       return {
         id: testInfo.id,
         testRunId: testInfo.id,
-        displayName: testInfo.displayName,
-        state: RCAState.FAILED,
+        state: RCAState.LOG_FETCH_ERROR,
         rcaData: {
           error: `HTTP ${response.status}: Failed to start RCA analysis`,
         },
@@ -100,31 +97,41 @@ async function fetchInitialRCA(
     }
 
     const data = await response.json();
-    if (data.state && !["pending", "completed"].includes(data.state)) {
-      return {
-        id: data.id ?? testInfo.id,
-        testRunId: data.testRunId ?? testInfo.id,
-        displayName: testInfo.displayName,
-        state: RCAState.FAILED,
-        rcaData: {
-          error: `API returned error state: ${data.state}`,
-          originalResponse: data,
-        },
-      };
-    }
+
+    const apiState = data.state?.toLowerCase();
+    let resultState: RCAState;
+
+    if (apiState === "completed") resultState = RCAState.COMPLETED;
+    else if (apiState === "pending") resultState = RCAState.PENDING;
+    else if (apiState === "fetching_logs") resultState = RCAState.FETCHING_LOGS;
+    else if (apiState === "generating_rca")
+      resultState = RCAState.GENERATING_RCA;
+    else if (apiState === "generated_rca") resultState = RCAState.GENERATED_RCA;
+    else if (apiState === "processing" || apiState === "running")
+      resultState = RCAState.GENERATING_RCA;
+    else if (apiState === "failed" || apiState === "error")
+      resultState = RCAState.UNKNOWN_ERROR;
+    else if (apiState) resultState = RCAState.UNKNOWN_ERROR;
+    else resultState = RCAState.PENDING;
 
     return {
-      id: data.id ?? testInfo.id,
-      testRunId: data.testRunId ?? testInfo.id,
-      displayName: testInfo.displayName,
-      state: RCAState.PENDING,
+      id: testInfo.id,
+      testRunId: testInfo.id,
+      state: resultState,
+      ...(resultState === RCAState.COMPLETED && { rcaData: data }),
+      ...(isFailedState(resultState) &&
+        data.state && {
+          rcaData: {
+            error: `API returned state: ${data.state}`,
+            originalResponse: data,
+          },
+        }),
     };
   } catch (error) {
     return {
       id: testInfo.id,
       testRunId: testInfo.id,
-      displayName: testInfo.displayName,
-      state: RCAState.FAILED,
+      state: RCAState.LLM_SERVICE_ERROR,
       rcaData: {
         error:
           error instanceof Error ? error.message : "Network or parsing error",
@@ -133,7 +140,6 @@ async function fetchInitialRCA(
   }
 }
 
-// --- Poll all test cases until completion or timeout ---
 async function pollRCAResults(
   testCases: RCATestCase[],
   headers: Record<string, string>,
@@ -144,55 +150,72 @@ async function pollRCAResults(
   initialDelay: number,
 ): Promise<RCAResponse> {
   const startTime = Date.now();
-
   await delay(initialDelay);
 
   try {
     while (true) {
-      const pendingCases = testCases.filter(
-        (tc) => tc.state === RCAState.PENDING,
+      const inProgressCases = testCases.filter((tc) =>
+        isInProgressState(tc.state),
       );
       await updateProgress(context, testCases);
 
-      if (pendingCases.length === 0) break;
+      if (inProgressCases.length === 0) break;
 
       if (Date.now() - startTime >= timeout) {
-        pendingCases.forEach((tc) => {
-          tc.state = RCAState.FAILED;
+        inProgressCases.forEach((tc) => {
+          tc.state = RCAState.TIMEOUT;
           tc.rcaData = { error: `Timeout after ${timeout}ms` };
         });
         await updateProgress(context, testCases, "RCA analysis timed out");
         break;
       }
 
-      // Poll all pending cases in parallel
       await Promise.allSettled(
-        pendingCases.map(async (tc) => {
+        inProgressCases.map(async (tc) => {
           try {
-            const response = await fetch(baseUrl.replace("{testId}", tc.id), {
-              headers,
-            });
+            const pollUrl = baseUrl.replace("{testId}", tc.id);
+            const response = await fetch(pollUrl, { headers });
             if (!response.ok) {
-              tc.state = RCAState.FAILED;
-              tc.rcaData = { error: `HTTP ${response.status}: Polling failed` };
+              const errorText = await response.text();
+              tc.state = RCAState.LOG_FETCH_ERROR;
+              tc.rcaData = {
+                error: `HTTP ${response.status}: Polling failed - ${errorText}`,
+              };
               return;
             }
+
             const data = await response.json();
-            if (tc.state === RCAState.PENDING) {
-              if (data.state === "completed") {
+            if (!isFailedState(tc.state)) {
+              const apiState = data.state?.toLowerCase();
+              if (apiState === "completed") {
                 tc.state = RCAState.COMPLETED;
                 tc.rcaData = data;
-              } else if (data.state && data.state !== "pending") {
-                tc.state = RCAState.FAILED;
+              } else if (apiState === "failed" || apiState === "error") {
+                tc.state = RCAState.UNKNOWN_ERROR;
                 tc.rcaData = {
                   error: `API returned error state: ${data.state}`,
+                  originalResponse: data,
+                };
+              } else if (apiState === "pending") tc.state = RCAState.PENDING;
+              else if (apiState === "fetching_logs")
+                tc.state = RCAState.FETCHING_LOGS;
+              else if (apiState === "generating_rca")
+                tc.state = RCAState.GENERATING_RCA;
+              else if (apiState === "generated_rca")
+                tc.state = RCAState.GENERATED_RCA;
+              else if (apiState === "processing" || apiState === "running")
+                tc.state = RCAState.GENERATING_RCA;
+              else {
+                tc.state = RCAState.UNKNOWN_ERROR;
+                tc.rcaData = {
+                  error: `API returned unknown state: ${data.state}`,
                   originalResponse: data,
                 };
               }
             }
           } catch (err) {
-            if (tc.state === RCAState.PENDING) {
-              tc.state = RCAState.FAILED;
+            if (!isFailedState(tc.state)) {
+              tc.state = RCAState.LLM_SERVICE_ERROR;
               tc.rcaData = {
                 error:
                   err instanceof Error
@@ -207,11 +230,10 @@ async function pollRCAResults(
       await delay(pollInterval);
     }
   } catch (err) {
-    // Fallback in case of unexpected error
     testCases
-      .filter((tc) => tc.state === RCAState.PENDING)
+      .filter((tc) => isInProgressState(tc.state))
       .forEach((tc) => {
-        tc.state = RCAState.FAILED;
+        tc.state = RCAState.UNKNOWN_ERROR;
         tc.rcaData = {
           error: err instanceof Error ? err.message : "Unexpected error",
         };
@@ -226,9 +248,8 @@ async function pollRCAResults(
   return { testCases };
 }
 
-// --- Public API function ---
 export async function getRCAData(
-  testInfos: FailedTestInfo[],
+  testIds: string[],
   authString: string,
   context?: ScanProgressContext,
 ): Promise<RCAResponse> {
@@ -245,31 +266,23 @@ export async function getRCAData(
 
   await notifyProgress(context, "Starting RCA analysis for test cases...", 0);
 
-  // Step 1: Fire initial RCA requests in parallel
   const testCases = await Promise.all(
-    testInfos.map((testInfo) => fetchInitialRCA(testInfo, headers, baseUrl)),
+    testIds.map((testId) => fetchInitialRCA({ id: testId }, headers, baseUrl)),
   );
 
-  const pendingCount = testCases.filter(
-    (tc) => tc.state === RCAState.PENDING,
+  const inProgressCount = testCases.filter((tc) =>
+    isInProgressState(tc.state),
   ).length;
+
   await notifyProgress(
     context,
-    `Initial RCA requests completed. ${pendingCount} cases pending analysis...`,
+    `Initial RCA requests completed. ${inProgressCount} cases pending analysis...`,
     10,
   );
 
-  if (pendingCount === 0) {
-    await notifyProgress(
-      context,
-      "RCA analysis completed for all test cases",
-      100,
-    );
-    return { testCases };
-  }
+  if (inProgressCount === 0) return { testCases };
 
-  // Step 2: Poll pending test cases
-  return pollRCAResults(
+  return await pollRCAResults(
     testCases,
     headers,
     baseUrl,
