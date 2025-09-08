@@ -1,4 +1,3 @@
-import { FailedTestInfo } from "./types.js";
 import { RCAState, RCATestCase, RCAResponse } from "./types.js";
 
 interface ScanProgressContext {
@@ -76,19 +75,19 @@ async function updateProgress(
 }
 
 async function fetchInitialRCA(
-  testInfo: FailedTestInfo,
+  testId: string,
   headers: Record<string, string>,
   baseUrl: string,
 ): Promise<RCATestCase> {
-  const url = baseUrl.replace("{testId}", testInfo.id);
+  const url = baseUrl.replace("{testId}", testId);
 
   try {
     const response = await fetch(url, { headers });
 
     if (!response.ok) {
       return {
-        id: testInfo.id,
-        testRunId: testInfo.id,
+        id: testId,
+        testRunId: testId,
         state: RCAState.LOG_FETCH_ERROR,
         rcaData: {
           error: `HTTP ${response.status}: Failed to start RCA analysis`,
@@ -115,8 +114,8 @@ async function fetchInitialRCA(
     else resultState = RCAState.PENDING;
 
     return {
-      id: testInfo.id,
-      testRunId: testInfo.id,
+      id: testId,
+      testRunId: testId,
       state: resultState,
       ...(resultState === RCAState.COMPLETED && { rcaData: data }),
       ...(isFailedState(resultState) &&
@@ -129,8 +128,8 @@ async function fetchInitialRCA(
     };
   } catch (error) {
     return {
-      id: testInfo.id,
-      testRunId: testInfo.id,
+      id: testId,
+      testRunId: testId,
       state: RCAState.LLM_SERVICE_ERROR,
       rcaData: {
         error:
@@ -267,7 +266,7 @@ export async function getRCAData(
   await notifyProgress(context, "Starting RCA analysis for test cases...", 0);
 
   const testCases = await Promise.all(
-    testIds.map((testId) => fetchInitialRCA({ id: testId }, headers, baseUrl)),
+    testIds.map((testId) => fetchInitialRCA(testId, headers, baseUrl)),
   );
 
   const inProgressCount = testCases.filter((tc) =>

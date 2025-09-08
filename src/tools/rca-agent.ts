@@ -98,7 +98,9 @@ export default function addRCATools(
     {
       testId: z
         .array(z.string())
-        .describe("Array of test IDs to fetch RCA data for"),
+        .describe(
+          "Array of test IDs to fetch RCA data for If not provided call listTestIds tool first to get the IDs",
+        ),
     },
     async (args) => {
       try {

@@ -21,7 +21,8 @@ export interface TestRun {
 }
 
 export interface FailedTestInfo {
-  id: string;
+  test_id: string;
+  test_name: string;
 }
 
 export enum RCAState {

@@ -1,74 +1,64 @@
 import { TestStatus, FailedTestInfo, TestRun, TestDetails } from "./types.js";
 
-let hasNext = false;
-let nextPageUrl: string | null = null;
-
 export async function getTestIds(
   buildId: string,
   authString: string,
   status?: TestStatus,
 ): Promise<FailedTestInfo[]> {
   const baseUrl = `https://api-automation.browserstack.com/ext/v1/builds/${buildId}/testRuns`;
-
-  // Build initial URL
-  const initialUrl = new URL(baseUrl);
-  if (status) initialUrl.searchParams.set("test_statuses", status);
-
-  // Use stored nextPageUrl if available, otherwise fresh URL
-  const requestUrl =
-    hasNext && nextPageUrl ? nextPageUrl : initialUrl.toString();
+  let url = status ? `${baseUrl}?test_statuses=${status}` : baseUrl;
   let allFailedTests: FailedTestInfo[] = [];
+  let requestNumber = 0;
 
   // Construct Basic auth header
   const encodedCredentials = Buffer.from(authString).toString("base64");
   const authHeader = `Basic ${encodedCredentials}`;
 
   try {
-    const response = await fetch(requestUrl, {
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "application/json",
-      },
-    });
+    while (true) {
+      requestNumber++;
 
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch test runs: ${response.status} ${response.statusText}`,
-      );
+      const response = await fetch(url, {
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch test runs: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      const data = (await response.json()) as TestRun;
+
+      // Extract failed IDs from current page
+      if (data.hierarchy && data.hierarchy.length > 0) {
+        const currentFailedTests = extractFailedTestIds(data.hierarchy);
+        allFailedTests = allFailedTests.concat(currentFailedTests);
+      }
+
+      // Check for pagination termination conditions
+      if (!data.pagination?.has_next || !data.pagination.next_page) {
+        break;
+      }
+
+      // Safety limit to prevent runaway requests
+      if (requestNumber >= 5) {
+        break;
+      }
+
+      // Prepare next request
+      url = `${baseUrl}?next_page=${encodeURIComponent(data.pagination.next_page)}`;
     }
 
-    const data = (await response.json()) as TestRun;
-
-    // Extract failed IDs from current page
-    if (data.hierarchy && data.hierarchy.length > 0) {
-      allFailedTests = extractFailedTestIds(data.hierarchy);
-    }
-
-    // Update pagination state in memory
-    hasNext = data.pagination?.has_next || false;
-    nextPageUrl =
-      hasNext && data.pagination?.next_page
-        ? buildNextPageUrl(baseUrl, status, data.pagination.next_page)
-        : null;
-
-    // Return failed test IDs from current page only
+    // Return unique failed test IDs
     return allFailedTests;
   } catch (error) {
     console.error("Error fetching failed tests:", error);
     throw error;
   }
-}
-
-// Helper to build next page URL safely
-function buildNextPageUrl(
-  baseUrl: string,
-  status: TestStatus | undefined,
-  nextPage: string,
-): string {
-  const url = new URL(baseUrl);
-  if (status) url.searchParams.set("test_statuses", status);
-  url.searchParams.set("next_page", nextPage);
-  return url.toString();
 }
 
 // Recursive function to extract failed test IDs from hierarchy
@@ -80,7 +70,10 @@ function extractFailedTestIds(hierarchy: TestDetails[]): FailedTestInfo[] {
       if (node.details?.observability_url) {
         const idMatch = node.details.observability_url.match(/details=(\d+)/);
         if (idMatch) {
-          failedTests.push({ id: idMatch[1] });
+          failedTests.push({
+            test_id: idMatch[1],
+            test_name: node.display_name || `Test ${idMatch[1]}`,
+          });
         }
       }
     }
