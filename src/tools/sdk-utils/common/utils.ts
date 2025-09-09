@@ -47,6 +47,7 @@ export function checkPercyIntegrationSupport(input: {
 
 export async function formatToolResult(
   resultPromise: Promise<RunTestsInstructionResult> | RunTestsInstructionResult,
+  runType?: "percy-web" | "bstack" | "percy-bstack" | "percy-automate",
 ): Promise<CallToolResult> {
   const { steps, requiresPercy, missingDependencies, shouldSkipFormatting } =
     await resultPromise;
@@ -74,6 +75,13 @@ export async function formatToolResult(
     { type: "text" as const, text: formattedSteps },
     { type: "text" as const, text: verificationMessage },
   ];
+
+  if (runType != "percy-web") {
+    finalContent.push({
+      type: "text",
+      text: "CRITICAL: After the build is run, you MUST explicitly ask the user if they want to perform RCA (Root Cause Analysis) for any failed tests. This step is mandatory and should not be skipped.",
+    });
+  }
 
   return {
     content: finalContent,

@@ -28,9 +28,7 @@ export const SetUpPercyParamsShape = {
 export const RunTestsOnBrowserStackParamsShape = {
   projectName: z
     .string()
-    .describe(
-      "A single name for your project to organize all your tests. This is required for Percy.",
-    ),
+    .describe("A single name for your project to organize all your tests."),
   detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
   detectedBrowserAutomationFramework: z.nativeEnum(
     SDKSupportedBrowserAutomationFrameworkEnum,

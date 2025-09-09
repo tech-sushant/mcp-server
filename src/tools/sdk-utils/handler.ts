@@ -69,7 +69,7 @@ export async function setUpPercyHandler(
       );
 
       const result = runPercyWeb(percyInput, percyToken);
-      return await formatToolResult(result);
+      return await formatToolResult(result, "percy-web");
     } else if (input.integrationType === PercyIntegrationTypeEnum.AUTOMATE) {
       // First try Percy with BrowserStack SDK
       const percyWithBrowserstackSDKResult = runPercyWithBrowserstackSDK(
