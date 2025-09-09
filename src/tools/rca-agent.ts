@@ -43,21 +43,22 @@ export async function listTestIdsTool(
   args: {
     projectName: string;
     buildName: string;
-    buildId?: string;
     status?: TestStatus;
   },
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
     const { projectName, buildName, status } = args;
-    let { buildId } = args;
     const authString = getBrowserStackAuth(config);
     const [username, accessKey] = authString.split(":");
 
     // Get build ID if not provided
-    buildId =
-      buildId ||
-      (await getBuildId(projectName, buildName, username, accessKey));
+    const buildId = await getBuildId(
+      username,
+      accessKey,
+      projectName,
+      buildName,
+    );
 
     // Get test IDs
     const testIds = await getTestIds(buildId, authString, status);
@@ -94,12 +95,13 @@ export default function addRCATools(
 
   tools.fetchRCA = server.tool(
     "fetchRCA",
-    "Retrieves AI-RCA (Root Cause Analysis) data for a BrowserStack Automate session and provides insights into test failures.",
+    "Retrieves AI-RCA (Root Cause Analysis) data for a BrowserStack Automate and App-Automate session and provides insights into test failures.",
     {
       testId: z
         .array(z.string())
+        .max(3)
         .describe(
-          "Array of test IDs to fetch RCA data for If not provided call listTestIds tool first to get the IDs",
+          "Array of test IDs to fetch RCA data. Input should be a maximum of 3 IDs at a time. If you get more than 3 Ids ask user to choose less than 3",
         ),
     },
     async (args) => {
@@ -122,16 +124,10 @@ export default function addRCATools(
 
   tools.listTestIds = server.tool(
     "listTestIds",
-    "List test IDs from a BrowserStack Automate build, optionally filtered by status (e.g., 'failed', 'passed').",
+    "List test IDs from a BrowserStack Automate build, optionally filtered by status",
     {
       projectName: z.string().describe("The project name of the test run"),
       buildName: z.string().describe("The build name of the test run"),
-      buildId: z
-        .string()
-        .optional()
-        .describe(
-          "The build ID of the test run (will be auto-detected if not provided)",
-        ),
       status: z
         .nativeEnum(TestStatus)
         .optional()
