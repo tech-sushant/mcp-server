@@ -33,9 +33,31 @@ function calculateProgress(
   totalCount: number,
   baseProgress: number = 10,
 ): number {
+  if (totalCount === 0) return 100; // ✅ fix divide by zero
   const progressRange = 90 - baseProgress;
   const completionProgress = (resolvedCount / totalCount) * progressRange;
   return Math.min(100, baseProgress + completionProgress);
+}
+
+// ✅ centralized mapping function
+function mapApiState(apiState?: string): RCAState {
+  const state = apiState?.toLowerCase();
+  switch (state) {
+    case "completed":
+      return RCAState.COMPLETED;
+    case "pending":
+      return RCAState.PENDING;
+    case "fetching_logs":
+      return RCAState.FETCHING_LOGS;
+    case "generating_rca":
+      return RCAState.GENERATING_RCA;
+    case "generated_rca":
+      return RCAState.GENERATED_RCA;
+    case "error":
+      return RCAState.UNKNOWN_ERROR;
+    default:
+      return RCAState.UNKNOWN_ERROR;
+  }
 }
 
 async function notifyProgress(
@@ -96,22 +118,7 @@ async function fetchInitialRCA(
     }
 
     const data = await response.json();
-
-    const apiState = data.state?.toLowerCase();
-    let resultState: RCAState;
-
-    if (apiState === "completed") resultState = RCAState.COMPLETED;
-    else if (apiState === "pending") resultState = RCAState.PENDING;
-    else if (apiState === "fetching_logs") resultState = RCAState.FETCHING_LOGS;
-    else if (apiState === "generating_rca")
-      resultState = RCAState.GENERATING_RCA;
-    else if (apiState === "generated_rca") resultState = RCAState.GENERATED_RCA;
-    else if (apiState === "processing" || apiState === "running")
-      resultState = RCAState.GENERATING_RCA;
-    else if (apiState === "failed" || apiState === "error")
-      resultState = RCAState.UNKNOWN_ERROR;
-    else if (apiState) resultState = RCAState.UNKNOWN_ERROR;
-    else resultState = RCAState.PENDING;
+    const resultState = mapApiState(data.state); // ✅ reuse helper
 
     return {
       id: testId,
@@ -185,29 +192,14 @@ async function pollRCAResults(
 
             const data = await response.json();
             if (!isFailedState(tc.state)) {
-              const apiState = data.state?.toLowerCase();
-              if (apiState === "completed") {
-                tc.state = RCAState.COMPLETED;
+              const mappedState = mapApiState(data.state); // ✅ reuse helper
+              tc.state = mappedState;
+
+              if (mappedState === RCAState.COMPLETED) {
                 tc.rcaData = data;
-              } else if (apiState === "failed" || apiState === "error") {
-                tc.state = RCAState.UNKNOWN_ERROR;
+              } else if (mappedState === RCAState.UNKNOWN_ERROR) {
                 tc.rcaData = {
-                  error: `API returned error state: ${data.state}`,
-                  originalResponse: data,
-                };
-              } else if (apiState === "pending") tc.state = RCAState.PENDING;
-              else if (apiState === "fetching_logs")
-                tc.state = RCAState.FETCHING_LOGS;
-              else if (apiState === "generating_rca")
-                tc.state = RCAState.GENERATING_RCA;
-              else if (apiState === "generated_rca")
-                tc.state = RCAState.GENERATED_RCA;
-              else if (apiState === "processing" || apiState === "running")
-                tc.state = RCAState.GENERATING_RCA;
-              else {
-                tc.state = RCAState.UNKNOWN_ERROR;
-                tc.rcaData = {
-                  error: `API returned unknown state: ${data.state}`,
+                  error: `API returned state: ${data.state}`,
                   originalResponse: data,
                 };
               }
