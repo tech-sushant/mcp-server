@@ -101,7 +101,7 @@ export default function addRCATools(
         .array(z.string())
         .max(3)
         .describe(
-          "Array of test IDs to fetch RCA data. Input should be a maximum of 3 IDs at a time. If you get more than 3 Ids ask user to choose less than 3",
+          "Array of test IDs to fetch RCA data for (maximum 3 IDs). Use the listTestIds tool to discover available test IDs if needed. If more than 3 IDs are provided, only the first 3 will be processed.",
         ),
     },
     async (args) => {

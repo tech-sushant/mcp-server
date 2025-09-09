@@ -253,7 +253,7 @@ export async function getRCAData(
   context?: ScanProgressContext,
 ): Promise<RCAResponse> {
   const pollInterval = 5000;
-  const timeout = 30000;
+  const timeout = 40000;
   const initialDelay = 20000;
 
   const baseUrl =
