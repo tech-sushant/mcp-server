@@ -101,7 +101,7 @@ export default function addRCATools(
         .array(z.string())
         .max(3)
         .describe(
-          "Array of test IDs to fetch RCA data for (maximum 3 IDs). Use the listTestIds tool to discover available test IDs if needed. If more than 3 IDs are provided, only the first 3 will be processed.",
+          "Array of test IDs to fetch RCA data for (maximum 3 IDs). If not provided, use the listTestIds tool get all failed testcases. If more than 3 IDs are provided, only the first 3 will be processed.",
         ),
     },
     async (args) => {
@@ -126,13 +126,20 @@ export default function addRCATools(
     "listTestIds",
     "List test IDs from a BrowserStack Automate build, optionally filtered by status",
     {
-      projectName: z.string().describe("The project name of the test run"),
-      buildName: z.string().describe("The build name of the test run"),
+      projectName: z
+        .string()
+        .describe(
+          "The Browserstack project name used while creation of test run. Check browserstack.yml or similar project configuration files. If found extract it and provide to user,IF not found or unsure, prompt the user for this value. Do not make assumptions",
+        ),
+      buildName: z
+        .string()
+        .describe(
+          "The Browserstack build name used while creation of test run. Check browserstack.yml or similar project configuration files. If found extract it and provide to user,IF not found or unsure, prompt the user for this value. Do not make assumptions",
+        ),
       status: z
         .nativeEnum(TestStatus)
-        .optional()
         .describe(
-          "Filter tests by status. If not provided, all tests are returned.",
+          "Filter tests by status. If not provided, all tests are returned. Example for RCA usecase always use failed status",
         ),
     },
     async (args) => {
