@@ -1,3 +1,4 @@
+import logger from "../../logger.js";
 import { TestStatus, FailedTestInfo, TestRun, TestDetails } from "./types.js";
 
 export async function getTestIds(
@@ -56,7 +57,7 @@ export async function getTestIds(
     // Return unique failed test IDs
     return allFailedTests;
   } catch (error) {
-    console.error("Error fetching failed tests:", error);
+    logger.error("Error fetching failed tests:", error);
     throw error;
   }
 }
