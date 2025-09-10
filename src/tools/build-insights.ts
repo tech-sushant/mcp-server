@@ -32,7 +32,7 @@ export async function fetchBuildInsightsTool(
       smart_tags: buildData.smart_tags,
       unique_errors: buildData.unique_errors?.overview,
       observability_url: buildData?.observability_url,
-      ci_build_url: buildData.ci_info.build_url,
+      ci_build_url: buildData.ci_info?.build_url,
       quality_gate_result: qualityData.quality_gate_result,
     };
 
