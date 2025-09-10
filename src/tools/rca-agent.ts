@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import { FETCH_RCA_PARAMS, GET_BUILD_ID_PARAMS, LIST_TEST_IDS_PARAMS } from "./rca-agent-utils/constants.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
 import { BrowserStackConfig } from "../lib/types.js";
@@ -127,14 +127,7 @@ export default function addRCATools(
   tools.fetchRCA = server.tool(
     "fetchRCA",
     "Retrieves AI-RCA (Root Cause Analysis) data for a BrowserStack Automate and App-Automate session and provides insights into test failures.",
-    {
-      testId: z
-        .array(z.string())
-        .max(3)
-        .describe(
-          "Array of test IDs to fetch RCA data for (maximum 3 IDs). If not provided, use the listTestIds tool get all failed testcases. If more than 3 IDs are provided, only the first 3 will be processed.",
-        ),
-    },
+    FETCH_RCA_PARAMS,
     async (args) => {
       try {
         return await fetchRCADataTool(args, config);
@@ -156,18 +149,7 @@ export default function addRCATools(
   tools.getBuildId = server.tool(
     "getBuildId",
     "Get the BrowserStack build ID for a given project and build name.",
-    {
-      projectName: z
-        .string()
-        .describe(
-          "The Browserstack project name used while creation of test run. Check browserstack.yml or similar project configuration files. If found extract it and provide to user, IF not found or unsure, prompt the user for this value. Do not make assumptions",
-        ),
-      buildName: z
-        .string()
-        .describe(
-          "The Browserstack build name used while creation of test run. Check browserstack.yml or similar project configuration files. If found extract it and provide to user, IF not found or unsure, prompt the user for this value. Do not make assumptions",
-        ),
-    },
+    GET_BUILD_ID_PARAMS,
     async (args) => {
       try {
         return await getBuildIdTool(args, config);
@@ -189,18 +171,7 @@ export default function addRCATools(
   tools.listTestIds = server.tool(
     "listTestIds",
     "List test IDs from a BrowserStack Automate build, optionally filtered by status",
-    {
-      buildId: z
-        .string()
-        .describe(
-          "The Browserstack Build ID of the test run. If not known, use the getBuildId tool to fetch it using project and build name",
-        ),
-      status: z
-        .nativeEnum(TestStatus)
-        .describe(
-          "Filter tests by status. If not provided, all tests are returned. Example for RCA usecase always use failed status",
-        ),
-    },
+    LIST_TEST_IDS_PARAMS,
     async (args) => {
       try {
         return await listTestIdsTool(args, config);
