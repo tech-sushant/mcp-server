@@ -23,10 +23,10 @@ export async function getBuildIdTool(
     const authString = getBrowserStackAuth(config);
     const [username, accessKey] = authString.split(":");
     const buildId = await getBuildId(
-      username,
-      accessKey,
       projectName,
       buildName,
+      username,
+      accessKey,
     );
     return {
       content: [
