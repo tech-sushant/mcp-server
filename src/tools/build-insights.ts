@@ -79,7 +79,11 @@ export default function addBuildInsightsTools(
     },
     async (args) => {
       try {
-        trackMCP("fetchBuildInsights", server.server.getClientVersion()!, config);
+        trackMCP(
+          "fetchBuildInsights",
+          server.server.getClientVersion()!,
+          config,
+        );
         return await fetchBuildInsightsTool(args, config);
       } catch (error) {
         return handleMCPError("fetchBuildInsights", server, config, error);
