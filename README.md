@@ -38,7 +38,15 @@ Stay in flow—keep all project context in one place and trigger actions directl
 ## ⚡️ One Click MCP Setup
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=vscode) &nbsp; [![Install in Cursor](https://img.shields.io/badge/Cursor-Install_Server-24bfa5?style=flat-square&color=000000&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=cursor)
+#### Note : Ensure you are using Node version >= `18.0` 
+- Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+- To Upgrade Node :
+- 1. On macOS `(Homebrew) - brew update && brew upgrade node  or if using (nvm) - nvm install 22.15.0 && nvm use 22.15.0 && nvm alias default 22.15.0`
+- 2. On Windows `(nvm-windows) : nvm install 22.15.0 && nvm use 22.15.0`
+- 👉 <a href="https://nodejs.org/en/download" target="_blank">Or directly download the Node.js LTS Installer</a>
 
+.
+        
 ## 💡 Usage Examples
 
 ### 📱 Manual App Testing
@@ -142,6 +150,10 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
 
 ## 🛠️ Installation
 
+### 📋 Prerequisites for MCP Setup
+#### Note : Ensure you are using Node version >= `18.0` 
+- Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+   
 ### **One Click MCP Setup**
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=vscode) &nbsp; [![Install in Cursor](https://img.shields.io/badge/Cursor-Install_Server-24bfa5?style=flat-square&color=000000&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=cursor)
@@ -158,7 +170,9 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
 
    - Once you have an account (and purchased appropriate plan), note down your `username` and `access_key` from [Account Settings](https://www.browserstack.com/accounts/profile/details).
 
-2. Ensure you are using Node version >= `18.0`. Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+2. #### Note : Ensure you are using Node version >= `18.0` 
+    - Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+   
 
 3. **Install the MCP Server**
 
@@ -456,7 +470,64 @@ As of now we support 20 tools.
   ```text
   Upload PRD from /Users/xyz/Desktop/login-flow.pdf and use BrowserStack AI to generate test cases
   ```
+##  Remote MCP Setup
 
+   - VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
+    
+      - Locate or Create the Configuration File:
+      - In the root directory of your project, look for a folder named .vscode. This folder is usually hidden so you will need to find it as            mentioned in the expand.
+      - If this folder doesn't exist, create it.
+      - Inside the .vscode folder, create a new file named mcp.json
+      - To setup Remote BrowserStack MCP instead of local BrowserStack MCP you can add the following JSON content :
+         <div align="center">
+         <img src="assets/remotemcp_json_file.png" alt="Remote MCP JSON file" height="300" width="300">
+         </div>
+        
+        ### Alternative way to Setup Remote MCP
+
+      -  Step 1.Click on the gear icon to Select Tools
+      
+          <div align="center">
+          <img src="assets/select_tools.png" alt="Select Tools" height="300" width="300"> 
+          </div>
+          
+      -  Step 2. A tool menu would appear at the top-centre, scroll down on the menu at the top and then Click on Add MCP Server
+      
+        <div align="center">
+        <img src="assets/add_mcp_server.png" alt="Add MCP Server" height="300" width="300"> 
+        </div>
+
+      - Step 3. Click on HTTP option
+         <div align="center">
+         <img src="assets/http_option.png" alt="HTTP Option" height="300" width="300">
+         </div>
+         
+      - Step 4. Paste Remote MCP Server URL : https://mcp.browserstack.com/mcp
+         <div align="center">
+         <img src="assets/server_url.png" alt="Remote MCP Server URL" height="300" width="300">
+         </div>
+         
+      - Step 5. Give server id as : browserstack
+      
+          <div align="center">
+          <img src="assets/server_id.png" alt="Remote MCP Server ID" height="300" width="300">
+          </div>
+          
+      - Step 6. In VSCode Click on start MCP Server and then click on "Allow"
+      
+          <div align="center">
+          <img src="assets/authentication1.png" alt="authentication1" height="300" width="300">
+          </div>
+          
+          <div align="center">
+          <img src="assets/authentication2.png" alt="authentication2" height="300" width="300">
+          </div>
+          
+          <div align="center">
+          <img src="assets/signin_success.png" alt="Sign_in_success" height="300" width="300">
+          </div>
+
+     
 
 ## 🤝 Recommended MCP Clients
 

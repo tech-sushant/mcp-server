@@ -7,6 +7,7 @@ const require = createRequire(import.meta.url);
 const packageJson = require("../package.json");
 import logger from "./logger.js";
 import addSDKTools from "./tools/bstack-sdk.js";
+import addPercyTools from "./tools/percy-sdk.js";
 import addBrowserLiveTools from "./tools/live.js";
 import addAccessibilityTools from "./tools/accessibility.js";
 import addTestManagementTools from "./tools/testmanagement.js";
@@ -18,6 +19,7 @@ import addAppLiveTools from "./tools/applive.js";
 import addBuildInsightsTools from "./tools/build-insights.js";
 import { setupOnInitialized } from "./oninitialized.js";
 import { BrowserStackConfig } from "./lib/types.js";
+import addRCATools from "./tools/rca-agent.js";
 
 /**
  * Wrapper class for BrowserStack MCP Server
@@ -49,6 +51,7 @@ export class BrowserStackMcpServer {
     const toolAdders = [
       addAccessibilityTools,
       addSDKTools,
+      addPercyTools,
       addAppLiveTools,
       addBrowserLiveTools,
       addTestManagementTools,
@@ -57,6 +60,7 @@ export class BrowserStackMcpServer {
       addAutomateTools,
       addSelfHealTools,
       addBuildInsightsTools,
+      addRCATools,
     ];
 
     toolAdders.forEach((adder) => {
