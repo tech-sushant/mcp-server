@@ -9,6 +9,7 @@ import { getRCAData } from "./rca-agent-utils/rca-data.js";
 import { formatRCAData } from "./rca-agent-utils/format-rca.js";
 import { TestStatus } from "./rca-agent-utils/types.js";
 import { handleMCPError } from "../lib/utils.js";
+import { trackMCP } from "../index.js";
 import {
   FETCH_RCA_PARAMS,
   GET_BUILD_ID_PARAMS,
@@ -134,6 +135,7 @@ export default function addRCATools(
     FETCH_RCA_PARAMS,
     async (args) => {
       try {
+        trackMCP("fetchRCA", server.server.getClientVersion()!, config);
         return await fetchRCADataTool(args, config);
       } catch (error) {
         return handleMCPError("fetchRCA", server, config, error);
@@ -147,6 +149,7 @@ export default function addRCATools(
     GET_BUILD_ID_PARAMS,
     async (args) => {
       try {
+        trackMCP("getBuildId", server.server.getClientVersion()!, config);
         return await getBuildIdTool(args, config);
       } catch (error) {
         return handleMCPError("getBuildId", server, config, error);
@@ -160,6 +163,7 @@ export default function addRCATools(
     LIST_TEST_IDS_PARAMS,
     async (args) => {
       try {
+        trackMCP("listTestIds", server.server.getClientVersion()!, config);
         return await listTestIdsTool(args, config);
       } catch (error) {
         return handleMCPError("listTestIds", server, config, error);
