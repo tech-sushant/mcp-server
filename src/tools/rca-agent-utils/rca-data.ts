@@ -118,7 +118,7 @@ async function fetchInitialRCA(
     }
 
     const data = await response.json();
-    const resultState = mapApiState(data.state); // ✅ reuse helper
+    const resultState = mapApiState(data.state);
 
     return {
       id: testId,
@@ -192,7 +192,7 @@ async function pollRCAResults(
 
             const data = await response.json();
             if (!isFailedState(tc.state)) {
-              const mappedState = mapApiState(data.state); // ✅ reuse helper
+              const mappedState = mapApiState(data.state);
               tc.state = mappedState;
 
               if (mappedState === RCAState.COMPLETED) {

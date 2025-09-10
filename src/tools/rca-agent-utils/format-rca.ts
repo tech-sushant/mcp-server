@@ -1,10 +1,5 @@
-import logger from "../../logger.js";
-
 // Utility function to format RCA data for better readability
 export function formatRCAData(rcaData: any): string {
-  logger.info(
-    `Formatting RCA data for output: ${JSON.stringify(rcaData, null, 2)}`,
-  );
   if (!rcaData || !rcaData.testCases || rcaData.testCases.length === 0) {
     return "No RCA data available.";
   }

@@ -60,7 +60,7 @@ export async function fetchRCADataTool(
     const authString = getBrowserStackAuth(config);
 
     // Limit to first 3 test IDs for performance
-    const testIds = args.testId.slice(0, 3);
+    const testIds = args.testId;
 
     const rcaData = await getRCAData(testIds, authString);
 
