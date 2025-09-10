@@ -10,6 +10,7 @@ import { formatRCAData } from "./rca-agent-utils/format-rca.js";
 import { TestStatus } from "./rca-agent-utils/types.js";
 import { handleMCPError } from "../lib/utils.js";
 import { trackMCP } from "../index.js";
+import { BuildIdArgs } from "./rca-agent-utils/types.js";
 import {
   FETCH_RCA_PARAMS,
   GET_BUILD_ID_PARAMS,
@@ -18,22 +19,22 @@ import {
 
 // Tool function to fetch build ID
 export async function getBuildIdTool(
-  args: {
-    projectName: string;
-    buildName: string;
-  },
+  args: BuildIdArgs,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    const { projectName, buildName } = args;
+    const { browserStackProjectName, browserStackBuildName } = args;
+
     const authString = getBrowserStackAuth(config);
     const [username, accessKey] = authString.split(":");
+
     const buildId = await getBuildId(
-      projectName,
-      buildName,
+      browserStackProjectName,
+      browserStackBuildName,
       username,
       accessKey,
     );
+
     return {
       content: [
         {

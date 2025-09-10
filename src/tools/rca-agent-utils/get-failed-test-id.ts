@@ -36,22 +36,25 @@ export async function getTestIds(
 
       // Extract failed IDs from current page
       if (data.hierarchy && data.hierarchy.length > 0) {
-        const currentFailedTests = extractFailedTestIds(data.hierarchy);
+        const currentFailedTests = extractFailedTestIds(data.hierarchy, status);
         allFailedTests = allFailedTests.concat(currentFailedTests);
       }
 
       // Check for pagination termination conditions
-      if (!data.pagination?.has_next || !data.pagination.next_page) {
+      if (
+        !data.pagination?.has_next ||
+        !data.pagination.next_page ||
+        requestNumber >= 5
+      ) {
         break;
       }
 
-      // Safety limit to prevent runaway requests
-      if (requestNumber >= 5) {
-        break;
-      }
+      const params: Record<string, string> = {
+        next_page: data.pagination.next_page,
+      };
+      if (status) params.test_statuses = status;
 
-      // Prepare next request
-      url = `${baseUrl}?next_page=${encodeURIComponent(data.pagination.next_page)}`;
+      url = `${baseUrl}?${new URLSearchParams(params).toString()}`;
     }
 
     // Return unique failed test IDs
@@ -63,11 +66,14 @@ export async function getTestIds(
 }
 
 // Recursive function to extract failed test IDs from hierarchy
-function extractFailedTestIds(hierarchy: TestDetails[]): FailedTestInfo[] {
+function extractFailedTestIds(
+  hierarchy: TestDetails[],
+  status?: TestStatus,
+): FailedTestInfo[] {
   let failedTests: FailedTestInfo[] = [];
 
   for (const node of hierarchy) {
-    if (node.details?.status === "failed" && node.details?.run_count) {
+    if (node.details?.status === status && node.details?.run_count) {
       if (node.details?.observability_url) {
         const idMatch = node.details.observability_url.match(/details=(\d+)/);
         if (idMatch) {
@@ -80,7 +86,9 @@ function extractFailedTestIds(hierarchy: TestDetails[]): FailedTestInfo[] {
     }
 
     if (node.children && node.children.length > 0) {
-      failedTests = failedTests.concat(extractFailedTestIds(node.children));
+      failedTests = failedTests.concat(
+        extractFailedTestIds(node.children, status),
+      );
     }
   }
 

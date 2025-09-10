@@ -48,3 +48,8 @@ export interface RCATestCase {
 export interface RCAResponse {
   testCases: RCATestCase[];
 }
+
+export interface BuildIdArgs {
+  browserStackProjectName: string;
+  browserStackBuildName: string;
+}
