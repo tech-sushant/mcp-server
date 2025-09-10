@@ -15,6 +15,7 @@ import addFailureLogsTools from "./tools/get-failure-logs.js";
 import addAutomateTools from "./tools/automate.js";
 import addSelfHealTools from "./tools/selfheal.js";
 import addAppLiveTools from "./tools/applive.js";
+import addBuildInsightsTools from "./tools/build-insights.js";
 import { setupOnInitialized } from "./oninitialized.js";
 import { BrowserStackConfig } from "./lib/types.js";
 
@@ -55,6 +56,7 @@ export class BrowserStackMcpServer {
       addFailureLogsTools,
       addAutomateTools,
       addSelfHealTools,
+      addBuildInsightsTools,
     ];
 
     toolAdders.forEach((adder) => {
