@@ -38,7 +38,15 @@ Stay in flow—keep all project context in one place and trigger actions directl
 ## ⚡️ One Click MCP Setup
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=vscode) &nbsp; [![Install in Cursor](https://img.shields.io/badge/Cursor-Install_Server-24bfa5?style=flat-square&color=000000&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=cursor)
+#### Note : Ensure you are using Node version >= `18.0` 
+- Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+- To Upgrade Node :
+- 1. On macOS `(Homebrew) - brew update && brew upgrade node  or if using (nvm) - nvm install 22.15.0 && nvm use 22.15.0 && nvm alias default 22.15.0`
+- 2. On Windows `(nvm-windows) : nvm install 22.15.0 && nvm use 22.15.0`
+- 👉 <a href="https://nodejs.org/en/download" target="_blank">Or directly download the Node.js LTS Installer</a>
 
+.
+        
 ## 💡 Usage Examples
 
 ### 📱 Manual App Testing
@@ -142,6 +150,10 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
 
 ## 🛠️ Installation
 
+### 📋 Prerequisites for MCP Setup
+#### Note : Ensure you are using Node version >= `18.0` 
+- Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+   
 ### **One Click MCP Setup**
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=vscode) &nbsp; [![Install in Cursor](https://img.shields.io/badge/Cursor-Install_Server-24bfa5?style=flat-square&color=000000&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=cursor)
@@ -158,7 +170,9 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
 
    - Once you have an account (and purchased appropriate plan), note down your `username` and `access_key` from [Account Settings](https://www.browserstack.com/accounts/profile/details).
 
-2. Ensure you are using Node version >= `18.0`. Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+2. #### Note : Ensure you are using Node version >= `18.0` 
+    - Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
+   
 
 3. **Install the MCP Server**
 
