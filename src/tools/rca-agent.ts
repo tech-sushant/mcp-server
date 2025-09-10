@@ -1,5 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { FETCH_RCA_PARAMS, GET_BUILD_ID_PARAMS, LIST_TEST_IDS_PARAMS } from "./rca-agent-utils/constants.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
 import { BrowserStackConfig } from "../lib/types.js";
@@ -9,6 +8,12 @@ import { getTestIds } from "./rca-agent-utils/get-failed-test-id.js";
 import { getRCAData } from "./rca-agent-utils/rca-data.js";
 import { formatRCAData } from "./rca-agent-utils/format-rca.js";
 import { TestStatus } from "./rca-agent-utils/types.js";
+import { handleMCPError } from "../lib/utils.js";
+import {
+  FETCH_RCA_PARAMS,
+  GET_BUILD_ID_PARAMS,
+  LIST_TEST_IDS_PARAMS,
+} from "./rca-agent-utils/constants.js";
 
 // Tool function to fetch build ID
 export async function getBuildIdTool(
@@ -117,7 +122,6 @@ export async function listTestIdsTool(
   }
 }
 
-// Registers the fetchRCA tool with the MCP server
 export default function addRCATools(
   server: McpServer,
   config: BrowserStackConfig,
@@ -132,16 +136,7 @@ export default function addRCATools(
       try {
         return await fetchRCADataTool(args, config);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error during fetching RCA data: ${errorMessage}`,
-            },
-          ],
-        };
+        return handleMCPError("fetchRCA", server, config, error);
       }
     },
   );
@@ -154,16 +149,7 @@ export default function addRCATools(
       try {
         return await getBuildIdTool(args, config);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error during fetching build ID: ${errorMessage}`,
-            },
-          ],
-        };
+        return handleMCPError("getBuildId", server, config, error);
       }
     },
   );
@@ -176,16 +162,7 @@ export default function addRCATools(
       try {
         return await listTestIdsTool(args, config);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error during listing test IDs: ${errorMessage}`,
-            },
-          ],
-        };
+        return handleMCPError("listTestIds", server, config, error);
       }
     },
   );

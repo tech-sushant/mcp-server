@@ -1,10 +1,10 @@
 import { z } from "zod";
+import { PercyIntegrationTypeEnum } from "./types.js";
 import {
   SDKSupportedBrowserAutomationFrameworkEnum,
   SDKSupportedTestingFrameworkEnum,
   SDKSupportedLanguageEnum,
 } from "./types.js";
-import { PercyIntegrationTypeEnum } from "./types.js";
 
 export const SetUpPercyParamsShape = {
   projectName: z.string().describe("A unique name for your Percy project."),
@@ -16,12 +16,12 @@ export const SetUpPercyParamsShape = {
   integrationType: z
     .nativeEnum(PercyIntegrationTypeEnum)
     .describe(
-      "Specifies whether to integrate with Percy Web or Percy Automate. If not explicitly provided, prompt the user to select the desired integration type.",
+      "Specify the Percy integration type: web (Percy Web) or automate (Percy Automate). If not provided, always prompt the user with: 'Please specify the Percy integration type.' Do not proceed without an explicit selection. Never use a default.",
     ),
   folderPaths: z
     .array(z.string())
     .describe(
-      "An array of folder paths to include in which Percy will be integrated. If not provided, strictly inspect the code and return the folders which contain UI test cases.",
+      "An array of absolute folder paths containing UI test files. If not provided, analyze codebase for UI test folders by scanning for test patterns which contain UI test cases as per framework. Return empty array if none found.",
     ),
 };
 

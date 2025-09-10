@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import logger from "../../logger.js";
 
 import {
   SDKSupportedLanguage,
@@ -38,7 +37,7 @@ async function walkDir(
       }
     }
   } catch {
-    logger.error(`Failed to read directory: ${dir}`);
+    // ignore
   }
 
   return result;
@@ -54,7 +53,6 @@ async function fileContainsRegex(
     const content = await fs.promises.readFile(filePath, "utf8");
     return regexes.some((re) => re.test(content));
   } catch {
-    logger.warn(`Failed to read file: ${filePath}`);
     return false;
   }
 }
@@ -69,7 +67,6 @@ async function batchRegexCheck(
       regexes.length > 0 ? regexes.some((re) => re.test(content)) : false,
     );
   } catch {
-    logger.warn(`Failed to read file: ${filePath}`);
     return regexGroups.map(() => false);
   }
 }
@@ -110,7 +107,6 @@ export async function listTestFiles(
   const config = TEST_FILE_DETECTION[language];
 
   if (!config) {
-    logger.error(`Unsupported language: ${language}`);
     return [];
   }
 
@@ -135,7 +131,6 @@ export async function listTestFiles(
 
     if (config.namePatterns.some((pattern) => pattern.test(fileName))) {
       candidateFiles.set(file, score);
-      logger.debug(`File matched by name pattern: ${file} (score: ${score})`);
     }
   }
 
@@ -147,7 +142,6 @@ export async function listTestFiles(
       const fileName = path.basename(file);
       const score = getFileScore(fileName, config);
       candidateFiles.set(file, score);
-      logger.debug(`File matched by content regex: ${file} (score: ${score})`);
     }
   });
 
@@ -158,16 +152,12 @@ export async function listTestFiles(
     try {
       const featureFiles = await walkDir(baseDir, [".feature"], 6);
       featureFiles.forEach((file) => candidateFiles.set(file, 2));
-      logger.info(`Added ${featureFiles.length} SpecFlow .feature files`);
     } catch {
-      logger.warn(
-        `Failed to collect SpecFlow .feature files from baseDir: ${baseDir}`,
-      );
+      // ignore
     }
   }
 
   if (candidateFiles.size === 0) {
-    logger.info("No test files found matching patterns");
     return [];
   }
 
@@ -185,7 +175,6 @@ export async function listTestFiles(
       const isUITest = await isLikelyUITest(file);
 
       if (isUITest) {
-        logger.debug(`File included - strong UI indicators: ${file}`);
         return file;
       }
 
@@ -198,43 +187,29 @@ export async function listTestFiles(
           config.excludeRegex || [],
         ]);
 
-      // Skip if explicitly excluded (mocks, unit tests, etc.)
       if (shouldExclude) {
-        logger.debug(`File excluded by exclude regex: ${file}`);
         return null;
       }
 
-      // Skip backend tests in any mode
       if (hasBackend) {
-        logger.debug(`File excluded as backend test: ${file}`);
         return null;
       }
 
-      // Include if has explicit UI drivers
       if (hasExplicitUI) {
-        logger.debug(`File included - explicit UI drivers: ${file}`);
         return file;
       }
 
-      // Include if has UI indicators (for cases where drivers aren't explicitly imported)
       if (hasUIIndicators) {
-        logger.debug(`File included - UI indicators: ${file}`);
         return file;
       }
 
-      // In non-strict mode, include high-scoring test files even without explicit UI patterns
       if (!strictMode) {
         const score = candidateFiles.get(file) || 0;
         if (score >= 3) {
-          // High confidence UI test based on naming
-          logger.debug(
-            `File included - high confidence score: ${file} (score: ${score})`,
-          );
           return file;
         }
       }
 
-      logger.debug(`File excluded - no UI patterns detected: ${file}`);
       return null;
     });
 
@@ -251,9 +226,6 @@ export async function listTestFiles(
     return scoreB - scoreA;
   });
 
-  logger.info(
-    `Returning ${uiFiles.length} UI test files from ${candidateFiles.size} total test files`,
-  );
   return uiFiles;
 }
 
