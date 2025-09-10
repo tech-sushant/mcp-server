@@ -10,6 +10,47 @@ import { getRCAData } from "./rca-agent-utils/rca-data.js";
 import { formatRCAData } from "./rca-agent-utils/format-rca.js";
 import { TestStatus } from "./rca-agent-utils/types.js";
 
+// Tool function to fetch build ID
+export async function getBuildIdTool(
+  args: {
+    projectName: string;
+    buildName: string;
+  },
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
+  try {
+    const { projectName, buildName } = args;
+    const authString = getBrowserStackAuth(config);
+    const [username, accessKey] = authString.split(":");
+    const buildId = await getBuildId(
+      username,
+      accessKey,
+      projectName,
+      buildName,
+    );
+    return {
+      content: [
+        {
+          type: "text",
+          text: buildId,
+        },
+      ],
+    };
+  } catch (error) {
+    logger.error("Error fetching build ID", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Error fetching build ID: ${errorMessage}`,
+        },
+      ],
+    };
+  }
+}
+
 // Tool function that fetches RCA data
 export async function fetchRCADataTool(
   args: { testId: string[] },
@@ -41,24 +82,14 @@ export async function fetchRCADataTool(
 
 export async function listTestIdsTool(
   args: {
-    projectName: string;
-    buildName: string;
+    buildId: string;
     status?: TestStatus;
   },
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    const { projectName, buildName, status } = args;
+    const { buildId, status } = args;
     const authString = getBrowserStackAuth(config);
-    const [username, accessKey] = authString.split(":");
-
-    // Get build ID if not provided
-    const buildId = await getBuildId(
-      username,
-      accessKey,
-      projectName,
-      buildName,
-    );
 
     // Get test IDs
     const testIds = await getTestIds(buildId, authString, status);
@@ -122,19 +153,47 @@ export default function addRCATools(
     },
   );
 
-  tools.listTestIds = server.tool(
-    "listTestIds",
-    "List test IDs from a BrowserStack Automate build, optionally filtered by status",
+  tools.getBuildId = server.tool(
+    "getBuildId",
+    "Get the BrowserStack build ID for a given project and build name.",
     {
       projectName: z
         .string()
         .describe(
-          "The Browserstack project name used while creation of test run. Check browserstack.yml or similar project configuration files. If found extract it and provide to user,IF not found or unsure, prompt the user for this value. Do not make assumptions",
+          "The Browserstack project name used while creation of test run. Check browserstack.yml or similar project configuration files. If found extract it and provide to user, IF not found or unsure, prompt the user for this value. Do not make assumptions",
         ),
       buildName: z
         .string()
         .describe(
-          "The Browserstack build name used while creation of test run. Check browserstack.yml or similar project configuration files. If found extract it and provide to user,IF not found or unsure, prompt the user for this value. Do not make assumptions",
+          "The Browserstack build name used while creation of test run. Check browserstack.yml or similar project configuration files. If found extract it and provide to user, IF not found or unsure, prompt the user for this value. Do not make assumptions",
+        ),
+    },
+    async (args) => {
+      try {
+        return await getBuildIdTool(args, config);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error during fetching build ID: ${errorMessage}`,
+            },
+          ],
+        };
+      }
+    },
+  );
+
+  tools.listTestIds = server.tool(
+    "listTestIds",
+    "List test IDs from a BrowserStack Automate build, optionally filtered by status",
+    {
+      buildId: z
+        .string()
+        .describe(
+          "The Browserstack Build ID of the test run. If not known, use the getBuildId tool to fetch it using project and build name",
         ),
       status: z
         .nativeEnum(TestStatus)
