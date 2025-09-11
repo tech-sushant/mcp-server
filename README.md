@@ -476,7 +476,7 @@ Remote MCP comes with all the functionalities of an MCP server without the hassl
 
 ### Key benefits:
 
-- ✅ Works seamlessly in enterprise networks without worrying about firewalls or binaries.
+- ✅ Works seamlessly in enterprise networks without worrying about firewalls or binaries or where local installation is not allowed.
 
 - ✅ Secure OAuth integration – no password sharing or manual credential handling.
 
