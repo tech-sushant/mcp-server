@@ -1,5 +1,7 @@
 import sharp from "sharp";
 import type { ApiResponse } from "./apiClient.js";
+import { BrowserStackConfig } from "./types.js";
+import { getBrowserStackAuth } from "./get-auth.js";
 
 export function sanitizeUrlParam(param: string): string {
   // Remove any characters that could be used for command injection
@@ -37,4 +39,26 @@ export async function assertOkResponse(
       `Failed to fetch logs for ${action}: ${response.statusText}`,
     );
   }
+}
+
+export async function fetchFromBrowserStackAPI(
+  url: string,
+  config: BrowserStackConfig,
+): Promise<any> {
+  const authString = getBrowserStackAuth(config);
+  const auth = Buffer.from(authString).toString("base64");
+
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Basic ${auth}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch from ${url}: ${res.status} ${res.statusText}`,
+    );
+  }
+
+  return res.json();
 }
