@@ -470,9 +470,24 @@ As of now we support 20 tools.
   ```text
   Upload PRD from /Users/xyz/Desktop/login-flow.pdf and use BrowserStack AI to generate test cases
   ```
-##  Remote MCP Setup
+##  🚀 Remote MCP Server
 
-   - VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
+Remote MCP comes with all the functionalities of an MCP server without the hassles of complex setup or local installation.
+
+### Key benefits:
+
+- ✅ Works seamlessly in enterprise networks without worrying about firewalls or binaries.
+
+- ✅ Secure OAuth integration – no password sharing or manual credential handling.
+
+### Limitations:
+
+- ❌ No Local Testing support (cannot test apps behind VPNs, firewalls, or localhost). If you have to do Local Testing, you would have to use a BrowserStack Local MCP server.
+- ❌ Latency can be slightly higher, but nothing considerable — you generally won’t notice it in normal use.
+
+### Installation Steps: 
+
+   - On VSCode (Copilot - Agent Mode): `.vscode/mcp.json`:
     
       - Locate or Create the Configuration File:
       - In the root directory of your project, look for a folder named .vscode. This folder is usually hidden so you will need to find it as            mentioned in the expand.
