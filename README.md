@@ -39,7 +39,7 @@ Stay in flow—keep all project context in one place and trigger actions directl
 
 
 <a href="http://mcp.browserstack.com/one-click-setup?client=vscode">
-  <img src="assets/one-click-vs-code-final.png" alt="Install in VS Code" width="150" height="70">
+  <img src="assets/one-click-vs-code.png" alt="Install in VS Code" width="150" height="70">
 </a>
 &nbsp;
 <a href="http://mcp.browserstack.com/one-click-setup?client=vscode">
