@@ -14,6 +14,7 @@ import {
 } from "../percy-snapshot-utils/constants.js";
 
 import { DetectionConfig } from "../percy-snapshot-utils/types.js";
+import logger from "../../logger.js";
 
 async function walkDir(
   dir: string,
@@ -37,7 +38,7 @@ async function walkDir(
       }
     }
   } catch {
-    // ignore
+    logger.info("Failed to read user directory");
   }
 
   return result;
