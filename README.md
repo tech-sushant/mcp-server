@@ -37,14 +37,13 @@ Stay in flow—keep all project context in one place and trigger actions directl
 
 ## ⚡️ One Click MCP Setup  
 
-Click on the buttons below to install MCP in your respective IDE:  
+Click on the buttons below to install MCP in your respective IDE:
 
 <a href="http://mcp.browserstack.com/one-click-setup?client=vscode">
   <img src="assets/one-click-vs-code.png" alt="Install in VS Code" width="160" height="80">
 </a>
-&nbsp;
 <a href="http://mcp.browserstack.com/one-click-setup?client=vscode">
-  <img src="assets/one-click-cursor.png" alt="Install in VS Code" width="150" height="70">
+  <img src="assets/one-click-cursor.png" alt="Install in Cursor" width="150" height="70">
 </a>
 
 #### Note : Ensure you are using Node version >= `18.0` 
