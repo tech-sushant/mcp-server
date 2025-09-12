@@ -39,7 +39,7 @@ Stay in flow—keep all project context in one place and trigger actions directl
 
 Click on the buttons below to install MCP in your respective IDE:
 
-<a href="http://mcp.browserstack.com/one-click-setup?client=vscode"><img src="assets/one-click-vs-code.png" alt="Install in VS Code" width="160" height="80"></a>&nbsp;&nbsp;&nbsp;<a href="http://mcp.browserstack.com/one-click-setup?client=vscode"><img src="assets/one-click-cursor.png" alt="Install in Cursor" width="150" height="70"></a>
+<a href="http://mcp.browserstack.com/one-click-setup?client=vscode"><img src="assets/one-click-vs-code.png" alt="Install in VS Code" width="160" height="80"></a>&nbsp;&nbsp;&nbsp;<a href="http://mcp.browserstack.com/one-click-setup?client=cursor"><img src="assets/one-click-cursor.png" alt="Install in Cursor" width="150" height="70"></a>
 
 #### Note : Ensure you are using Node version >= `18.0` 
 - Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
@@ -161,7 +161,7 @@ Generate test cases from PRDs, convert manual tests to low-code automation, and 
 
 Click on the buttons below to install MCP in your respective IDE:
 
-<a href="http://mcp.browserstack.com/one-click-setup?client=vscode"><img src="assets/one-click-vs-code.png" alt="Install in VS Code" width="160" height="80"></a>&nbsp;&nbsp;&nbsp;<a href="http://mcp.browserstack.com/one-click-setup?client=vscode"><img src="assets/one-click-cursor.png" alt="Install in Cursor" width="150" height="70"></a>
+<a href="http://mcp.browserstack.com/one-click-setup?client=vscode"><img src="assets/one-click-vs-code.png" alt="Install in VS Code" width="160" height="80"></a>&nbsp;&nbsp;&nbsp;<a href="http://mcp.browserstack.com/one-click-setup?client=cursor"><img src="assets/one-click-cursor.png" alt="Install in Cursor" width="150" height="70"></a>
 
 ### **Alternate ways to Setup MCP server**
 
