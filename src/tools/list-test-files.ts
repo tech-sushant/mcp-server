@@ -7,6 +7,12 @@ export async function addListTestFiles(args: any): Promise<CallToolResult> {
   const { dirs, language, framework } = args;
   let testFiles: string[] = [];
 
+  if (!dirs || dirs.length === 0) {
+    throw new Error(
+      "No directories provided to add the test files. Please provide test directories to add percy snapshot commands.",
+    );
+  }
+
   for (const dir of dirs) {
     const files = await listTestFiles({
       language,

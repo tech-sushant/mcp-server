@@ -3,7 +3,8 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
 import { BrowserStackConfig } from "../lib/types.js";
-import { fetchFromBrowserStackAPI } from "../lib/utils.js";
+import { fetchFromBrowserStackAPI, handleMCPError } from "../lib/utils.js";
+import { trackMCP } from "../lib/instrumentation.js";
 
 // Tool function that fetches build insights from two APIs
 export async function fetchBuildInsightsTool(
@@ -78,18 +79,14 @@ export default function addBuildInsightsTools(
     },
     async (args) => {
       try {
+        trackMCP(
+          "fetchBuildInsights",
+          server.server.getClientVersion()!,
+          config,
+        );
         return await fetchBuildInsightsTool(args, config);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error during fetching build insights: ${errorMessage}`,
-            },
-          ],
-        };
+        return handleMCPError("fetchBuildInsights", server, config, error);
       }
     },
   );

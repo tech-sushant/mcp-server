@@ -1,11 +1,3 @@
-import {
-  SetUpPercySchema,
-  RunTestsOnBrowserStackSchema,
-} from "./common/schema.js";
-import {
-  getBootstrapFailedMessage,
-  percyUnsupportedResult,
-} from "./common/utils.js";
 import { formatToolResult } from "./common/utils.js";
 import { BrowserStackConfig } from "../../lib/types.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -17,6 +9,14 @@ import { runPercyAutomateOnly } from "./percy-automate/handler.js";
 import { runBstackSDKOnly } from "./bstack/sdkHandler.js";
 import { runPercyWithBrowserstackSDK } from "./percy-bstack/handler.js";
 import { checkPercyIntegrationSupport } from "./common/utils.js";
+import {
+  SetUpPercySchema,
+  RunTestsOnBrowserStackSchema,
+} from "./common/schema.js";
+import {
+  getBootstrapFailedMessage,
+  percyUnsupportedResult,
+} from "./common/utils.js";
 
 export async function runTestsOnBrowserStackHandler(
   rawInput: unknown,
