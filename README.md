@@ -42,6 +42,7 @@ Click on the buttons below to install MCP in your respective IDE:
 <a href="http://mcp.browserstack.com/one-click-setup?client=vscode">
   <img src="assets/one-click-vs-code.png" alt="Install in VS Code" width="160" height="80">
 </a>
+&nbsp;&nbsp;&nbsp;
 <a href="http://mcp.browserstack.com/one-click-setup?client=vscode">
   <img src="assets/one-click-cursor.png" alt="Install in Cursor" width="150" height="70">
 </a>
