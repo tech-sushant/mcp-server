@@ -35,9 +35,18 @@ Manage, execute, debug tests, and even fix code using plain English prompts.
 #### Reduced context switching:
 Stay in flow—keep all project context in one place and trigger actions directly from your IDE or LLM.
 
-## ⚡️ One Click MCP Setup
+## ⚡️ One Click MCP Setup  
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=vscode) &nbsp; [![Install in Cursor](https://img.shields.io/badge/Cursor-Install_Server-24bfa5?style=flat-square&color=000000&logo=visualstudiocode&logoColor=white)](http://mcp.browserstack.com/one-click-setup?client=cursor)
+Click on the buttons below to install MCP in your respective IDE:  
+
+<a href="http://mcp.browserstack.com/one-click-setup?client=vscode">
+  <img src="assets/one-click-vs-code.png" alt="Install in VS Code" width="160" height="80">
+</a>
+&nbsp;
+<a href="http://mcp.browserstack.com/one-click-setup?client=vscode">
+  <img src="assets/one-click-cursor.png" alt="Install in VS Code" width="150" height="70">
+</a>
+
 #### Note : Ensure you are using Node version >= `18.0` 
 - Check your node version using `node --version`. Recommended version: `v22.15.0` (LTS)
 - To Upgrade Node :
