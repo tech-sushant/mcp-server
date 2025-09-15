@@ -192,7 +192,7 @@ class ApiClient {
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
-      () => this.instance.post<T>(url, body, config),
+      () => this.instance.post<T>(url, config),
       url,
       config,
       raise_error,
@@ -213,7 +213,7 @@ class ApiClient {
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
-      () => this.instance.put<T>(url, body, config),
+      () => this.instance.put<T>(url, config),
       url,
       config,
       raise_error,
@@ -234,7 +234,7 @@ class ApiClient {
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
-      () => this.instance.patch<T>(url, body, config),
+      () => this.instance.patch<T>(url, config),
       url,
       config,
       raise_error,
