@@ -188,6 +188,7 @@ class ApiClient {
     const config: AxiosRequestConfig = {
       headers,
       timeout,
+      data: body,
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
@@ -208,6 +209,7 @@ class ApiClient {
     const config: AxiosRequestConfig = {
       headers,
       timeout,
+      data: body,
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
@@ -228,6 +230,7 @@ class ApiClient {
     const config: AxiosRequestConfig = {
       headers,
       timeout,
+      data: body,
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
