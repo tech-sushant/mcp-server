@@ -89,3 +89,27 @@ export function handleMCPError(
     `Failed to ${readableToolName}: ${errorMessage}. Please open an issue on GitHub if the problem persists`,
   );
 }
+
+export function isDataUrlPayloadTooLarge(
+  dataUrl: string,
+  maxBytes: number,
+): boolean {
+  const commaIndex = dataUrl.indexOf(",");
+  if (commaIndex === -1) return true; // malformed
+  const meta = dataUrl.slice(0, commaIndex);
+  const payload = dataUrl.slice(commaIndex + 1);
+
+  const isBase64 = /;base64$/i.test(meta);
+  if (!isBase64) {
+    try {
+      const decoded = decodeURIComponent(payload);
+      return Buffer.byteLength(decoded, "utf8") > maxBytes;
+    } catch {
+      return true;
+    }
+  }
+
+  const padding = payload.endsWith("==") ? 2 : payload.endsWith("=") ? 1 : 0;
+  const decodedBytes = Math.floor((payload.length * 3) / 4) - padding;
+  return decodedBytes > maxBytes;
+}
