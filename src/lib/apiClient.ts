@@ -144,9 +144,13 @@ class ApiClient {
     url: string,
     config?: AxiosRequestConfig,
     raise_error: boolean = true,
+    body?: any,
   ): Promise<ApiResponse<T>> {
     try {
-      this.validateUrl(url, config);
+      // Temporarily attach body to config for validation
+      const validationConfig = { ...config, data: body };
+      this.validateUrl(url, validationConfig);
+
       const res = await fn(this.axiosAgent);
       return new ApiResponse<T>(res);
     } catch (error: any) {
@@ -188,14 +192,14 @@ class ApiClient {
     const config: AxiosRequestConfig = {
       headers,
       timeout,
-      data: body,
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
-      () => this.instance.post<T>(url, config),
+      () => this.instance.post<T>(url, body, config),
       url,
       config,
       raise_error,
+      body,
     );
   }
 
@@ -209,14 +213,14 @@ class ApiClient {
     const config: AxiosRequestConfig = {
       headers,
       timeout,
-      data: body,
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
-      () => this.instance.put<T>(url, config),
+      () => this.instance.put<T>(url, body, config),
       url,
       config,
       raise_error,
+      body,
     );
   }
 
@@ -230,14 +234,14 @@ class ApiClient {
     const config: AxiosRequestConfig = {
       headers,
       timeout,
-      data: body,
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
-      () => this.instance.patch<T>(url, config),
+      () => this.instance.patch<T>(url, body, config),
       url,
       config,
       raise_error,
+      body,
     );
   }
 
