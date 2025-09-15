@@ -3,7 +3,7 @@ import { getBrowserStackAuth } from "./get-auth.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const packageJson = require("../../package.json");
-import axios from "axios";
+import { apiClient } from "./apiClient.js";
 import globalConfig from "../config.js";
 
 interface MCPEventPayload {
@@ -63,13 +63,16 @@ export function trackMCP(
     authHeader = `Basic ${Buffer.from(authString).toString("base64")}`;
   }
 
-  axios
-    .post(instrumentationEndpoint, event, {
+  apiClient
+    .post({
+      url: instrumentationEndpoint,
+      body: event,
       headers: {
         "Content-Type": "application/json",
         ...(authHeader ? { Authorization: authHeader } : {}),
       },
       timeout: 2000,
+      raise_error: false,
     })
     .catch(() => {});
 }
