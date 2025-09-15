@@ -11,7 +11,7 @@ type RequestOptions = {
   headers?: Record<string, string>;
   params?: Record<string, string | number>;
   body?: any;
-  timeout?: number; 
+  timeout?: number;
   raise_error?: boolean; // default: true
 };
 
