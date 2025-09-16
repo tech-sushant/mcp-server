@@ -1,5 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { FETCH_RCA_PARAMS, GET_BUILD_ID_PARAMS, LIST_TEST_IDS_PARAMS } from "./rca-agent-utils/constants.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import logger from "../logger.js";
 import { BrowserStackConfig } from "../lib/types.js";
@@ -9,25 +8,33 @@ import { getTestIds } from "./rca-agent-utils/get-failed-test-id.js";
 import { getRCAData } from "./rca-agent-utils/rca-data.js";
 import { formatRCAData } from "./rca-agent-utils/format-rca.js";
 import { TestStatus } from "./rca-agent-utils/types.js";
+import { handleMCPError } from "../lib/utils.js";
+import { trackMCP } from "../index.js";
+import { BuildIdArgs } from "./rca-agent-utils/types.js";
+import {
+  FETCH_RCA_PARAMS,
+  GET_BUILD_ID_PARAMS,
+  LIST_TEST_IDS_PARAMS,
+} from "./rca-agent-utils/constants.js";
 
 // Tool function to fetch build ID
 export async function getBuildIdTool(
-  args: {
-    projectName: string;
-    buildName: string;
-  },
+  args: BuildIdArgs,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {
-    const { projectName, buildName } = args;
+    const { browserStackProjectName, browserStackBuildName } = args;
+
     const authString = getBrowserStackAuth(config);
     const [username, accessKey] = authString.split(":");
+
     const buildId = await getBuildId(
-      projectName,
-      buildName,
+      browserStackProjectName,
+      browserStackBuildName,
       username,
       accessKey,
     );
+
     return {
       content: [
         {
@@ -117,7 +124,6 @@ export async function listTestIdsTool(
   }
 }
 
-// Registers the fetchRCA tool with the MCP server
 export default function addRCATools(
   server: McpServer,
   config: BrowserStackConfig,
@@ -130,18 +136,10 @@ export default function addRCATools(
     FETCH_RCA_PARAMS,
     async (args) => {
       try {
+        trackMCP("fetchRCA", server.server.getClientVersion()!, config);
         return await fetchRCADataTool(args, config);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error during fetching RCA data: ${errorMessage}`,
-            },
-          ],
-        };
+        return handleMCPError("fetchRCA", server, config, error);
       }
     },
   );
@@ -152,18 +150,10 @@ export default function addRCATools(
     GET_BUILD_ID_PARAMS,
     async (args) => {
       try {
+        trackMCP("getBuildId", server.server.getClientVersion()!, config);
         return await getBuildIdTool(args, config);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error during fetching build ID: ${errorMessage}`,
-            },
-          ],
-        };
+        return handleMCPError("getBuildId", server, config, error);
       }
     },
   );
@@ -174,18 +164,10 @@ export default function addRCATools(
     LIST_TEST_IDS_PARAMS,
     async (args) => {
       try {
+        trackMCP("listTestIds", server.server.getClientVersion()!, config);
         return await listTestIdsTool(args, config);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error during listing test IDs: ${errorMessage}`,
-            },
-          ],
-        };
+        return handleMCPError("listTestIds", server, config, error);
       }
     },
   );

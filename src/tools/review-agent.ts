@@ -1,4 +1,3 @@
-import logger from "../logger.js";
 import { BrowserStackConfig } from "../lib/types.js";
 import { getBrowserStackAuth } from "../lib/get-auth.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -56,9 +55,6 @@ export async function fetchPercyChanges(
     config,
     orgId,
     browserIds,
-  );
-  logger.info(
-    `Fetched ${snapshotIds.length} snapshot IDs for build: ${lastBuildId} as ${snapshotIds.join(", ")}`,
   );
 
   // Fetch all diffs concurrently and flatten results

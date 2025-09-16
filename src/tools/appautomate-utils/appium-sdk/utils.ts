@@ -96,7 +96,15 @@ export function validateSupportforAppAutomate(
     );
   }
 
-  const testingFrameworks = SUPPORTED_CONFIGURATIONS[framework][language];
+  const testingFrameworks = SUPPORTED_CONFIGURATIONS[framework][
+    language
+  ] as string[];
+
+  if (testingFrameworks.length === 0) {
+    throw new Error(
+      `No testing frameworks are supported for language '${language}' and framework '${framework}'.`,
+    );
+  }
   if (!testingFrameworks.includes(testingFramework)) {
     throw new Error(
       `Unsupported testing framework '${testingFramework}' for language '${language}' and framework '${framework}'. Supported testing frameworks: ${testingFrameworks.join(", ")}`,

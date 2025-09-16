@@ -60,15 +60,8 @@ export interface AppSDKInstruction {
 export const SUPPORTED_CONFIGURATIONS = {
   appium: {
     ruby: ["cucumberRuby"],
-    java: [
-      "junit5",
-      "junit4",
-      "testng",
-      "cucumberTestng",
-      "selenide",
-      "jbehave",
-    ],
-    csharp: ["nunit", "xunit", "mstest", "specflow", "reqnroll"],
+    java: [],
+    csharp: [],
     python: ["pytest", "robot", "behave", "lettuce"],
     nodejs: ["jest", "mocha", "cucumberJs", "webdriverio", "nightwatch"],
   },
