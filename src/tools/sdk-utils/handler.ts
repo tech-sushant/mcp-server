@@ -17,6 +17,12 @@ import {
   getBootstrapFailedMessage,
   percyUnsupportedResult,
 } from "./common/utils.js";
+import {
+  PERCY_SIMULATE_INSTRUCTION,
+  PERCY_REPLACE_REGEX,
+  PERCY_SIMULATION_DRIVER_INSTRUCTION,
+  PERCY_VERIFICATION_REGEX,
+} from "./common/constants.js";
 
 export async function runTestsOnBrowserStackHandler(
   rawInput: unknown,
@@ -157,6 +163,46 @@ export async function setUpPercyHandler(
         shouldSkipFormatting: true,
       };
     }
+  } catch (error) {
+    throw new Error(getBootstrapFailedMessage(error, { config }));
+  }
+}
+
+export async function simulatePercyChangeHandler(
+  rawInput: unknown,
+  config: BrowserStackConfig,
+): Promise<CallToolResult> {
+  try {
+    let percyInstruction;
+
+    try {
+      percyInstruction = await setUpPercyHandler(rawInput, config);
+    } catch {
+      throw new Error("Failed to set up Percy");
+    }
+
+    if (percyInstruction.isError) {
+      return percyInstruction;
+    }
+
+    if (Array.isArray(percyInstruction.content)) {
+      percyInstruction.content = percyInstruction.content.map((item) => {
+        if (typeof item.text === "string") {
+          const updatedText = item.text
+            .replace(PERCY_REPLACE_REGEX, PERCY_SIMULATE_INSTRUCTION)
+            .replace(PERCY_VERIFICATION_REGEX, "");
+          return { ...item, text: updatedText };
+        }
+        return item;
+      });
+    }
+
+    percyInstruction.content?.push({
+      type: "text" as const,
+      text: PERCY_SIMULATION_DRIVER_INSTRUCTION,
+    });
+
+    return percyInstruction;
   } catch (error) {
     throw new Error(getBootstrapFailedMessage(error, { config }));
   }

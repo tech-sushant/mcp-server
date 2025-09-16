@@ -7,12 +7,16 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SetUpPercyParamsShape } from "./sdk-utils/common/schema.js";
 import { updateTestsWithPercyCommands } from "./add-percy-snapshots.js";
 import { approveOrDeclinePercyBuild } from "./review-agent-utils/percy-approve-reject.js";
-import { setUpPercyHandler } from "./sdk-utils/handler.js";
-
+import {
+  setUpPercyHandler,
+  simulatePercyChangeHandler,
+} from "./sdk-utils/handler.js";
+import { z } from "zod";
 import {
   SETUP_PERCY_DESCRIPTION,
   LIST_TEST_FILES_DESCRIPTION,
   PERCY_SNAPSHOT_COMMANDS_DESCRIPTION,
+  SIMULATE_PERCY_CHANGE_DESCRIPTION,
 } from "./sdk-utils/common/constants.js";
 
 import {
@@ -33,8 +37,53 @@ export function registerPercyTools(
 ) {
   const tools: Record<string, any> = {};
 
+  tools.percyVisualTestIntegrationAgent = server.tool(
+    "percyVisualTestIntegrationAgent",
+    SIMULATE_PERCY_CHANGE_DESCRIPTION,
+    SetUpPercyParamsShape,
+    async (args) => {
+      try {
+        trackMCP(
+          "VisualTestIntegrationAgent",
+          server.server.getClientVersion()!,
+          config,
+        );
+        return simulatePercyChangeHandler(args, config);
+      } catch (error) {
+        return handleMCPError(
+          "VisualTestIntegrationAgent",
+          server,
+          config,
+          error,
+        );
+      }
+    },
+  );
+
+  server.prompt(
+    "integrate-percy",
+    {
+      project_name: z
+        .string()
+        .describe("The name of the project to integrate with Percy"),
+    },
+    async ({ project_name }) => {
+      return {
+        messages: [
+          {
+            role: "assistant",
+            content: {
+              type: "text",
+              text: `Integrate percy in this project ${project_name} using tool percyVisualTestIntegrationAgent.`,
+            },
+          },
+        ],
+      };
+    },
+  );
+
   tools.setupPercyVisualTesting = server.tool(
-    "setupPercyVisualTesting",
+    "expandPercyVisualTesting",
     SETUP_PERCY_DESCRIPTION,
     SetUpPercyParamsShape,
     async (args) => {
