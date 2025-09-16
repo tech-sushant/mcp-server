@@ -429,7 +429,7 @@ As of now we support 20 tools.
   **Prompt example**
 
   ```text
-  Run Espresso tests from /tests/checkout.zip on Galaxy S21 and Pixel 6 with Android 14. App path is /apps/beta-release.apk under project 'Checkout Flow'
+  Run Espresso tests from /tests/checkout.zip on Galaxy S21 and Pixel 6 with Android 12. App path is /apps/beta-release.apk under project 'Checkout Flow'
   ```
 
 ---
