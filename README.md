@@ -418,7 +418,7 @@ As of now we support 20 tools.
   **Prompt example**
 
   ```text
-  Take a screenshot of my app on Google Pixel 6 with Android 14 while testing on App Automate. App file path: /Users/xyz/app-debug.apk
+  Take a screenshot of my app on Google Pixel 6 with Android 12 while testing on App Automate. App file path: /Users/xyz/app-debug.apk
   ```
 
  15. `runAppTestsOnBrowserStack` — Run automated mobile tests (Espresso/XCUITest, etc.) on real devices.
