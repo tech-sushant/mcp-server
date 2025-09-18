@@ -25,6 +25,8 @@ import {
   BrowserStackProducts,
 } from "../lib/device-cache.js";
 
+import { validateAppAutomateDevices } from "./sdk-utils/common/device-validator.js";
+
 import {
   findMatchingDevice,
   getDeviceVersions,
@@ -192,6 +194,9 @@ async function runAppTestsOnBrowserStack(
       "testSuitePath is required when browserstackTestSuiteUrl is not provided",
     );
   }
+
+  // Validate devices against real BrowserStack device data
+  await validateAppAutomateDevices(args.devices);
 
   switch (args.detectedAutomationFramework) {
     case AppTestPlatform.ESPRESSO: {

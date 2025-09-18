@@ -107,7 +107,10 @@ export function runPercyWithBrowserstackSDK(
   }
 
   const ymlInstructions = generateBrowserStackYMLInstructions(
-    input.desiredPlatforms as string[],
+    // For now, feed a normalized summary string from devices for the comment
+    ((input as any).devices as string[][] | undefined)?.map((t) =>
+      t.join(" "),
+    ) || [],
     true,
     input.projectName,
   );

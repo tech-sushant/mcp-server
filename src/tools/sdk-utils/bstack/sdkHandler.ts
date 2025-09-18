@@ -6,20 +6,31 @@ import { getSDKPrefixCommand } from "./commands.js";
 import { generateBrowserStackYMLInstructions } from "./configUtils.js";
 import { getInstructionsForProjectConfiguration } from "../common/instructionUtils.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
+import { validateDevices } from "../common/device-validator.js";
 import {
   SDKSupportedBrowserAutomationFramework,
   SDKSupportedTestingFramework,
   SDKSupportedLanguage,
 } from "../common/types.js";
 
-export function runBstackSDKOnly(
+export async function runBstackSDKOnly(
   input: RunTestsOnBrowserStackInput,
   config: BrowserStackConfig,
   isPercyAutomate = false,
-): RunTestsInstructionResult {
+): Promise<RunTestsInstructionResult> {
   const steps: RunTestsStep[] = [];
   const authString = getBrowserStackAuth(config);
   const [username, accessKey] = authString.split(":");
+
+  // Validate devices against real BrowserStack device data
+  const tupleTargets = (input as any).devices as
+    | Array<Array<string>>
+    | undefined;
+
+  await validateDevices(
+    tupleTargets || [],
+    input.detectedBrowserAutomationFramework,
+  );
 
   // Handle frameworks with unique setup instructions that don't use browserstack.yml
   if (
@@ -76,7 +87,7 @@ export function runBstackSDKOnly(
   }
 
   const ymlInstructions = generateBrowserStackYMLInstructions(
-    input.desiredPlatforms as string[],
+    (tupleTargets || []).map((tuple) => tuple.join(" ")),
     false,
     input.projectName,
   );

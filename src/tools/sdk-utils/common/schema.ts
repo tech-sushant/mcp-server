@@ -6,6 +6,23 @@ import {
   SDKSupportedLanguageEnum,
 } from "./types.js";
 
+// Platform enums for better validation
+export const PlatformEnum = {
+  WINDOWS: "windows",
+  MACOS: "macos",
+  ANDROID: "android",
+  IOS: "ios",
+} as const;
+
+export const WindowsPlatformEnum = {
+  WINDOWS: "windows",
+} as const;
+
+export const MacOSPlatformEnum = {
+  MAC: "mac",
+  MACOS: "macos",
+} as const;
+
 export const SetUpPercyParamsShape = {
   projectName: z.string().describe("A unique name for your Percy project."),
   detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
@@ -34,12 +51,60 @@ export const RunTestsOnBrowserStackParamsShape = {
     SDKSupportedBrowserAutomationFrameworkEnum,
   ),
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
-  desiredPlatforms: z
-    .array(z.enum(["windows", "macos", "android", "ios"]))
-    .describe("An array of platforms to run tests on."),
+  devices: z
+    .array(
+      z.union([
+        // Windows: [windows, osVersion, browser, browserVersion]
+        z.tuple([
+          z
+            .nativeEnum(WindowsPlatformEnum)
+            .describe("Platform identifier: 'windows'"),
+          z.string().describe("Windows version, e.g. '10', '11'"),
+          z.string().describe("Browser name, e.g. 'chrome', 'firefox', 'edge'"),
+          z
+            .string()
+            .describe("Browser version, e.g. '132', 'latest', 'oldest'"),
+        ]),
+        // Android: [android, name, model, osVersion, browser]
+        z.tuple([
+          z
+            .literal(PlatformEnum.ANDROID)
+            .describe("Platform identifier: 'android'"),
+          z
+            .string()
+            .describe(
+              "Device name, e.g. 'Samsung Galaxy S24', 'Google Pixel 8'",
+            ),
+          z.string().describe("Android version, e.g. '14', '16', 'latest'"),
+          z.string().describe("Browser name, e.g. 'chrome', 'samsung browser'"),
+        ]),
+        // iOS: [ios, name, model, osVersion, browser]
+        z.tuple([
+          z.literal(PlatformEnum.IOS).describe("Platform identifier: 'ios'"),
+          z.string().describe("Device name, e.g. 'iPhone 12 Pro'"),
+          z.string().describe("iOS version, e.g. '17', 'latest'"),
+          z.string().describe("Browser name, typically 'safari'"),
+        ]),
+        // macOS: [mac|macos, name, model, browser, browserVersion]
+        z.tuple([
+          z
+            .nativeEnum(MacOSPlatformEnum)
+            .describe("Platform identifier: 'mac' or 'macos'"),
+          z.string().describe("macOS version name, e.g. 'Sequoia', 'Ventura'"),
+          z.string().describe("Browser name, e.g. 'safari', 'chrome'"),
+          z.string().describe("Browser version, e.g. 'latest'"),
+        ]),
+      ]),
+    )
+    .max(3)
+    .default([])
+    .describe(
+      "Preferred input: 1-3 tuples describing target devices.Example: [['windows', '11', 'chrome', 'latest'], ['android', 'Samsung Galaxy S24', '14', 'chrome'], ['ios', 'iPhone 15', '17', 'safari']]",
+    ),
 };
 
 export const SetUpPercySchema = z.object(SetUpPercyParamsShape);
+
 export const RunTestsOnBrowserStackSchema = z.object(
   RunTestsOnBrowserStackParamsShape,
 );
