@@ -2,6 +2,8 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
+import { generateAppAutomateYML } from "./config-generator.js";
+
 import {
   getAppUploadInstruction,
   validateSupportforAppAutomate,
@@ -43,6 +45,10 @@ export async function setupAppAutomateHandler(
   //Validating if supported framework or not
   validateSupportforAppAutomate(framework, language, testingFramework);
 
+  // For app automate, we don't have individual device validation like in automate
+  // The platforms array already contains the desired platforms
+  const validatedEnvironments: any[] = [];
+
   // Step 1: Generate SDK setup command
   const sdkCommand = getAppSDKPrefixCommand(
     language,
@@ -57,13 +63,26 @@ export async function setupAppAutomateHandler(
   }
 
   // Step 2: Generate browserstack.yml configuration
-  const configInstructions = generateAppBrowserStackYMLInstructions(
-    platforms,
-    username,
-    accessKey,
-    appPath,
-    testingFramework,
-  );
+  let configInstructions;
+  if (validatedEnvironments.length > 0) {
+    // Use validated environments for YML generation
+    configInstructions = generateAppAutomateYML(
+      validatedEnvironments,
+      username,
+      accessKey,
+      appPath,
+      input.project as string,
+    );
+  } else {
+    // Fallback to original method
+    configInstructions = generateAppBrowserStackYMLInstructions(
+      platforms,
+      username,
+      accessKey,
+      appPath,
+      testingFramework,
+    );
+  }
 
   if (configInstructions) {
     instructions.push({ content: configInstructions, type: "config" });

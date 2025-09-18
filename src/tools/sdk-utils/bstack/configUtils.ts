@@ -1,6 +1,7 @@
 /**
  * Utilities for generating BrowserStack configuration files.
  */
+import { ValidatedEnvironment } from "../common/device-validator.js";
 
 export function generateBrowserStackYMLInstructions(
   desiredPlatforms: string[],
@@ -65,6 +66,101 @@ percyCaptureMode: manual`;
   return `
 ---STEP---
 Create a browserstack.yml file in the project root. The file should be in the following format:
+
+\`\`\`yaml${ymlContent}
+\`\`\`
+\n`;
+}
+
+/**
+ * Generate browserstack.yml content from validated device configurations
+ */
+export function generateBrowserStackYMLFromValidatedEnvironments(
+  validatedEnvironments: ValidatedEnvironment[],
+  enablePercy: boolean = false,
+  projectName: string,
+) {
+  // Generate platforms array from validated environments
+  const platforms = validatedEnvironments.map((env) => {
+    if (env.platform === "windows" || env.platform === "macos") {
+      // Desktop configuration
+      return {
+        os: env.platform === "windows" ? "Windows" : "OS X",
+        osVersion: env.osVersion,
+        browserName: env.browser,
+        browserVersion: env.browserVersion || "latest",
+      };
+    } else {
+      // Mobile configuration (android/ios)
+      return {
+        deviceName: env.deviceName,
+        osVersion: env.osVersion,
+        browserName: env.browser,
+      };
+    }
+  });
+
+  // Convert platforms to YAML format
+  const platformsYAML = platforms
+    .map((platform) => {
+      if (platform.deviceName) {
+        // Mobile platform
+        return `  - deviceName: "${platform.deviceName}"
+    osVersion: "${platform.osVersion}"
+    browserName: ${platform.browserName}`;
+      } else {
+        // Desktop platform
+        return `  - os: ${platform.os}
+    osVersion: "${platform.osVersion}"
+    browserName: ${platform.browserName}
+    browserVersion: ${platform.browserVersion}`;
+      }
+    })
+    .join("\n");
+
+  let ymlContent = `
+# ======================
+# BrowserStack Reporting
+# ======================
+projectName: ${projectName}
+buildName: ${projectName}-Build
+
+# =======================================
+# Platforms (Browsers / Devices to test)
+# =======================================
+# Auto-generated from validated device configurations
+platforms:
+${platformsYAML}
+
+# =======================
+# Parallels per Platform
+# =======================
+parallelsPerPlatform: 1
+
+# =================
+# Local Testing
+# =================
+browserstackLocal: true
+
+# ===================
+# Debugging features
+# ===================
+debug: true
+testObservability: true`;
+
+  if (enablePercy) {
+    ymlContent += `
+
+# =====================
+# Percy Visual Testing
+# =====================
+percy: true
+percyCaptureMode: manual`;
+  }
+
+  return `
+---STEP---
+Create a browserstack.yml file in the project root with your validated device configurations:
 
 \`\`\`yaml${ymlContent}
 \`\`\`

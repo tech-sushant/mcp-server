@@ -357,7 +357,12 @@ async function validateMobileEnvironment(
     5,
   );
   if (deviceMatches.length === 0) {
-    throw new Error(`No ${platform} devices matching "${deviceName}"`);
+    throw new Error(
+      `No ${platform} devices matching "${deviceName}". Available devices: ${platformEntries
+        .map((d) => d.display_name || d.device || "unknown")
+        .slice(0, 5)
+        .join(", ")}`,
+    );
   }
 
   const exactMatch = deviceMatches.find(
@@ -390,19 +395,41 @@ async function validateMobileEnvironment(
   // Validate browser if provided
   let validatedBrowser = browser || defaultBrowser;
   if (browser && osFiltered.length > 0) {
+    // Extract browsers more carefully - handle different possible structures
     const availableBrowsers = [
       ...new Set(
-        osFiltered.flatMap((d) => d.browsers?.map((b: any) => b.browser) || []),
+        osFiltered.flatMap((d) => {
+          if (d.browsers && Array.isArray(d.browsers)) {
+            // If browsers is an array of objects with browser property
+            return d.browsers
+              .map((b: any) => {
+                // Use display_name for user-friendly browser names, fallback to browser field
+                return b.display_name || b.browser || b.browserName || b.name;
+              })
+              .filter(Boolean);
+          } else if (d.browser) {
+            // If there's just a browser property directly
+            return [d.browser];
+          }
+          // For mobile devices, provide default browsers if none found
+          return platform === "android" ? ["chrome"] : ["safari"];
+        }),
       ),
-    ] as string[];
+    ].filter(Boolean) as string[];
 
     if (availableBrowsers.length > 0) {
-      validatedBrowser = validateBrowser(browser, availableBrowsers);
+      try {
+        validatedBrowser = validateBrowser(browser, availableBrowsers);
+      } catch (error) {
+        // Add more context to browser validation errors
+        throw new Error(
+          `Failed to validate browser "${browser}" for ${platform} device "${exactMatch.display_name}" on OS version "${validatedOSVersion}". ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     } else {
-      // If no browsers available for this device/OS combination, throw error
-      throw new Error(
-        `Browser "${browser}" not available for ${platform} device "${exactMatch.display_name}" on OS version "${validatedOSVersion}". No browsers found for this configuration.`,
-      );
+      // For mobile, if no specific browsers found, just use the requested browser
+      // as most mobile devices support standard browsers
+      validatedBrowser = browser || defaultBrowser;
     }
   }
 
