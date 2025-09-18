@@ -1,13 +1,11 @@
 import { ValidatedEnvironment } from "../common/device-validator.js";
 
-export function generateBrowserStackYMLInstructions(
-  config: {
-    validatedEnvironments?: ValidatedEnvironment[];
-    platforms?: string[];
-    enablePercy?: boolean;
-    projectName: string;
-  }
-): string {
+export function generateBrowserStackYMLInstructions(config: {
+  validatedEnvironments?: ValidatedEnvironment[];
+  platforms?: string[];
+  enablePercy?: boolean;
+  projectName: string;
+}): string {
   const enablePercy = config.enablePercy || false;
   const projectName = config.projectName;
 
@@ -15,13 +13,15 @@ export function generateBrowserStackYMLInstructions(
   const platformConfigs = generatePlatformConfigs(config);
 
   // Determine build name and step title
-  const buildName = config.validatedEnvironments && config.validatedEnvironments.length > 0
-    ? `${projectName}-Build`
-    : "Sample-Build";
+  const buildName =
+    config.validatedEnvironments && config.validatedEnvironments.length > 0
+      ? `${projectName}-Build`
+      : "Sample-Build";
 
-  const stepTitle = config.validatedEnvironments && config.validatedEnvironments.length > 0
-    ? "Create a browserstack.yml file in the project root with your validated device configurations:"
-    : "Create a browserstack.yml file in the project root. The file should be in the following format:";
+  const stepTitle =
+    config.validatedEnvironments && config.validatedEnvironments.length > 0
+      ? "Create a browserstack.yml file in the project root with your validated device configurations:"
+      : "Create a browserstack.yml file in the project root. The file should be in the following format:";
 
   let ymlContent = `
 # ======================
@@ -139,6 +139,6 @@ function generatePlatformConfigs(config: {
     browserName: chrome
     browserVersion: latest`;
   }
-  
+
   return "";
 }

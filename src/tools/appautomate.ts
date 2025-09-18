@@ -176,7 +176,7 @@ async function runAppTestsOnBrowserStack(
     testSuitePath?: string;
     browserstackAppUrl?: string;
     browserstackTestSuiteUrl?: string;
-    devices: string[];
+    devices: Array<Array<string>>;
     project: string;
     detectedAutomationFramework: string;
   },
@@ -223,10 +223,16 @@ async function runAppTestsOnBrowserStack(
           logger.info(`Test suite uploaded. URL: ${test_suite_url}`);
         }
 
+        // Convert array format to string format for Espresso
+        const deviceStrings = args.devices.map((device) => {
+          const [, deviceName, osVersion] = device;
+          return `${deviceName}-${osVersion}`;
+        });
+
         const build_id = await triggerEspressoBuild(
           app_url,
           test_suite_url,
-          args.devices,
+          deviceStrings,
           args.project,
         );
 
@@ -268,10 +274,16 @@ async function runAppTestsOnBrowserStack(
           logger.info(`Test suite uploaded. URL: ${test_suite_url}`);
         }
 
+        // Convert array format to string format for XCUITest
+        const deviceStrings = args.devices.map((device) => {
+          const [, deviceName, osVersion] = device;
+          return `${deviceName}-${osVersion}`;
+        });
+
         const build_id = await triggerXcuiBuild(
           app_url,
           test_suite_url,
-          args.devices,
+          deviceStrings,
           args.project,
           config,
         );

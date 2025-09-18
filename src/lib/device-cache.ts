@@ -25,7 +25,7 @@ const URLS: Record<BrowserStackProducts, string> = {
   [BrowserStackProducts.APP_AUTOMATE]:
     "https://www.browserstack.com/list-of-browsers-and-platforms/app_automate.json",
   [BrowserStackProducts.SELENIUM_AUTOMATE]:
-    "https://www.browserstack.com/list-of-browsers-and-platforms/selenium_app_automate.json",
+    "https://www.browserstack.com/list-of-browsers-and-platforms/automate.json",
   [BrowserStackProducts.PLAYWRIGHT_AUTOMATE]:
     "https://www.browserstack.com/list-of-browsers-and-platforms/playwright.json",
 };

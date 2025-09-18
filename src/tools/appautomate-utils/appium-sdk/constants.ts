@@ -75,7 +75,9 @@ export const SETUP_APP_AUTOMATE_SCHEMA = {
       ]),
     )
     .max(3)
-    .default([[AppSDKSupportedPlatformEnum.android, 'Samsung Galaxy S24', 'latest']])
+    .default([
+      [AppSDKSupportedPlatformEnum.android, "Samsung Galaxy S24", "latest"],
+    ])
     .describe(
       "Preferred input: 1-3 tuples describing target mobile devices. Example: [['android', 'Samsung Galaxy S24', '14'], ['ios', 'iPhone 15', '17']]",
     ),
@@ -92,7 +94,6 @@ export const SETUP_APP_AUTOMATE_SCHEMA = {
     .describe("Project name for organizing test runs on BrowserStack."),
 };
 
-// Legacy schema for backward compatibility
 export const SETUP_APP_AUTOMATE_SCHEMA_LEGACY = {
   detectedFramework: z
     .nativeEnum(AppSDKSupportedFrameworkEnum)

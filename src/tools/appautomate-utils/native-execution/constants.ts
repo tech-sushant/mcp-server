@@ -29,9 +29,9 @@ export const RUN_APP_AUTOMATE_SCHEMA = {
         "If in other directory, provide existing test file path",
     ),
   devices: z
-    .array(z.string())
+    .array(z.array(z.string()))
     .describe(
-      "List of devices to run the test on, e.g., ['Samsung Galaxy S20-10.0', 'iPhone 12 Pro-16.0'].",
+      "List of devices to run the test on, e.g., [['android', 'Samsung Galaxy S20', '10.0'], ['ios', 'iPhone 12 Pro', '16.0']].",
     ),
   project: z
     .string()

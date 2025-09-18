@@ -13,7 +13,7 @@ import {
   generateAppBrowserStackYMLInstructions,
 } from "./index.js";
 
-import { validateDevices } from "../../sdk-utils/common/device-validator.js";
+import { validateAppAutomateDevices } from "../../sdk-utils/common/device-validator.js";
 
 import {
   AppSDKSupportedLanguage,
@@ -46,12 +46,13 @@ export async function setupAppAutomateHandler(
   validateSupportforAppAutomate(framework, language, testingFramework);
 
   // Use default mobile devices when array is empty
-  const devices = inputDevices.length === 0 
-    ? [['android', 'Samsung Galaxy S24', 'latest']] // Default mobile device for App Automate
-    : inputDevices;
+  const devices =
+    inputDevices.length === 0
+      ? [["android", "Samsung Galaxy S24", "latest"]]
+      : inputDevices;
 
   // Validate devices against real BrowserStack device data
-  const validatedEnvironments = await validateDevices(devices, framework);
+  const validatedEnvironments = await validateAppAutomateDevices(devices);
 
   // Extract platforms for backward compatibility (if needed)
   const platforms = validatedEnvironments.map((env) => env.platform);
