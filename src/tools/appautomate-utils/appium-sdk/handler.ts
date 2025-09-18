@@ -2,8 +2,6 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
-import { generateAppAutomateYML } from "./config-generator.js";
-
 import {
   getAppUploadInstruction,
   validateSupportforAppAutomate,
@@ -14,6 +12,8 @@ import {
   getAppSDKPrefixCommand,
   generateAppBrowserStackYMLInstructions,
 } from "./index.js";
+
+import { validateDevices } from "../../sdk-utils/common/device-validator.js";
 
 import {
   AppSDKSupportedLanguage,
@@ -38,16 +38,23 @@ export async function setupAppAutomateHandler(
   const testingFramework =
     input.detectedTestingFramework as AppSDKSupportedTestingFramework;
   const language = input.detectedLanguage as AppSDKSupportedLanguage;
-  const platforms = (input.desiredPlatforms as string[]) ?? ["android"];
+  const inputDevices = (input.devices as Array<Array<string>>) ?? [];
   const appPath = input.appPath as string;
   const framework = input.detectedFramework as SupportedFramework;
 
   //Validating if supported framework or not
   validateSupportforAppAutomate(framework, language, testingFramework);
 
-  // For app automate, we don't have individual device validation like in automate
-  // The platforms array already contains the desired platforms
-  const validatedEnvironments: any[] = [];
+  // Use default mobile devices when array is empty
+  const devices = inputDevices.length === 0 
+    ? [['android', 'Samsung Galaxy S24', 'latest']] // Default mobile device for App Automate
+    : inputDevices;
+
+  // Validate devices against real BrowserStack device data
+  const validatedEnvironments = await validateDevices(devices, framework);
+
+  // Extract platforms for backward compatibility (if needed)
+  const platforms = validatedEnvironments.map((env) => env.platform);
 
   // Step 1: Generate SDK setup command
   const sdkCommand = getAppSDKPrefixCommand(
@@ -63,26 +70,17 @@ export async function setupAppAutomateHandler(
   }
 
   // Step 2: Generate browserstack.yml configuration
-  let configInstructions;
-  if (validatedEnvironments.length > 0) {
-    // Use validated environments for YML generation
-    configInstructions = generateAppAutomateYML(
+  const configInstructions = generateAppBrowserStackYMLInstructions(
+    {
       validatedEnvironments,
-      username,
-      accessKey,
-      appPath,
-      input.project as string,
-    );
-  } else {
-    // Fallback to original method
-    configInstructions = generateAppBrowserStackYMLInstructions(
       platforms,
-      username,
-      accessKey,
-      appPath,
       testingFramework,
-    );
-  }
+      projectName: input.project as string,
+    },
+    username,
+    accessKey,
+    appPath,
+  );
 
   if (configInstructions) {
     instructions.push({ content: configInstructions, type: "config" });

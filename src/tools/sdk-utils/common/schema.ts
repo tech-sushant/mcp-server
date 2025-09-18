@@ -12,7 +12,7 @@ export const PlatformEnum = {
   MACOS: "macos",
   ANDROID: "android",
   IOS: "ios",
-} as const;
+} as const; 
 
 export const WindowsPlatformEnum = {
   WINDOWS: "windows",

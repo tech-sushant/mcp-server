@@ -3,7 +3,7 @@ import { RunTestsInstructionResult, RunTestsStep } from "../common/types.js";
 import { RunTestsOnBrowserStackInput } from "../common/schema.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
 import { getSDKPrefixCommand } from "./commands.js";
-import { generateBrowserStackYMLFromValidatedEnvironments } from "./configUtils.js";
+import { generateBrowserStackYMLInstructions } from "./configUtils.js";
 import { getInstructionsForProjectConfiguration } from "../common/instructionUtils.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
 import { validateDevices } from "../common/device-validator.js";
@@ -86,11 +86,11 @@ export async function runBstackSDKOnly(
     });
   }
 
-  const ymlInstructions = generateBrowserStackYMLFromValidatedEnvironments(
+  const ymlInstructions = generateBrowserStackYMLInstructions({
     validatedEnvironments,
-    false,
-    input.projectName,
-  );
+    enablePercy: false,
+    projectName: input.projectName,
+  });
 
   if (ymlInstructions) {
     steps.push({

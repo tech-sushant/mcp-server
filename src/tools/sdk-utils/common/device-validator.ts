@@ -15,7 +15,6 @@ export interface ValidatedEnvironment {
   notes?: string;
 }
 
-// Centralized defaults
 const DEFAULTS = {
   windows: { browser: "chrome" },
   macos: { browser: "safari" },
@@ -23,11 +22,6 @@ const DEFAULTS = {
   ios: { device: "iPhone 15", browser: "safari" },
 } as const;
 
-/**
- * Validates device tuples against real BrowserStack device data
- * This prevents hallucination by checking against actual available devices
- * Throws errors directly if validation fails
- */
 export async function validateDevices(
   devices: Array<Array<string>>,
   framework?: string,
@@ -67,17 +61,11 @@ export async function validateDevices(
       // Use framework-specific endpoint for app automate data
       if (framework === SDKSupportedBrowserAutomationFrameworkEnum.playwright) {
         appAutomateData = await getDevicesAndBrowsers(
-          BrowserStackProducts.PLAYWRIGHT_APP_AUTOMATE,
-        );
-      } else if (
-        framework === SDKSupportedBrowserAutomationFrameworkEnum.selenium
-      ) {
-        appAutomateData = await getDevicesAndBrowsers(
-          BrowserStackProducts.SELENIUM_APP_AUTOMATE,
+          BrowserStackProducts.PLAYWRIGHT_AUTOMATE,
         );
       } else {
         appAutomateData = await getDevicesAndBrowsers(
-          BrowserStackProducts.APP_AUTOMATE,
+          BrowserStackProducts.SELENIUM_AUTOMATE,
         );
       }
     }
@@ -167,12 +155,6 @@ export async function validateDevices(
   return validatedEnvironments;
 }
 
-/**
- * Validates mobile device strings for App Automate against real BrowserStack device data
- * Device strings should be in format: "Device Name-OS Version" (e.g., "Samsung Galaxy S20-10.0")
- * This prevents hallucination by checking against actual available devices
- * Throws errors directly if validation fails
- */
 export async function validateAppAutomateDevices(
   deviceStrings: string[],
 ): Promise<ValidatedEnvironment[]> {

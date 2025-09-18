@@ -106,14 +106,14 @@ export function runPercyWithBrowserstackSDK(
     });
   }
 
-  const ymlInstructions = generateBrowserStackYMLInstructions(
+  const ymlInstructions = generateBrowserStackYMLInstructions({
     // For now, feed a normalized summary string from devices for the comment
-    ((input as any).devices as string[][] | undefined)?.map((t) =>
+    platforms: ((input as any).devices as string[][] | undefined)?.map((t) =>
       t.join(" "),
     ) || [],
-    true,
-    input.projectName,
-  );
+    enablePercy: true,
+    projectName: input.projectName,
+  });
 
   if (ymlInstructions) {
     steps.push({

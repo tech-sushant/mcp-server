@@ -9,6 +9,7 @@ import { maybeCompressBase64 } from "../lib/utils.js";
 import { remote } from "webdriverio";
 import { AppTestPlatform } from "./appautomate-utils/native-execution/types.js";
 import { setupAppAutomateHandler } from "./appautomate-utils/appium-sdk/handler.js";
+import { validateAppAutomateDevices } from "./sdk-utils/common/device-validator.js";
 
 import {
   SETUP_APP_AUTOMATE_DESCRIPTION,
@@ -24,8 +25,6 @@ import {
   getDevicesAndBrowsers,
   BrowserStackProducts,
 } from "../lib/device-cache.js";
-
-import { validateAppAutomateDevices } from "./sdk-utils/common/device-validator.js";
 
 import {
   findMatchingDevice,
