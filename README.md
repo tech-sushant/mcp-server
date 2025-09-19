@@ -35,11 +35,6 @@ Manage, execute, debug tests, and even fix code using plain English prompts.
 #### Reduced context switching:
 Stay in flow—keep all project context in one place and trigger actions directly from your IDE or LLM.
 
-## 📚 Quick Start
-
-Ready to get started? Choose your path:
-- **🚀 New to BrowserStack MCP?** Start with the [Usage Examples](#-usage-examples) below
-- **🛠️ Need detailed tool documentation?** Jump to our [Complete Tools Reference for 30+ Active Tools](TOOLS.md)
 
 ## ⚡️ One Click MCP Setup  
 
@@ -55,7 +50,12 @@ Click on the buttons below to install MCP in your respective IDE:
 - 👉 <a href="https://nodejs.org/en/download" target="_blank">Or directly download the Node.js LTS Installer</a>
 
 .
-        
+## 📚 Quick Start
+
+Ready to get started? Choose your path:
+- **🚀 New to BrowserStack MCP?** Start with the [Usage Examples](#-usage-examples) below
+- **🛠️ Need detailed tool documentation?** Jump to our [Complete Tools Reference for 30+ Active Tools](TOOLS.md)
+
 ## 💡 Usage Examples
 
 ### 📱 Manual App Testing
@@ -303,7 +303,9 @@ To install BrowserStack Test Platform Server for Claude Desktop automatically vi
 npx -y @smithery/cli install @browserstack/mcp-server --client claude
 ```
 
-> **🏢 Enterprise Environment?** If you're in a corporate network with restrictions, check out our [**Remote MCP Setup**](REMOTE_MCP.md) for a hassle-free installation without local binaries.
+## 🏢 Remote MCP
+
+If you're in a corporate network with restrictions, check out our [**Remote MCP Setup**](REMOTE_MCP.md) for a hassle-free installation without local binaries.
 
 ## 🤝 Recommended MCP Clients
 
