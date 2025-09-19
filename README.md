@@ -35,6 +35,12 @@ Manage, execute, debug tests, and even fix code using plain English prompts.
 #### Reduced context switching:
 Stay in flow—keep all project context in one place and trigger actions directly from your IDE or LLM.
 
+## 📚 Quick Start
+
+Ready to get started? Choose your path:
+- **🚀 New to BrowserStack MCP?** Start with the [Usage Examples](#-usage-examples) below
+- **🛠️ Need detailed tool documentation?** Jump to our [Complete Tools Reference for 30+ Active Tools](TOOLS.md)
+
 ## ⚡️ One Click MCP Setup  
 
 Click on the buttons below to install MCP in your respective IDE:
@@ -132,6 +138,7 @@ Create and manage test cases, create test plans and trigger test runs using natu
 # Update test results
 "update test results as passed for Login tests test run from My Demo Project"
 ```
+> **🛠️ Need detailed setup instructions?** Check our [**Complete Tools Reference**](TOOLS.md) for step-by-step SDK integration guides and advanced automation examples.
 
 ### 🧪 Access BrowserStack AI agents 
 
@@ -295,6 +302,8 @@ To install BrowserStack Test Platform Server for Claude Desktop automatically vi
 ```bash
 npx -y @smithery/cli install @browserstack/mcp-server --client claude
 ```
+
+> **🏢 Enterprise Environment?** If you're in a corporate network with restrictions, check out our [**Remote MCP Setup**](REMOTE_MCP.md) for a hassle-free installation without local binaries.
 
 ## 🤝 Recommended MCP Clients
 
