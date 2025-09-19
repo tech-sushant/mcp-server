@@ -75,11 +75,9 @@ export const SETUP_APP_AUTOMATE_SCHEMA = {
       ]),
     )
     .max(3)
-    .default([
-      [AppSDKSupportedPlatformEnum.android, "Samsung Galaxy S24", "latest"],
-    ])
+    .default([])
     .describe(
-      "Preferred input: 1-3 tuples describing target mobile devices. Example: [['android', 'Samsung Galaxy S24', '14'], ['ios', 'iPhone 15', '17']]",
+      "Tuples describing target mobile devices. Add device only when user asks explicitly for it. Defaults to [] . Example: [['android', 'Samsung Galaxy S24', '14'], ['ios', 'iPhone 15', '17']]",
     ),
 
   appPath: z

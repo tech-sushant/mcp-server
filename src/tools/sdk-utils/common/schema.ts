@@ -19,7 +19,6 @@ export const WindowsPlatformEnum = {
 } as const;
 
 export const MacOSPlatformEnum = {
-  MAC: "mac",
   MACOS: "macos",
 } as const;
 
@@ -99,7 +98,7 @@ export const RunTestsOnBrowserStackParamsShape = {
     .max(3)
     .default([])
     .describe(
-      "Preferred input: 1-3 tuples describing target devices.Example: [['windows', '11', 'chrome', 'latest'], ['android', 'Samsung Galaxy S24', '14', 'chrome'], ['ios', 'iPhone 15', '17', 'safari']]",
+      "Preferred tuples of target devices.Add device only when user asks explicitly for it. Defaults to [] . Example: [['windows', '11', 'chrome', 'latest']]",
     ),
 };
 
