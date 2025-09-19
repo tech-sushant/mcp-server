@@ -78,7 +78,7 @@ function getMavenCommandForWindows(
   accessKey: string,
   appPath?: string,
 ): string {
-  let command = (
+  let command =
     `mvn archetype:generate -B ` +
     `-DarchetypeGroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
     `-DarchetypeArtifactId="${mavenFramework}" ` +
@@ -87,8 +87,7 @@ function getMavenCommandForWindows(
     `-DartifactId="${mavenFramework}" ` +
     `-Dversion="${version}" ` +
     `-DBROWSERSTACK_USERNAME="${username}" ` +
-    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}"`
-  );
+    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}"`;
 
   // Add framework parameter for browserstack-sdk-archetype-integrate
   if (mavenFramework === "browserstack-sdk-archetype-integrate") {
@@ -111,7 +110,7 @@ function getMavenCommandForUnix(
   accessKey: string,
   appPath?: string,
 ): string {
-  let command = (
+  let command =
     `mvn archetype:generate -B ` +
     `-DarchetypeGroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
     `-DarchetypeArtifactId="${mavenFramework}" ` +
@@ -120,8 +119,7 @@ function getMavenCommandForUnix(
     `-DartifactId="${mavenFramework}" ` +
     `-Dversion="${version}" ` +
     `-DBROWSERSTACK_USERNAME="${username}" ` +
-    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}"`
-  );
+    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}"`;
 
   // Add framework parameter for browserstack-sdk-archetype-integrate
   if (mavenFramework === "browserstack-sdk-archetype-integrate") {
@@ -179,13 +177,21 @@ export function getJavaSDKCommand(
   const mavenStep = createStep(
     "Install BrowserStack SDK using Maven Archetype for App Automate",
     `Maven command for ${framework} (${getPlatformLabel()}):
-\`\`\`bash
-${mavenCommand}
-\`\`\`
+    \`\`\`bash
+    ${mavenCommand}
+    \`\`\`
 
-Alternative setup for Gradle users:
-${GRADLE_APP_SETUP_INSTRUCTIONS}`,
+    Alternative setup for Gradle users:
+    ${GRADLE_APP_SETUP_INSTRUCTIONS}`,
   );
 
-  return combineInstructions(envStep, mavenStep);
+  const argsLineStep = createStep(
+    "Verifying dependency and argsLine",
+    `Verify browserstack-java-sdk with LATEST is added as dependency and add this line in pom.xml if not added:
+    \`\`\`xml
+    <argLine>-javaagent:"\${com.browserstack:browserstack-java-sdk:jar}"</argLine>
+    \`\`\``,
+  );
+
+  return combineInstructions(envStep, mavenStep, argsLineStep);
 }
