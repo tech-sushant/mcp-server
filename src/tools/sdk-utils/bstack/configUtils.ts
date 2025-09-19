@@ -7,26 +7,22 @@ export function generateBrowserStackYMLInstructions(config: {
   projectName: string;
 }): string {
   const enablePercy = config.enablePercy || false;
-  const projectName = config.projectName;
+  const projectName = config.projectName || "BrowserStack Automate Build";
 
   // Generate platform configurations using the utility function
   const platformConfigs = generatePlatformConfigs(config);
 
-  // Determine build name and step title
-  const buildName =
-    config.validatedEnvironments && config.validatedEnvironments.length > 0
-      ? `${projectName}-Build`
-      : "Sample-Build";
-
   const stepTitle =
-    config.validatedEnvironments && config.validatedEnvironments.length > 0
-      ? "Create a browserstack.yml file in the project root with your validated device configurations:"
-      : "Create a browserstack.yml file in the project root. The file should be in the following format:";
+    "Create a browserstack.yml file in the project root with your validated device configurations:";
+
+  const buildName = `${projectName}-Build`;
 
   let ymlContent = `
 # ======================
 # BrowserStack Reporting
 # ======================
+
+# TODO: Replace these sample values with your actual project details
 projectName: ${projectName}
 buildName: ${buildName}
 
@@ -34,19 +30,10 @@ buildName: ${buildName}
 # Platforms (Browsers / Devices to test)
 # =======================================`;
 
-  if (config.validatedEnvironments && config.validatedEnvironments.length > 0) {
-    ymlContent += `
-# Auto-generated from validated device configurations
-platforms:
-${platformConfigs}`;
-  } else {
-    ymlContent += `
+  ymlContent += `
 # Platforms object contains all the browser / device combinations you want to test on.
-# Generate this on the basis of the following platforms requested by the user:
-# Requested platforms: ${config.platforms || []}
 platforms:
 ${platformConfigs}`;
-  }
 
   ymlContent += `
 
@@ -55,6 +42,7 @@ ${platformConfigs}`;
 # =======================
 # The number of parallel threads to be used for each platform set.
 # BrowserStack's SDK runner will select the best strategy based on the configured value
+# The number of parallel threads to be used for each platform set.
 parallelsPerPlatform: 1
 
 # =================

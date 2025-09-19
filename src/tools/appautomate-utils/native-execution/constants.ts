@@ -29,7 +29,7 @@ export const RUN_APP_AUTOMATE_SCHEMA = {
         "  zip -r Tests.zip *.xctestrun *-Runner.app\n\n" +
         "If in other directory, provide existing test file path",
     ),
-    devices: z
+  devices: z
     .array(
       z.union([
         // Android: [android, deviceName, osVersion]

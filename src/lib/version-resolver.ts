@@ -3,10 +3,7 @@
  * Else if exact match, returns that
  * Else picks the numerically closest (or first)
  */
-export function resolveVersion(
-  requested: string,
-  available: string[],
-): string {
+export function resolveVersion(requested: string, available: string[]): string {
   // strip duplicates & sort
   const uniq = Array.from(new Set(available));
 

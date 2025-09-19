@@ -42,8 +42,9 @@ platforms:
 ${platformConfigs}
 parallelsPerPlatform: 1
 browserstackLocal: true
-buildName: ${buildName}
+// TODO: replace projectName and buildName according to actual project
 projectName: ${projectName}
+buildName: ${buildName}
 debug: true
 networkLogs: true
 percy: false

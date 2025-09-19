@@ -2,6 +2,8 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
+import { validateAppAutomateDevices } from "../../sdk-utils/common/device-validator.js";
+
 import {
   getAppUploadInstruction,
   validateSupportforAppAutomate,
@@ -12,8 +14,6 @@ import {
   getAppSDKPrefixCommand,
   generateAppBrowserStackYMLInstructions,
 } from "./index.js";
-
-import { validateAppAutomateDevices } from "../../sdk-utils/common/device-validator.js";
 
 import {
   AppSDKSupportedLanguage,
