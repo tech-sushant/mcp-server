@@ -21,6 +21,7 @@ export enum AppSDKSupportedTestingFrameworkEnum {
   junit4 = "junit4",
   selenide = "selenide",
   jbehave = "jbehave",
+  serenity = "serenity",
   cucumberTestng = "cucumberTestng",
   cucumberJunit4 = "cucumberJunit4",
   cucumberJunit5 = "cucumberJunit5",
@@ -60,7 +61,15 @@ export interface AppSDKInstruction {
 export const SUPPORTED_CONFIGURATIONS = {
   appium: {
     ruby: ["cucumberRuby"],
-    java: [],
+    java: [
+      "testng",
+      "cucumber",
+      "junit4",
+      "junit5",
+      "jbehave",
+      "selenide",
+      "serenity",
+    ],
     csharp: [],
     python: ["pytest", "robot", "behave", "lettuce"],
     nodejs: ["jest", "mocha", "cucumberJs", "webdriverio", "nightwatch"],

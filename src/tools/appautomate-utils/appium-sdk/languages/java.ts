@@ -11,15 +11,32 @@ export const MAVEN_ARCHETYPE_GROUP_ID = "com.browserstack";
 export const MAVEN_ARCHETYPE_ARTIFACT_ID = "junit-archetype-integrate";
 export const MAVEN_ARCHETYPE_VERSION = "1.0";
 
+// Version mapping for different frameworks
+export const JAVA_APP_FRAMEWORK_VERSION_MAP: Record<string, string> = {
+  testng: "1.4",
+  selenide: "1.4",
+  junit5: "1.0",
+  junit4: "1.0",
+  jbehave: "1.0",
+  cucumberTestng: "1.0",
+  cucumberJunit4: "1.0",
+  cucumberJunit5: "1.0",
+  cucumber: "1.0",
+  serenity: "1.0",
+};
+
 // Framework mapping for Java Maven archetype generation for App Automate
 export const JAVA_APP_FRAMEWORK_MAP: Record<string, string> = {
-  testng: "browserstack-sdk-archetype-integrate",
+  testng: "testng-archetype-integrate",
   junit5: "browserstack-sdk-archetype-integrate",
   selenide: "selenide-archetype-integrate",
   jbehave: "browserstack-sdk-archetype-integrate",
+  junit4: "browserstack-sdk-archetype-integrate",
   cucumberTestng: "browserstack-sdk-archetype-integrate",
   cucumberJunit4: "browserstack-sdk-archetype-integrate",
   cucumberJunit5: "browserstack-sdk-archetype-integrate",
+  cucumber: "browserstack-sdk-archetype-integrate",
+  serenity: "browserstack-sdk-archetype-integrate",
 };
 
 // Common Gradle setup instructions for App Automate (platform-independent)
@@ -49,44 +66,72 @@ export function getJavaAppFrameworkForMaven(framework: string): string {
   return JAVA_APP_FRAMEWORK_MAP[framework] || framework;
 }
 
+export function getJavaAppFrameworkVersion(framework: string): string {
+  return JAVA_APP_FRAMEWORK_VERSION_MAP[framework] || MAVEN_ARCHETYPE_VERSION;
+}
+
 function getMavenCommandForWindows(
   framework: string,
   mavenFramework: string,
+  version: string,
   username: string,
   accessKey: string,
+  appPath?: string,
 ): string {
-  return (
+  let command =
     `mvn archetype:generate -B ` +
     `-DarchetypeGroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
     `-DarchetypeArtifactId="${mavenFramework}" ` +
-    `-DarchetypeVersion="${MAVEN_ARCHETYPE_VERSION}" ` +
+    `-DarchetypeVersion="${version}" ` +
     `-DgroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
-    `-DartifactId="${MAVEN_ARCHETYPE_ARTIFACT_ID}" ` +
-    `-Dversion="${MAVEN_ARCHETYPE_VERSION}" ` +
+    `-DartifactId="${mavenFramework}" ` +
+    `-Dversion="${version}" ` +
     `-DBROWSERSTACK_USERNAME="${username}" ` +
-    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}" ` +
-    `-DBROWSERSTACK_FRAMEWORK="${framework}"`
-  );
+    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}"`;
+
+  // Add framework parameter for browserstack-sdk-archetype-integrate
+  if (mavenFramework === "browserstack-sdk-archetype-integrate") {
+    command += ` -DBROWSERSTACK_FRAMEWORK="${framework}"`;
+  }
+
+  // Add app path if provided
+  if (appPath) {
+    command += ` -DBROWSERSTACK_APP="${appPath}"`;
+  }
+
+  return command;
 }
 
 function getMavenCommandForUnix(
   framework: string,
   mavenFramework: string,
+  version: string,
   username: string,
   accessKey: string,
+  appPath?: string,
 ): string {
-  return (
+  let command =
     `mvn archetype:generate -B ` +
     `-DarchetypeGroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
     `-DarchetypeArtifactId="${mavenFramework}" ` +
-    `-DarchetypeVersion="${MAVEN_ARCHETYPE_VERSION}" ` +
+    `-DarchetypeVersion="${version}" ` +
     `-DgroupId="${MAVEN_ARCHETYPE_GROUP_ID}" ` +
-    `-DartifactId="${MAVEN_ARCHETYPE_ARTIFACT_ID}" ` +
-    `-Dversion="${MAVEN_ARCHETYPE_VERSION}" ` +
+    `-DartifactId="${mavenFramework}" ` +
+    `-Dversion="${version}" ` +
     `-DBROWSERSTACK_USERNAME="${username}" ` +
-    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}" ` +
-    `-DBROWSERSTACK_FRAMEWORK="${framework}"`
-  );
+    `-DBROWSERSTACK_ACCESS_KEY="${accessKey}"`;
+
+  // Add framework parameter for browserstack-sdk-archetype-integrate
+  if (mavenFramework === "browserstack-sdk-archetype-integrate") {
+    command += ` -DBROWSERSTACK_FRAMEWORK="${framework}"`;
+  }
+
+  // Add app path if provided
+  if (appPath) {
+    command += ` -DBROWSERSTACK_APP="${appPath}"`;
+  }
+
+  return command;
 }
 
 export function getJavaSDKCommand(
@@ -98,6 +143,7 @@ export function getJavaSDKCommand(
   const { isWindows = false, getPlatformLabel } = PLATFORM_UTILS || {};
 
   const mavenFramework = getJavaAppFrameworkForMaven(framework);
+  const version = getJavaAppFrameworkVersion(framework);
 
   let mavenCommand: string;
 
@@ -105,22 +151,20 @@ export function getJavaSDKCommand(
     mavenCommand = getMavenCommandForWindows(
       framework,
       mavenFramework,
+      version,
       username,
       accessKey,
+      appPath,
     );
-    if (appPath) {
-      mavenCommand += ` -DBROWSERSTACK_APP="${appPath}"`;
-    }
   } else {
     mavenCommand = getMavenCommandForUnix(
       framework,
       mavenFramework,
+      version,
       username,
       accessKey,
+      appPath,
     );
-    if (appPath) {
-      mavenCommand += ` -DBROWSERSTACK_APP="${appPath}"`;
-    }
   }
 
   const envStep = createEnvStep(
@@ -133,13 +177,21 @@ export function getJavaSDKCommand(
   const mavenStep = createStep(
     "Install BrowserStack SDK using Maven Archetype for App Automate",
     `Maven command for ${framework} (${getPlatformLabel()}):
-\`\`\`bash
-${mavenCommand}
-\`\`\`
+    \`\`\`bash
+    ${mavenCommand}
+    \`\`\`
 
-Alternative setup for Gradle users:
-${GRADLE_APP_SETUP_INSTRUCTIONS}`,
+    Alternative setup for Gradle users:
+    ${GRADLE_APP_SETUP_INSTRUCTIONS}`,
   );
 
-  return combineInstructions(envStep, mavenStep);
+  const argsLineStep = createStep(
+    "Verifying dependency and argsLine",
+    `Verify browserstack-java-sdk with LATEST is added as dependency and add this line in pom.xml if not added:
+    \`\`\`xml
+    <argLine>-javaagent:"\${com.browserstack:browserstack-java-sdk:jar}"</argLine>
+    \`\`\``,
+  );
+
+  return combineInstructions(envStep, mavenStep, argsLineStep);
 }
