@@ -22,15 +22,9 @@ export async function runTestsOnBrowserStackHandler(
   rawInput: unknown,
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
-  try {
-    const input = RunTestsOnBrowserStackSchema.parse(rawInput);
-
-    // Only handle BrowserStack SDK setup for functional/integration tests.
-    const result = runBstackSDKOnly(input, config);
-    return await formatToolResult(result);
-  } catch (error) {
-    throw new Error(getBootstrapFailedMessage(error, { config }));
-  }
+  const input = RunTestsOnBrowserStackSchema.parse(rawInput);
+  const result = await runBstackSDKOnly(input, config);
+  return await formatToolResult(result);
 }
 
 export async function setUpPercyHandler(
@@ -75,7 +69,7 @@ export async function setUpPercyHandler(
       const percyWithBrowserstackSDKResult = runPercyWithBrowserstackSDK(
         {
           ...percyInput,
-          desiredPlatforms: [],
+          devices: [],
         },
         config,
       );
@@ -113,9 +107,9 @@ export async function setUpPercyHandler(
           detectedBrowserAutomationFramework:
             input.detectedBrowserAutomationFramework,
           detectedTestingFramework: input.detectedTestingFramework,
-          desiredPlatforms: [],
+          devices: [],
         };
-        const sdkResult = runBstackSDKOnly(sdkInput, config, true);
+        const sdkResult = await runBstackSDKOnly(sdkInput, config, true);
         // Percy Automate instructions
         const percyToken = await fetchPercyToken(
           input.projectName,

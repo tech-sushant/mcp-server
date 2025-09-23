@@ -9,6 +9,7 @@ import { maybeCompressBase64 } from "../lib/utils.js";
 import { remote } from "webdriverio";
 import { AppTestPlatform } from "./appautomate-utils/native-execution/types.js";
 import { setupAppAutomateHandler } from "./appautomate-utils/appium-sdk/handler.js";
+import { validateAppAutomateDevices } from "./sdk-utils/common/device-validator.js";
 
 import {
   SETUP_APP_AUTOMATE_DESCRIPTION,
@@ -175,7 +176,7 @@ async function runAppTestsOnBrowserStack(
     testSuitePath?: string;
     browserstackAppUrl?: string;
     browserstackTestSuiteUrl?: string;
-    devices: string[];
+    devices: Array<Array<string>>;
     project: string;
     detectedAutomationFramework: string;
   },
@@ -192,6 +193,9 @@ async function runAppTestsOnBrowserStack(
       "testSuitePath is required when browserstackTestSuiteUrl is not provided",
     );
   }
+
+  // Validate devices against real BrowserStack device data
+  await validateAppAutomateDevices(args.devices);
 
   switch (args.detectedAutomationFramework) {
     case AppTestPlatform.ESPRESSO: {
@@ -219,10 +223,16 @@ async function runAppTestsOnBrowserStack(
           logger.info(`Test suite uploaded. URL: ${test_suite_url}`);
         }
 
+        // Convert array format to string format for Espresso
+        const deviceStrings = args.devices.map((device) => {
+          const [, deviceName, osVersion] = device;
+          return `${deviceName}-${osVersion}`;
+        });
+
         const build_id = await triggerEspressoBuild(
           app_url,
           test_suite_url,
-          args.devices,
+          deviceStrings,
           args.project,
         );
 
@@ -264,10 +274,16 @@ async function runAppTestsOnBrowserStack(
           logger.info(`Test suite uploaded. URL: ${test_suite_url}`);
         }
 
+        // Convert array format to string format for XCUITest
+        const deviceStrings = args.devices.map((device) => {
+          const [, deviceName, osVersion] = device;
+          return `${deviceName}-${osVersion}`;
+        });
+
         const build_id = await triggerXcuiBuild(
           app_url,
           test_suite_url,
-          args.devices,
+          deviceStrings,
           args.project,
           config,
         );

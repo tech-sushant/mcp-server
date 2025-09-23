@@ -2,6 +2,8 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
+import { validateAppAutomateDevices } from "../../sdk-utils/common/device-validator.js";
+
 import {
   getAppUploadInstruction,
   validateSupportforAppAutomate,
@@ -36,12 +38,24 @@ export async function setupAppAutomateHandler(
   const testingFramework =
     input.detectedTestingFramework as AppSDKSupportedTestingFramework;
   const language = input.detectedLanguage as AppSDKSupportedLanguage;
-  const platforms = (input.desiredPlatforms as string[]) ?? ["android"];
+  const inputDevices = (input.devices as Array<Array<string>>) ?? [];
   const appPath = input.appPath as string;
   const framework = input.detectedFramework as SupportedFramework;
 
   //Validating if supported framework or not
   validateSupportforAppAutomate(framework, language, testingFramework);
+
+  // Use default mobile devices when array is empty
+  const devices =
+    inputDevices.length === 0
+      ? [["android", "Samsung Galaxy S24", "latest"]]
+      : inputDevices;
+
+  // Validate devices against real BrowserStack device data
+  const validatedEnvironments = await validateAppAutomateDevices(devices);
+
+  // Extract platforms for backward compatibility (if needed)
+  const platforms = validatedEnvironments.map((env) => env.platform);
 
   // Step 1: Generate SDK setup command
   const sdkCommand = getAppSDKPrefixCommand(
@@ -58,11 +72,15 @@ export async function setupAppAutomateHandler(
 
   // Step 2: Generate browserstack.yml configuration
   const configInstructions = generateAppBrowserStackYMLInstructions(
-    platforms,
+    {
+      validatedEnvironments,
+      platforms,
+      testingFramework,
+      projectName: input.project as string,
+    },
     username,
     accessKey,
     appPath,
-    testingFramework,
   );
 
   if (configInstructions) {

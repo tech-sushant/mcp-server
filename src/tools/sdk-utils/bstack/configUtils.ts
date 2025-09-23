@@ -1,42 +1,48 @@
-/**
- * Utilities for generating BrowserStack configuration files.
- */
+import { ValidatedEnvironment } from "../common/device-validator.js";
 
-export function generateBrowserStackYMLInstructions(
-  desiredPlatforms: string[],
-  enablePercy: boolean = false,
-  projectName: string,
-) {
+export function generateBrowserStackYMLInstructions(config: {
+  validatedEnvironments?: ValidatedEnvironment[];
+  platforms?: string[];
+  enablePercy?: boolean;
+  projectName: string;
+}): string {
+  const enablePercy = config.enablePercy || false;
+  const projectName = config.projectName || "BrowserStack Automate Build";
+
+  // Generate platform configurations using the utility function
+  const platformConfigs = generatePlatformConfigs(config);
+
+  const stepTitle =
+    "Create a browserstack.yml file in the project root with your validated device configurations:";
+
+  const buildName = `${projectName}-Build`;
+
   let ymlContent = `
 # ======================
 # BrowserStack Reporting
 # ======================
-# A single name for your project to organize all your tests. This is required for Percy.
-projectName: ${projectName}
+
 # TODO: Replace these sample values with your actual project details
-buildName: Sample-Build
+projectName: ${projectName}
+buildName: ${buildName}
 
 # =======================================
 # Platforms (Browsers / Devices to test)
-# =======================================
+# =======================================`;
+
+  ymlContent += `
 # Platforms object contains all the browser / device combinations you want to test on.
-# Generate this on the basis of the following platforms requested by the user:
-# Requested platforms: ${desiredPlatforms}
 platforms:
-  - os: Windows
-    osVersion: 11
-    browserName: chrome
-    browserVersion: latest
-  
+${platformConfigs}`;
+
+  ymlContent += `
+
 # =======================
 # Parallels per Platform
 # =======================
 # The number of parallel threads to be used for each platform set.
 # BrowserStack's SDK runner will select the best strategy based on the configured value
-#
-# Example 1 - If you have configured 3 platforms and set \`parallelsPerPlatform\` as 2, a total of 6 (2 * 3) parallel threads will be used on BrowserStack
-#
-# Example 2 - If you have configured 1 platform and set \`parallelsPerPlatform\` as 5, a total of 5 (1 * 5) parallel threads will be used on BrowserStack
+# The number of parallel threads to be used for each platform set.
 parallelsPerPlatform: 1
 
 # =================
@@ -62,11 +68,65 @@ testObservability: true # For Test Observability`;
 percy: true
 percyCaptureMode: manual`;
   }
+
   return `
 ---STEP---
-Create a browserstack.yml file in the project root. The file should be in the following format:
+${stepTitle}
 
 \`\`\`yaml${ymlContent}
 \`\`\`
 \n`;
+}
+
+function generatePlatformConfigs(config: {
+  validatedEnvironments?: ValidatedEnvironment[];
+  platforms?: string[];
+}): string {
+  if (config.validatedEnvironments && config.validatedEnvironments.length > 0) {
+    // Generate platforms array from validated environments
+    const platforms = config.validatedEnvironments.map((env) => {
+      if (env.platform === "windows" || env.platform === "macos") {
+        // Desktop configuration
+        return {
+          os: env.platform === "windows" ? "Windows" : "OS X",
+          osVersion: env.osVersion,
+          browserName: env.browser,
+          browserVersion: env.browserVersion || "latest",
+        };
+      } else {
+        // Mobile configuration (android/ios)
+        return {
+          deviceName: env.deviceName,
+          osVersion: env.osVersion,
+          browserName: env.browser,
+        };
+      }
+    });
+
+    // Convert platforms to YAML format
+    return platforms
+      .map((platform) => {
+        if (platform.deviceName) {
+          // Mobile platform
+          return `  - deviceName: "${platform.deviceName}"
+    osVersion: "${platform.osVersion}"
+    browserName: ${platform.browserName}`;
+        } else {
+          // Desktop platform
+          return `  - os: ${platform.os}
+    osVersion: "${platform.osVersion}"
+    browserName: ${platform.browserName}
+    browserVersion: ${platform.browserVersion}`;
+        }
+      })
+      .join("\n");
+  } else if (config.platforms && config.platforms.length > 0) {
+    // Fallback to default platforms configuration
+    return `  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest`;
+  }
+
+  return "";
 }

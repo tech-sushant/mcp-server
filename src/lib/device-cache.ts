@@ -13,6 +13,8 @@ export enum BrowserStackProducts {
   LIVE = "live",
   APP_LIVE = "app_live",
   APP_AUTOMATE = "app_automate",
+  SELENIUM_AUTOMATE = "selenium_automate",
+  PLAYWRIGHT_AUTOMATE = "playwright_automate",
 }
 
 const URLS: Record<BrowserStackProducts, string> = {
@@ -22,6 +24,10 @@ const URLS: Record<BrowserStackProducts, string> = {
     "https://www.browserstack.com/list-of-browsers-and-platforms/app_live.json",
   [BrowserStackProducts.APP_AUTOMATE]:
     "https://www.browserstack.com/list-of-browsers-and-platforms/app_automate.json",
+  [BrowserStackProducts.SELENIUM_AUTOMATE]:
+    "https://www.browserstack.com/list-of-browsers-and-platforms/automate.json",
+  [BrowserStackProducts.PLAYWRIGHT_AUTOMATE]:
+    "https://www.browserstack.com/list-of-browsers-and-platforms/playwright.json",
 };
 
 /**
