@@ -32,7 +32,9 @@ export function runPercyWeb(
   steps.push({
     type: "instruction",
     title: "Set Percy Token in Environment",
-    content: `Here is percy token if required {${percyToken}}`,
+    content: `Set the environment variable for your project:
+        export PERCY_TOKEN="${percyToken}"
+        (For Windows: use 'setx PERCY_TOKEN "${percyToken}"' or 'set PERCY_TOKEN=${percyToken}' as appropriate.)`,
   });
 
   steps.push({

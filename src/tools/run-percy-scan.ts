@@ -34,7 +34,7 @@ export async function runPercyScan(
     - Node.js → npm test or yarn test
     - Cypress → cypress run
     or from package.json scripts`,
-    `Wrap the inferred command with Percy:\nnpx percy exec -- <test command>`,
+    `Wrap the inferred command with Percy along with label: \nnpx percy exec --labels=mcp -- <test command>`,
     `If the test command cannot be inferred confidently, ask the user directly for the correct test command.`,
   );
 
