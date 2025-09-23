@@ -4,12 +4,14 @@ const { HttpsProxyAgent } = httpsProxyAgentPkg;
 import * as https from "https";
 import * as fs from "fs";
 import config from "../config.js";
+import { isDataUrlPayloadTooLarge } from "../lib/utils.js";
 
 type RequestOptions = {
   url: string;
   headers?: Record<string, string>;
   params?: Record<string, string | number>;
   body?: any;
+  timeout?: number;
   raise_error?: boolean; // default: true
 };
 
@@ -99,11 +101,53 @@ class ApiClient {
     return getAxiosAgent();
   }
 
+  private validateUrl(url: string, options?: AxiosRequestConfig) {
+    try {
+      const parsedUrl = new URL(url);
+
+      // Default safe limits
+      const maxContentLength = options?.maxContentLength ?? 20 * 1024 * 1024; // 20MB
+      const maxBodyLength = options?.maxBodyLength ?? 20 * 1024 * 1024; // 20MB
+      const maxUrlLength = 8000; // cutoff for URLs
+
+      // Check overall URL length
+      if (url.length > maxUrlLength) {
+        throw new Error(
+          `URL length exceeds maxUrlLength (${maxUrlLength} chars)`,
+        );
+      }
+
+      if (parsedUrl.protocol === "data:") {
+        // Either reject completely OR check payload size
+        if (isDataUrlPayloadTooLarge(url, maxContentLength)) {
+          throw new Error("data: URI payload too large or invalid");
+        }
+      } else if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+        throw new Error(`Unsupported URL scheme: ${parsedUrl.protocol}`);
+      }
+
+      if (
+        options?.data &&
+        Buffer.byteLength(JSON.stringify(options.data), "utf8") > maxBodyLength
+      ) {
+        throw new Error(
+          `Request body exceeds maxBodyLength (${maxBodyLength} bytes)`,
+        );
+      }
+    } catch (error: any) {
+      throw new Error(`Invalid URL: ${error.message}`);
+    }
+  }
+
   private async requestWrapper<T>(
     fn: (agent: AxiosRequestConfig["httpsAgent"]) => Promise<AxiosResponse<T>>,
+    url: string,
+    config?: AxiosRequestConfig,
     raise_error: boolean = true,
   ): Promise<ApiResponse<T>> {
     try {
+      this.validateUrl(url, config);
+
       const res = await fn(this.axiosAgent);
       return new ApiResponse<T>(res);
     } catch (error: any) {
@@ -118,11 +162,19 @@ class ApiClient {
     url,
     headers,
     params,
+    timeout,
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
+    const config: AxiosRequestConfig = {
+      headers,
+      params,
+      timeout,
+      httpsAgent: this.axiosAgent,
+    };
     return this.requestWrapper<T>(
-      (agent) =>
-        this.instance.get<T>(url, { headers, params, httpsAgent: agent }),
+      () => this.instance.get<T>(url, config),
+      url,
+      config,
       raise_error,
     );
   }
@@ -131,11 +183,19 @@ class ApiClient {
     url,
     headers,
     body,
+    timeout,
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
+    const config: AxiosRequestConfig = {
+      headers,
+      timeout,
+      httpsAgent: this.axiosAgent,
+      data: body,
+    };
     return this.requestWrapper<T>(
-      (agent) =>
-        this.instance.post<T>(url, body, { headers, httpsAgent: agent }),
+      () => this.instance.post<T>(url, config.data, config),
+      url,
+      config,
       raise_error,
     );
   }
@@ -144,11 +204,19 @@ class ApiClient {
     url,
     headers,
     body,
+    timeout,
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
+    const config: AxiosRequestConfig = {
+      headers,
+      timeout,
+      httpsAgent: this.axiosAgent,
+      data: body,
+    };
     return this.requestWrapper<T>(
-      (agent) =>
-        this.instance.put<T>(url, body, { headers, httpsAgent: agent }),
+      () => this.instance.put<T>(url, config.data, config),
+      url,
+      config,
       raise_error,
     );
   }
@@ -157,11 +225,19 @@ class ApiClient {
     url,
     headers,
     body,
+    timeout,
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
+    const config: AxiosRequestConfig = {
+      headers,
+      timeout,
+      httpsAgent: this.axiosAgent,
+      data: body,
+    };
     return this.requestWrapper<T>(
-      (agent) =>
-        this.instance.patch<T>(url, body, { headers, httpsAgent: agent }),
+      () => this.instance.patch<T>(url, config.data, config),
+      url,
+      config,
       raise_error,
     );
   }
@@ -170,11 +246,19 @@ class ApiClient {
     url,
     headers,
     params,
+    timeout,
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
+    const config: AxiosRequestConfig = {
+      headers,
+      params,
+      timeout,
+      httpsAgent: this.axiosAgent,
+    };
     return this.requestWrapper<T>(
-      (agent) =>
-        this.instance.delete<T>(url, { headers, params, httpsAgent: agent }),
+      () => this.instance.delete<T>(url, config),
+      url,
+      config,
       raise_error,
     );
   }
