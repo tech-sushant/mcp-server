@@ -97,11 +97,11 @@ async function updateProgress(
 }
 
 async function fetchInitialRCA(
-  testId: string,
+  testId: number,
   headers: Record<string, string>,
   baseUrl: string,
 ): Promise<RCATestCase> {
-  const url = baseUrl.replace("{testId}", testId);
+  const url = baseUrl.replace("{testId}", testId.toString());
 
   try {
     const response = await fetch(url, { headers });
@@ -179,7 +179,7 @@ async function pollRCAResults(
       await Promise.allSettled(
         inProgressCases.map(async (tc) => {
           try {
-            const pollUrl = baseUrl.replace("{testId}", tc.id);
+            const pollUrl = baseUrl.replace("{testId}", tc.id.toString());
             const response = await fetch(pollUrl, { headers });
             if (!response.ok) {
               const errorText = await response.text();
@@ -240,7 +240,7 @@ async function pollRCAResults(
 }
 
 export async function getRCAData(
-  testIds: string[],
+  testIds: number[],
   authString: string,
   context?: ScanProgressContext,
 ): Promise<RCAResponse> {
