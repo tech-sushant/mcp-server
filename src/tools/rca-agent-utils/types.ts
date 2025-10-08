@@ -21,7 +21,7 @@ export interface TestRun {
 }
 
 export interface FailedTestInfo {
-  test_id: string;
+  test_id: number;
   test_name: string;
 }
 
@@ -39,8 +39,8 @@ export enum RCAState {
 }
 
 export interface RCATestCase {
-  id: string;
-  testRunId: string;
+  id: number;
+  testRunId: number;
   state: RCAState;
   rcaData?: any;
 }

@@ -60,7 +60,7 @@ export async function getBuildIdTool(
 
 // Tool function that fetches RCA data
 export async function fetchRCADataTool(
-  args: { testId: string[] },
+  args: { testId: number[] },
   config: BrowserStackConfig,
 ): Promise<CallToolResult> {
   try {

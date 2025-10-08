@@ -3,10 +3,10 @@ import { TestStatus } from "./types.js";
 
 export const FETCH_RCA_PARAMS = {
   testId: z
-    .array(z.string())
+    .array(z.number().int())
     .max(3)
     .describe(
-      "Array of test IDs to fetch RCA data for (maximum 3 IDs). If not provided, use the listTestIds tool get all failed testcases. If more than 3 IDs are provided, only the first 3 will be processed.",
+      "Array of integer test IDs to fetch RCA data for (maximum 3 IDs). These must be numeric test IDs, not session IDs or strings. If not provided, use the listTestIds tool to get all failed testcases. If more than 3 IDs are provided, only the first 3 will be processed.",
     ),
 };
 
