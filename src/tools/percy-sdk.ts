@@ -18,11 +18,7 @@ import {
   PERCY_SNAPSHOT_COMMANDS_DESCRIPTION,
   SIMULATE_PERCY_CHANGE_DESCRIPTION,
 } from "./sdk-utils/common/constants.js";
-
-import {
-  ListTestFilesParamsShape,
-  UpdateTestFileWithInstructionsParams,
-} from "./percy-snapshot-utils/constants.js";
+import { UpdateTestFileWithInstructionsParams } from "./percy-snapshot-utils/constants.js";
 
 import {
   RunPercyScanParamsShape,
@@ -126,11 +122,11 @@ export function registerPercyTools(
   tools.listTestFiles = server.tool(
     "listTestFiles",
     LIST_TEST_FILES_DESCRIPTION,
-    ListTestFilesParamsShape,
-    async (args) => {
+    {},
+    async () => {
       try {
         trackMCP("listTestFiles", server.server.getClientVersion()!, config);
-        return addListTestFiles(args);
+        return addListTestFiles();
       } catch (error) {
         return handleMCPError("listTestFiles", server, config, error);
       }

@@ -59,9 +59,9 @@ async function convertUrlsToBase64(
 ): Promise<Array<{ url: string; base64: string }>> {
   const screenshots = await Promise.all(
     urls.map(async (url) => {
-      const response = await apiClient.get({ 
-        url, 
-        responseType: "arraybuffer"
+      const response = await apiClient.get({
+        url,
+        responseType: "arraybuffer",
       });
       // Axios returns response.data as a Buffer for binary data
       const base64 = Buffer.from(response.data).toString("base64");
