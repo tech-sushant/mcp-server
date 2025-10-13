@@ -12,6 +12,7 @@ type RequestOptions = {
   params?: Record<string, string | number>;
   body?: any;
   timeout?: number;
+  responseType?: AxiosRequestConfig["responseType"];
   raise_error?: boolean; // default: true
 };
 
@@ -163,12 +164,14 @@ class ApiClient {
     headers,
     params,
     timeout,
+    responseType,
     raise_error = true,
   }: RequestOptions): Promise<ApiResponse<T>> {
     const config: AxiosRequestConfig = {
       headers,
       params,
       timeout,
+      responseType,
       httpsAgent: this.axiosAgent,
     };
     return this.requestWrapper<T>(
