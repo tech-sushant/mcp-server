@@ -57,7 +57,7 @@ export async function setUpPercyHandler(
       integrationType: input.integrationType,
       folderPaths: input.folderPaths || [],
       filePaths: input.filePaths || [],
-      uuid: null,
+      testFiles: {},
     });
 
     const authorization = getBrowserStackAuth(config);

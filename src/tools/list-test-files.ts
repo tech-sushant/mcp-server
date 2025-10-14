@@ -2,7 +2,6 @@ import { listTestFiles } from "./percy-snapshot-utils/detect-test-files.js";
 import { storedPercyResults } from "../lib/inmemory-store.js";
 import { updateFileAndStep } from "./percy-snapshot-utils/utils.js";
 import { percyWebSetupInstructions } from "./sdk-utils/percy-web/handler.js";
-import crypto from "crypto";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
 export async function addListTestFiles(): Promise<CallToolResult> {
@@ -56,30 +55,26 @@ export async function addListTestFiles(): Promise<CallToolResult> {
     };
   }
 
-  // For multiple files, use the UUID workflow
-  const uuid = crypto.randomUUID();
-
-  // Store files in the unified structure with initial status false (not updated)
+  // For multiple files, store directly in testFiles
   const fileStatusMap: { [key: string]: boolean } = {};
   testFiles.forEach((file) => {
     fileStatusMap[file] = false; // false = not updated, true = updated
   });
 
-  // Update storedPercyResults with single UUID for the project
+  // Update storedPercyResults with test files
   const updatedStored = { ...storedResults };
-  updatedStored.uuid = uuid; // Store the UUID reference
-  updatedStored[uuid] = fileStatusMap; // Store files under the UUID key
+  updatedStored.testFiles = fileStatusMap;
   storedPercyResults.set(updatedStored);
 
   return {
     content: [
       {
         type: "text",
-        text: `The Test files are stored in memory with id ${uuid} and the total number of tests files found is ${testFiles.length}. You can use this UUID to retrieve the tests file paths later.`,
+        text: `The Test files are stored in memory and the total number of tests files found is ${testFiles.length}.`,
       },
       {
         type: "text",
-        text: `You can now use the tool addPercySnapshotCommands to update the test file with Percy commands for visual testing with the UUID ${uuid}`,
+        text: `You can now use the tool addPercySnapshotCommands to update the test file with Percy commands for visual testing.`,
       },
     ],
   };

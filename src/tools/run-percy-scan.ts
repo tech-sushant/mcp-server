@@ -73,15 +73,14 @@ function checkForUpdatedFiles(
   const projectMatches = stored?.projectName === projectName;
   return (
     projectMatches &&
-    stored?.uuid &&
-    stored[stored.uuid] &&
-    Object.values(stored[stored.uuid]).some((status) => status === true)
+    stored?.testFiles &&
+    Object.values(stored.testFiles).some((status) => status === true)
   );
 }
 
 function getUpdatedFiles(stored: any): string[] {
   const updatedFiles: string[] = [];
-  const fileStatusMap = stored[stored.uuid!];
+  const fileStatusMap = stored.testFiles;
 
   Object.entries(fileStatusMap).forEach(([filePath, status]) => {
     if (status === true) {
@@ -105,7 +104,7 @@ function generateUpdatedFilesSteps(
 
   return [
     `Run only the updated files with Percy:\n` +
-      `Example: ${exampleCommand} -- <file1> <file2> ...`,
+      `Example: ${exampleCommand} <file1> <file2> ...`,
     `Updated files to run:\n${filesToRun.join("\n")}`,
   ];
 }

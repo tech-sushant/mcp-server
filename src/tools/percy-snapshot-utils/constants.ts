@@ -3,9 +3,6 @@ import { SDKSupportedLanguage } from "../sdk-utils/common/types.js";
 import { DetectionConfig } from "./types.js";
 
 export const UpdateTestFileWithInstructionsParams = {
-  uuid: z
-    .string()
-    .describe("UUID referencing the in-memory array of test file paths"),
   index: z.number().describe("Index of the test file to update"),
 };
 
