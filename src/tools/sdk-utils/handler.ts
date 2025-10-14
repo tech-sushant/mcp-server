@@ -45,7 +45,11 @@ export async function setUpPercyHandler(
     const input = SetUpPercySchema.parse(rawInput);
     validatePercyPathandFolders(input);
 
+    // Clear any previous Percy results for a fresh start
+    storedPercyResults.clear();
+
     storedPercyResults.set({
+      projectName: input.projectName,
       detectedLanguage: input.detectedLanguage,
       detectedBrowserAutomationFramework:
         input.detectedBrowserAutomationFramework,
@@ -53,6 +57,7 @@ export async function setUpPercyHandler(
       integrationType: input.integrationType,
       folderPaths: input.folderPaths || [],
       filePaths: input.filePaths || [],
+      uuid: null,
     });
 
     const authorization = getBrowserStackAuth(config);

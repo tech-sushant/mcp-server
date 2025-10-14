@@ -3,6 +3,12 @@ import { PercyIntegrationTypeEnum } from "./sdk-utils/common/types.js";
 import { BrowserStackConfig } from "../lib/types.js";
 import { getBrowserStackAuth } from "../lib/get-auth.js";
 import { fetchPercyToken } from "./sdk-utils/percy-web/fetchPercyToken.js";
+import { storedPercyResults } from "../lib/inmemory-store.js";
+import {
+  getFrameworkTestCommand,
+  PERCY_FALLBACK_STEPS,
+} from "./sdk-utils/percy-web/constants.js";
+import path from "path";
 
 export async function runPercyScan(
   args: {
@@ -18,25 +24,22 @@ export async function runPercyScan(
     type: integrationType,
   });
 
-  const steps: string[] = [generatePercyTokenInstructions(percyToken)];
+  // Check if we have stored data and project matches
+  const stored = storedPercyResults.get();
 
-  if (instruction) {
-    steps.push(
-      `Use the provided test command with Percy:\n${instruction}`,
-      `If this command fails or is incorrect, fall back to the default approach below.`,
-    );
-  }
+  // Compute if we have updated files to run
+  const hasUpdatedFiles = checkForUpdatedFiles(stored, projectName);
+  const updatedFiles = hasUpdatedFiles ? getUpdatedFiles(stored) : [];
 
-  steps.push(
-    `Attempt to infer the project's test command from context (high confidence commands first):
-    - Java → mvn test
-    - Python → pytest
-    - Node.js → npm test or yarn test
-    - Cypress → cypress run
-    or from package.json scripts`,
-    `Wrap the inferred command with Percy along with label: \nnpx percy exec --labels=mcp -- <test command>`,
-    `If the test command cannot be inferred confidently, ask the user directly for the correct test command.`,
-  );
+  // Build steps array with conditional spread
+  const steps = [
+    generatePercyTokenInstructions(percyToken),
+    ...(hasUpdatedFiles ? generateUpdatedFilesSteps(stored, updatedFiles) : []),
+    ...(instruction && !hasUpdatedFiles
+      ? generateInstructionSteps(instruction)
+      : []),
+    ...(!hasUpdatedFiles ? PERCY_FALLBACK_STEPS : []),
+  ];
 
   const instructionContext = steps
     .map((step, index) => `${index + 1}. ${step}`)
@@ -58,4 +61,58 @@ function generatePercyTokenInstructions(percyToken: string): string {
 export PERCY_TOKEN="${percyToken}"
 
 (For Windows: use 'setx PERCY_TOKEN "${percyToken}"' or 'set PERCY_TOKEN=${percyToken}' as appropriate.)`;
+}
+
+const toAbs = (p: string): string | undefined =>
+  p ? path.resolve(p) : undefined;
+
+function checkForUpdatedFiles(
+  stored: any, // storedPercyResults structure
+  projectName: string,
+): boolean {
+  const projectMatches = stored?.projectName === projectName;
+  return (
+    projectMatches &&
+    stored?.uuid &&
+    stored[stored.uuid] &&
+    Object.values(stored[stored.uuid]).some((status) => status === true)
+  );
+}
+
+function getUpdatedFiles(stored: any): string[] {
+  const updatedFiles: string[] = [];
+  const fileStatusMap = stored[stored.uuid!];
+
+  Object.entries(fileStatusMap).forEach(([filePath, status]) => {
+    if (status === true) {
+      updatedFiles.push(filePath);
+    }
+  });
+
+  return updatedFiles;
+}
+
+function generateUpdatedFilesSteps(
+  stored: any,
+  updatedFiles: string[],
+): string[] {
+  const filesToRun = updatedFiles.map(toAbs).filter(Boolean) as string[];
+  const { detectedLanguage, detectedTestingFramework } = stored;
+  const exampleCommand = getFrameworkTestCommand(
+    detectedLanguage,
+    detectedTestingFramework,
+  );
+
+  return [
+    `Run only the updated files with Percy:\n` +
+      `Example: ${exampleCommand} -- <file1> <file2> ...`,
+    `Updated files to run:\n${filesToRun.join("\n")}`,
+  ];
+}
+
+function generateInstructionSteps(instruction: string): string[] {
+  return [
+    `Use the provided test command with Percy:\n${instruction}`,
+    `If this command fails or is incorrect, fall back to the default approach below.`,
+  ];
 }

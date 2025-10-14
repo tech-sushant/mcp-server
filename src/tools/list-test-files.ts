@@ -1,5 +1,5 @@
 import { listTestFiles } from "./percy-snapshot-utils/detect-test-files.js";
-import { testFilePathsMap, storedPercyResults } from "../lib/inmemory-store.js";
+import { storedPercyResults } from "../lib/inmemory-store.js";
 import { updateFileAndStep } from "./percy-snapshot-utils/utils.js";
 import { percyWebSetupInstructions } from "./sdk-utils/percy-web/handler.js";
 import crypto from "crypto";
@@ -45,7 +45,12 @@ export async function addListTestFiles(): Promise<CallToolResult> {
   }
 
   if (testFiles.length === 1) {
-    const result = await updateFileAndStep(testFiles[0],0,1,percyWebSetupInstructions);
+    const result = await updateFileAndStep(
+      testFiles[0],
+      0,
+      1,
+      percyWebSetupInstructions,
+    );
     return {
       content: result,
     };
@@ -53,7 +58,18 @@ export async function addListTestFiles(): Promise<CallToolResult> {
 
   // For multiple files, use the UUID workflow
   const uuid = crypto.randomUUID();
-  testFilePathsMap.set(uuid, testFiles);
+
+  // Store files in the unified structure with initial status false (not updated)
+  const fileStatusMap: { [key: string]: boolean } = {};
+  testFiles.forEach((file) => {
+    fileStatusMap[file] = false; // false = not updated, true = updated
+  });
+
+  // Update storedPercyResults with single UUID for the project
+  const updatedStored = { ...storedResults };
+  updatedStored.uuid = uuid; // Store the UUID reference
+  updatedStored[uuid] = fileStatusMap; // Store files under the UUID key
+  storedPercyResults.set(updatedStored);
 
   return {
     content: [
