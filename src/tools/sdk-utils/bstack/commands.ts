@@ -99,6 +99,18 @@ Alternative setup for Gradle users:
 ${GRADLE_SETUP_INSTRUCTIONS}`;
 }
 
+function getPythonSDKInstructions(
+  username: string,
+  accessKey: string,
+): string {
+  return `---STEP---
+Install BrowserStack Python SDK and setup:
+\`\`\`bash
+pip install browserstack-sdk
+browserstack-sdk setup --username "${username}" --key "${accessKey}"
+\`\`\``;
+}
+
 // Main function to get SDK setup commands based on language and framework
 export function getSDKPrefixCommand(
   language: SDKSupportedLanguage,
@@ -112,7 +124,8 @@ export function getSDKPrefixCommand(
 
     case "java":
       return getJavaSDKInstructions(framework, username, accessKey);
-
+    case "python":
+      return getPythonSDKInstructions(username, accessKey);
     default:
       return "";
   }
