@@ -4,7 +4,7 @@ import { ConfigMapping } from "../common/types.js";
  * ---------- PYTHON INSTRUCTIONS ----------
  */
 
-export const pythonInstructions = (username: string, accessKey: string) => {
+export const pythonInstructions = () => {
   const setup = `
 ---STEP---
 
@@ -32,7 +32,7 @@ browserstack-sdk pytest <path-to-test-directory>
 };
 
 export const generatePythonFrameworkInstructions =
-  (framework: string) => (username: string, accessKey: string) => {
+  (framework: string) => () => {
     const setup = `
 ---STEP---
 
