@@ -316,6 +316,14 @@ export async function validateDevices(
     validatedEnvironments.push(validatedEnv);
   }
 
+  if (framework === SDKSupportedBrowserAutomationFrameworkEnum.playwright) {
+    validatedEnvironments.forEach((env) => {
+      if (env.browser) {
+        env.browser = env.browser.toLowerCase();
+      }
+    });
+  }
+
   return validatedEnvironments;
 }
 

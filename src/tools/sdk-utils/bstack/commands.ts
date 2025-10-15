@@ -99,10 +99,7 @@ Alternative setup for Gradle users:
 ${GRADLE_SETUP_INSTRUCTIONS}`;
 }
 
-function getPythonSDKInstructions(
-  username: string,
-  accessKey: string,
-): string {
+function getPythonSDKInstructions(username: string, accessKey: string): string {
   return `---STEP---
 Install BrowserStack Python SDK and setup:
 \`\`\`bash

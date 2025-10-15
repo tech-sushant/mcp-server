@@ -27,6 +27,13 @@ export function resolveVersion(requested: string, available: string[]): string {
     return requested;
   }
 
+  const caseInsensitiveMatch = uniq.find(
+    (v) => v.toLowerCase() === requested.toLowerCase(),
+  );
+  if (caseInsensitiveMatch) {
+    return caseInsensitiveMatch;
+  }
+
   // Try major version matching (e.g., "14" matches "14.0", "14.1", etc.)
   const reqNum = parseFloat(requested);
   if (!isNaN(reqNum)) {
