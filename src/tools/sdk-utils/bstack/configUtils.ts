@@ -13,7 +13,7 @@ export function generateBrowserStackYMLInstructions(config: {
   const platformConfigs = generatePlatformConfigs(config);
 
   const stepTitle =
-    "Create a browserstack.yml file in the project root with your validated device configurations:";
+    "Create a browserstack.yml file in the project root with your validated device configurations:If already exists, update it with the following content for devices and project details.";
 
   const buildName = `${projectName}-Build`;
 

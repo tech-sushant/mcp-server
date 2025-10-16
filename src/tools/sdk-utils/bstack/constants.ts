@@ -4,20 +4,13 @@ import { ConfigMapping } from "../common/types.js";
  * ---------- PYTHON INSTRUCTIONS ----------
  */
 
-export const pythonInstructions = (username: string, accessKey: string) => {
+export const pythonInstructions = () => {
   const setup = `
 ---STEP---
 
 Install the BrowserStack SDK:
 \`\`\`bash
 python3 -m pip install browserstack-sdk
-\`\`\`
-
----STEP---
-
-Setup the BrowserStack SDK with your credentials:
-\`\`\`bash
-browserstack-sdk setup --username "${username}" --key "${accessKey}"
 \`\`\`
 `;
 
@@ -26,7 +19,12 @@ browserstack-sdk setup --username "${username}" --key "${accessKey}"
 
 Run your tests on BrowserStack:
 \`\`\`bash
-browserstack-sdk python <path-to-test-file>
+browserstack-sdk pytest -s tests/<example_test>.py
+\`\`\`
+
+Or run all tests in a directory:
+\`\`\`bash
+browserstack-sdk pytest <path-to-test-directory>
 \`\`\`
 `;
 
@@ -34,7 +32,7 @@ browserstack-sdk python <path-to-test-file>
 };
 
 export const generatePythonFrameworkInstructions =
-  (framework: string) => (username: string, accessKey: string) => {
+  (framework: string) => () => {
     const setup = `
 ---STEP---
 
@@ -42,13 +40,6 @@ Install the BrowserStack SDK:
 
 \`\`\`bash
 python3 -m pip install browserstack-sdk
-\`\`\`
-
----STEP---
-
-Setup the BrowserStack SDK with framework-specific configuration:
-\`\`\`bash
-browserstack-sdk setup --framework "${framework}" --username "${username}" --key "${accessKey}"
 \`\`\`
 `;
 
