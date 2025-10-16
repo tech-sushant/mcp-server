@@ -86,20 +86,6 @@ export async function runBstackSDKOnly(
     });
   }
 
-  const ymlInstructions = generateBrowserStackYMLInstructions({
-    validatedEnvironments,
-    enablePercy: false,
-    projectName: input.projectName,
-  });
-
-  if (ymlInstructions) {
-    steps.push({
-      type: "instruction",
-      title: "Configure browserstack.yml",
-      content: ymlInstructions,
-    });
-  }
-
   const frameworkInstructions = getInstructionsForProjectConfiguration(
     input.detectedBrowserAutomationFramework as SDKSupportedBrowserAutomationFramework,
     input.detectedTestingFramework as SDKSupportedTestingFramework,
@@ -116,7 +102,26 @@ export async function runBstackSDKOnly(
         content: frameworkInstructions.setup,
       });
     }
+  }
 
+  const ymlInstructions = generateBrowserStackYMLInstructions(
+    {
+      validatedEnvironments,
+      enablePercy: false,
+      projectName: input.projectName,
+    },
+    config,
+  );
+
+  if (ymlInstructions) {
+    steps.push({
+      type: "instruction",
+      title: "Configure browserstack.yml",
+      content: ymlInstructions,
+    });
+  }
+
+  if (frameworkInstructions) {
     if (frameworkInstructions.run && !isPercyAutomate) {
       steps.push({
         type: "instruction",
