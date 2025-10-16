@@ -1,13 +1,22 @@
 import { ValidatedEnvironment } from "../common/device-validator.js";
+import { BrowserStackConfig } from "../../../lib/types.js";
+import { getBrowserStackAuth } from "../../../lib/get-auth.js";
 
-export function generateBrowserStackYMLInstructions(config: {
-  validatedEnvironments?: ValidatedEnvironment[];
-  platforms?: string[];
-  enablePercy?: boolean;
-  projectName: string;
-}): string {
+export function generateBrowserStackYMLInstructions(
+  config: {
+    validatedEnvironments?: ValidatedEnvironment[];
+    platforms?: string[];
+    enablePercy?: boolean;
+    projectName: string;
+  },
+  browserStackConfig: BrowserStackConfig,
+): string {
   const enablePercy = config.enablePercy || false;
   const projectName = config.projectName || "BrowserStack Automate Build";
+
+  // Get credentials from config
+  const authString = getBrowserStackAuth(browserStackConfig);
+  const [username, accessKey] = authString.split(":");
 
   // Generate platform configurations using the utility function
   const platformConfigs = generatePlatformConfigs(config);
@@ -21,6 +30,9 @@ export function generateBrowserStackYMLInstructions(config: {
 # ======================
 # BrowserStack Reporting
 # ======================
+
+userName: ${username}
+accessKey: ${accessKey}
 
 # TODO: Replace these sample values with your actual project details
 projectName: ${projectName}

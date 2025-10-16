@@ -32,7 +32,7 @@ browserstack-sdk pytest <path-to-test-directory>
 };
 
 export const generatePythonFrameworkInstructions =
-  (framework: string) => () => {
+  (framework: string) => (username: string, accessKey: string) => {
     const setup = `
 ---STEP---
 
@@ -40,6 +40,13 @@ Install the BrowserStack SDK:
 
 \`\`\`bash
 python3 -m pip install browserstack-sdk
+\`\`\`
+
+---STEP---
+
+Setup the BrowserStack SDK with framework-specific configuration:
+\`\`\`bash
+browserstack-sdk setup --framework "${framework}" --username "${username}" --key "${accessKey}"
 \`\`\`
 `;
 
