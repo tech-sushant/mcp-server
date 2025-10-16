@@ -6,7 +6,7 @@
     "url": "https://github.com/browserstack/mcp-server",
     "source": "github"
   },
-  "version": "1.2.6",
+  "version": "1.0.0",
   "packages": [
     {
       "registryType": "npm",
