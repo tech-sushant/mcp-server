@@ -8,11 +8,15 @@ import { runPercyWeb } from "./percy-web/handler.js";
 import { runPercyAutomateOnly } from "./percy-automate/handler.js";
 import { runBstackSDKOnly } from "./bstack/sdkHandler.js";
 import { runPercyWithBrowserstackSDK } from "./percy-bstack/handler.js";
-import { checkPercyIntegrationSupport } from "./common/utils.js";
+import {
+  checkPercyIntegrationSupport,
+  validatePercyPathandFolders,
+} from "./common/utils.js";
 import {
   SetUpPercySchema,
   RunTestsOnBrowserStackSchema,
 } from "./common/schema.js";
+import { storedPercyResults } from "../../lib/inmemory-store.js";
 import {
   getBootstrapFailedMessage,
   percyUnsupportedResult,
@@ -39,7 +43,27 @@ export async function setUpPercyHandler(
 ): Promise<CallToolResult> {
   try {
     const input = SetUpPercySchema.parse(rawInput);
+    validatePercyPathandFolders(input);
+
+    // Clear any previous Percy results for a fresh start
+    storedPercyResults.clear();
+
+    storedPercyResults.set({
+      projectName: input.projectName,
+      detectedLanguage: input.detectedLanguage,
+      detectedBrowserAutomationFramework:
+        input.detectedBrowserAutomationFramework,
+      detectedTestingFramework: input.detectedTestingFramework,
+      integrationType: input.integrationType,
+      folderPaths: input.folderPaths || [],
+      filePaths: input.filePaths || [],
+      testFiles: {},
+    });
+
     const authorization = getBrowserStackAuth(config);
+
+    const folderPaths = input.folderPaths || [];
+    const filePaths = input.filePaths || [];
 
     const percyInput = {
       projectName: input.projectName,
@@ -48,7 +72,8 @@ export async function setUpPercyHandler(
         input.detectedBrowserAutomationFramework,
       detectedTestingFramework: input.detectedTestingFramework,
       integrationType: input.integrationType,
-      folderPaths: input.folderPaths || [],
+      folderPaths,
+      filePaths,
     };
 
     // Check for Percy Web integration support

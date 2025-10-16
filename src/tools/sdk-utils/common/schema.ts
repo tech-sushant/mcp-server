@@ -36,8 +36,15 @@ export const SetUpPercyParamsShape = {
     ),
   folderPaths: z
     .array(z.string())
+    .optional()
     .describe(
       "An array of absolute folder paths containing UI test files. If not provided, analyze codebase for UI test folders by scanning for test patterns which contain UI test cases as per framework. Return empty array if none found.",
+    ),
+  filePaths: z
+    .array(z.string())
+    .optional()
+    .describe(
+      "An array of absolute file paths to specific UI test files. Use this when you want to target specific test files rather than entire folders. If not provided, will use folderPaths instead.",
     ),
 };
 

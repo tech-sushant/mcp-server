@@ -921,3 +921,51 @@ ${csharpPlaywrightInstructionsSnapshot}
 To run the Percy build, call the tool runPercyScan with the appropriate test command (e.g. npx percy exec -- <command to run the test script file>).
 ${percyReviewSnapshotsStep}
 `;
+
+export function getFrameworkTestCommand(
+  language: string,
+  framework: string,
+): string {
+  const percyPrefix = "npx percy exec --labels=mcp --";
+
+  const nodeCommands: Record<string, string> = {
+    cypress: "cypress run",
+    playwright: "playwright test",
+    webdriverio: "wdio",
+    puppeteer: "node",
+    testcafe: "testcafe",
+    nightwatch: "nightwatch",
+    protractor: "protractor",
+    gatsby: "gatsby build",
+    storybook: "storybook build",
+    ember: "ember test",
+    default: "npm test",
+  };
+
+  const languageMap: Record<string, string> = {
+    python: "python -m pytest",
+    java: "mvn test",
+    ruby: "bundle exec rspec",
+    csharp: "dotnet test",
+  };
+
+  if (language === "nodejs") {
+    const cmd = nodeCommands[framework] ?? nodeCommands.default;
+    return `${percyPrefix} ${cmd}`;
+  }
+
+  const cmd = languageMap[language];
+  return cmd ? `${percyPrefix} ${cmd}` : `${percyPrefix} <test-runner>`;
+}
+
+export const PERCY_FALLBACK_STEPS = [
+  `Attempt to infer the project's test command from context (high confidence commands first):
+- Node.js: npm test, cypress run, npx playwright test, npx wdio, npx testcafe, npx nightwatch, npx protractor, ember test, npx gatsby build, npx storybook build
+- Python: python -m pytest
+- Java: mvn test
+- Ruby: bundle exec rspec
+- C#: dotnet test
+or from package.json scripts`,
+  `Wrap the inferred command with Percy along with label: \nnpx percy exec --labels=mcp -- <test command>`,
+  `If the test command cannot be inferred confidently, ask the user directly for the correct test command.`,
+];

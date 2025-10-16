@@ -19,7 +19,7 @@ export const PERCY_REPLACE_REGEX =
   /Invoke listTestFiles\(\) with the provided directories[\s\S]*?- DO NOT STOP until you add commands in all the files or you reach end of the files\./;
 
 export const PERCY_SNAPSHOT_INSTRUCTION = `
-Invoke listTestFiles() with the provided directories from user to gather all test files in memory and obtain the generated UUID ---STEP---
+Invoke listTestFiles() with the provided directories from user to gather all test files in memory ---STEP---
 Process files in STRICT sequential order using tool addPercySnapshotCommands() with below instructions:
 - Start with index 0
 - Then index 1  

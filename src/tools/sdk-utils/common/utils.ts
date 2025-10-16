@@ -11,6 +11,7 @@ import {
   PercyAutomateNotImplementedType,
 } from "./types.js";
 import { IMPORTANT_SETUP_WARNING } from "./index.js";
+import { PackageJsonVersion } from "../../../index.js";
 
 export function checkPercyIntegrationSupport(input: {
   integrationType: string;
@@ -108,14 +109,14 @@ export function getPercyAutomateNotImplementedMessage(
 
 export function getBootstrapFailedMessage(
   error: unknown,
-  context: { config: unknown; percyMode?: string; sdkVersion?: string },
+  context: { config: unknown; percyMode?: string },
 ): string {
   const error_message =
     error instanceof Error ? error.message : "unknown error";
   return `Failed to bootstrap project with BrowserStack SDK.
 Error: ${error_message}
 Percy Mode: ${context.percyMode ?? "automate"}
-SDK Version: ${context.sdkVersion ?? "N/A"}
+MCP Version: ${PackageJsonVersion}
 Please open an issue on GitHub if the problem persists.`;
 }
 
@@ -135,4 +136,18 @@ export function percyUnsupportedResult(
     isError: true,
     shouldSkipFormatting: true,
   };
+}
+
+export function validatePercyPathandFolders(input: any): void {
+  const hasFolderPaths = input.folderPaths && input.folderPaths.length > 0;
+  const hasFilePaths = input.filePaths && input.filePaths.length > 0;
+
+  if (!hasFolderPaths && !hasFilePaths) {
+    throw new Error(
+      "Please provide either:\n" +
+        "• folderPaths: Array of directory paths containing test files\n" +
+        "• filePaths: Array of specific test file paths\n\n" +
+        "Example: { filePaths: ['/path/to/test.spec.js'] }",
+    );
+  }
 }
