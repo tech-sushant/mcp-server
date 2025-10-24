@@ -133,7 +133,7 @@ function openBrowser(launchUrl: string): void {
       process.platform === "darwin"
         ? ["open", launchUrl]
         : process.platform === "win32"
-          ? ["cmd", "/c", "start", launchUrl]
+          ? ["cmd", "/c", "start", `""`, `"${launchUrl}"`]
           : ["xdg-open", launchUrl];
 
     // nosemgrep:javascript.lang.security.detect-child-process.detect-child-process
