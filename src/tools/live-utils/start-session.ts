@@ -94,7 +94,7 @@ function buildDesktopUrl(
     resolution: "responsive-mode",
     speed: "1",
     local: isLocal ? "true" : "false",
-    start: "true",
+    ...(isLocal ? {} : { start: "true" }),
   });
   return `https://live.browserstack.com/dashboard#${params.toString()}`;
 }
@@ -120,7 +120,7 @@ function buildMobileUrl(
     scale_to_fit: "true",
     speed: "1",
     local: isLocal ? "true" : "false",
-    start: "true",
+    ...(isLocal ? {} : { start: "true" }),
   });
   return `https://live.browserstack.com/dashboard#${params.toString()}`;
 }
