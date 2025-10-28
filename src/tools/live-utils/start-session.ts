@@ -94,7 +94,7 @@ function buildDesktopUrl(
     resolution: "responsive-mode",
     speed: "1",
     local: isLocal ? "true" : "false",
-    start: "true",
+    ...(isLocal ? {} : { start: "true" }),
   });
   return `https://live.browserstack.com/dashboard#${params.toString()}`;
 }
@@ -120,7 +120,7 @@ function buildMobileUrl(
     scale_to_fit: "true",
     speed: "1",
     local: isLocal ? "true" : "false",
-    start: "true",
+    ...(isLocal ? {} : { start: "true" }),
   });
   return `https://live.browserstack.com/dashboard#${params.toString()}`;
 }
@@ -140,6 +140,7 @@ function openBrowser(launchUrl: string): void {
     const child = childProcess.spawn(command[0], command.slice(1), {
       stdio: "ignore",
       detached: true,
+      ...(process.platform === "win32" ? { shell: true } : {}),
     });
     child.on("error", (err) =>
       logger.error(`Failed to open browser: ${err}. URL: ${launchUrl}`),
