@@ -2,7 +2,10 @@ import { z } from "zod";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
-import { validateAppAutomateDevices } from "../../sdk-utils/common/device-validator.js";
+import {
+  validateAppAutomateDevices,
+  convertMobileDevicesToTuples,
+} from "../../sdk-utils/common/device-validator.js";
 
 import {
   getAppUploadInstruction,
@@ -38,18 +41,18 @@ export async function setupAppAutomateHandler(
   const testingFramework =
     input.detectedTestingFramework as AppSDKSupportedTestingFramework;
   const language = input.detectedLanguage as AppSDKSupportedLanguage;
-  const inputDevices = (input.devices as Array<Array<string>>) ?? [];
   const appPath = input.appPath as string;
   const framework = input.detectedFramework as SupportedFramework;
 
   //Validating if supported framework or not
   validateSupportforAppAutomate(framework, language, testingFramework);
 
-  // Use default mobile devices when array is empty
-  const devices =
+  // Convert device objects to tuples for validator
+  const inputDevices = input.devices || [];
+  const devices: Array<Array<string>> =
     inputDevices.length === 0
       ? [["android", "Samsung Galaxy S24", "latest"]]
-      : inputDevices;
+      : convertMobileDevicesToTuples(inputDevices);
 
   // Validate devices against real BrowserStack device data
   const validatedEnvironments = await validateAppAutomateDevices(devices);

@@ -5,6 +5,7 @@ import {
   AppSDKSupportedLanguageEnum,
   AppSDKSupportedPlatformEnum,
 } from "./index.js";
+import { MobileDeviceSchema } from "../../sdk-utils/common/schema.js";
 
 // App Automate specific device configurations
 export const APP_DEVICE_CONFIGS = {
@@ -50,34 +51,11 @@ export const SETUP_APP_AUTOMATE_SCHEMA = {
     ),
 
   devices: z
-    .array(
-      z.union([
-        // Android: [android, deviceName, osVersion]
-        z.tuple([
-          z
-            .literal(AppSDKSupportedPlatformEnum.android)
-            .describe("Platform identifier: 'android'"),
-          z
-            .string()
-            .describe(
-              "Device name, e.g. 'Samsung Galaxy S24', 'Google Pixel 8'",
-            ),
-          z.string().describe("Android version, e.g. '14', '16', 'latest'"),
-        ]),
-        // iOS: [ios, deviceName, osVersion]
-        z.tuple([
-          z
-            .literal(AppSDKSupportedPlatformEnum.ios)
-            .describe("Platform identifier: 'ios'"),
-          z.string().describe("Device name, e.g. 'iPhone 15', 'iPhone 14 Pro'"),
-          z.string().describe("iOS version, e.g. '17', '16', 'latest'"),
-        ]),
-      ]),
-    )
+    .array(MobileDeviceSchema)
     .max(3)
     .default([])
     .describe(
-      "Tuples describing target mobile devices. Add device only when user asks explicitly for it. Defaults to [] . Example: [['android', 'Samsung Galaxy S24', '14'], ['ios', 'iPhone 15', '17']]",
+      "Mobile device objects array. Use the object format directly - no transformation needed. Add only when user explicitly requests devices. Examples: [{ platform: 'android', deviceName: 'Samsung Galaxy S24', osVersion: '14' }] or [{ platform: 'ios', deviceName: 'iPhone 15', osVersion: '17' }].",
     ),
 
   appPath: z

@@ -48,66 +48,63 @@ export const SetUpPercyParamsShape = {
     ),
 };
 
+// Shared mobile device schema for App Automate (no browser field)
+export const MobileDeviceSchema = z.discriminatedUnion("platform", [
+  z.object({
+    platform: z.literal("android"),
+    deviceName: z.string().describe("Device name, e.g. 'Samsung Galaxy S24', 'Google Pixel 8'"),
+    osVersion: z.string().describe("Android version, e.g. '14', '16', 'latest'"),
+  }),
+  z.object({
+    platform: z.literal("ios"),
+    deviceName: z.string().describe("Device name, e.g. 'iPhone 15', 'iPhone 14 Pro'"),
+    osVersion: z.string().describe("iOS version, e.g. '17', '16', 'latest'"),
+  }),
+]);
+
+const DeviceSchema = z.discriminatedUnion("platform", [
+  z.object({
+    platform: z.literal("windows"),
+    osVersion: z.string().describe("Windows version, e.g. '10', '11'"),
+    browser: z.string().describe("Browser name, e.g. 'chrome', 'firefox', 'edge'"),
+    browserVersion: z.string().describe("Browser version, e.g. '132', 'latest', 'oldest'"),
+  }),
+  z.object({
+    platform: z.literal("android"),
+    deviceName: z.string().describe("Device name, e.g. 'Samsung Galaxy S24'"),
+    osVersion: z.string().describe("Android version, e.g. '14', '16', 'latest'"),
+    browser: z.string().describe("Browser name, e.g. 'chrome', 'samsung browser'"),
+  }),
+  z.object({
+    platform: z.literal("ios"),
+    deviceName: z.string().describe("Device name, e.g. 'iPhone 12 Pro'"),
+    osVersion: z.string().describe("iOS version, e.g. '17', 'latest'"),
+    browser: z.string().describe("Browser name, typically 'safari'"),
+  }),
+  z.object({
+    platform: z.enum(["mac", "macos"]),
+    osVersion: z.string().describe("macOS version name, e.g. 'Sequoia', 'Ventura'"),
+    browser: z.string().describe("Browser name, e.g. 'safari', 'chrome'"),
+    browserVersion: z.string().describe("Browser version, e.g. 'latest'"),
+  }),
+]);
+
 export const RunTestsOnBrowserStackParamsShape = {
   projectName: z
     .string()
     .describe("A single name for your project to organize all your tests."),
   detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
-  detectedBrowserAutomationFramework: z.nativeEnum(
-    SDKSupportedBrowserAutomationFrameworkEnum,
-  ),
+  detectedBrowserAutomationFramework: z.nativeEnum(SDKSupportedBrowserAutomationFrameworkEnum),
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
   devices: z
-    .array(
-      z.union([
-        // Windows: [windows, osVersion, browser, browserVersion]
-        z.tuple([
-          z
-            .nativeEnum(WindowsPlatformEnum)
-            .describe("Platform identifier: 'windows'"),
-          z.string().describe("Windows version, e.g. '10', '11'"),
-          z.string().describe("Browser name, e.g. 'chrome', 'firefox', 'edge'"),
-          z
-            .string()
-            .describe("Browser version, e.g. '132', 'latest', 'oldest'"),
-        ]),
-        // Android: [android, name, model, osVersion, browser]
-        z.tuple([
-          z
-            .literal(PlatformEnum.ANDROID)
-            .describe("Platform identifier: 'android'"),
-          z
-            .string()
-            .describe(
-              "Device name, e.g. 'Samsung Galaxy S24', 'Google Pixel 8'",
-            ),
-          z.string().describe("Android version, e.g. '14', '16', 'latest'"),
-          z.string().describe("Browser name, e.g. 'chrome', 'samsung browser'"),
-        ]),
-        // iOS: [ios, name, model, osVersion, browser]
-        z.tuple([
-          z.literal(PlatformEnum.IOS).describe("Platform identifier: 'ios'"),
-          z.string().describe("Device name, e.g. 'iPhone 12 Pro'"),
-          z.string().describe("iOS version, e.g. '17', 'latest'"),
-          z.string().describe("Browser name, typically 'safari'"),
-        ]),
-        // macOS: [mac|macos, name, model, browser, browserVersion]
-        z.tuple([
-          z
-            .nativeEnum(MacOSPlatformEnum)
-            .describe("Platform identifier: 'mac' or 'macos'"),
-          z.string().describe("macOS version name, e.g. 'Sequoia', 'Ventura'"),
-          z.string().describe("Browser name, e.g. 'safari', 'chrome'"),
-          z.string().describe("Browser version, e.g. 'latest'"),
-        ]),
-      ]),
-    )
+    .array(DeviceSchema)
     .max(3)
     .default([])
     .describe(
-      "Preferred tuples of target devices.Add device only when user asks explicitly for it. Defaults to [] . Example: [['windows', '11', 'chrome', 'latest']]",
+      "Device objects array. Use the object format directly - no transformation needed. Add only when user explicitly requests devices. Examples: [{ platform: 'windows', osVersion: '11', browser: 'chrome', browserVersion: 'latest' }] or [{ platform: 'android', deviceName: 'Samsung Galaxy S24', osVersion: '14', browser: 'chrome' }].",
     ),
 };
+
 
 export const SetUpPercySchema = z.object(SetUpPercyParamsShape);
 

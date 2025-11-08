@@ -230,10 +230,19 @@ export async function validateDevices(
   }
 
   // Determine what data we need to fetch
-  const needsDesktop = devices.some((env) =>
+  // Normalize "mac" to "macos" for consistency
+  const normalizedDevices = devices.map((env) => {
+    const platform = (env[0] || "").toLowerCase();
+    if (platform === "mac") {
+      return ["macos", ...env.slice(1)];
+    }
+    return env;
+  });
+  
+  const needsDesktop = normalizedDevices.some((env) =>
     ["windows", "macos"].includes((env[0] || "").toLowerCase()),
   );
-  const needsMobile = devices.some((env) =>
+  const needsMobile = normalizedDevices.some((env) =>
     ["android", "ios"].includes((env[0] || "").toLowerCase()),
   );
 
@@ -275,7 +284,7 @@ export async function validateDevices(
     iosIndex = createMobileIndex(iosEntries);
   }
 
-  for (const env of devices) {
+  for (const env of normalizedDevices) {
     const discriminator = (env[0] || "").toLowerCase();
     let validatedEnv: ValidatedEnvironment;
 
@@ -620,6 +629,23 @@ export async function validateAppAutomateDevices(
 // ============================================================================
 // SHARED UTILITY FUNCTIONS
 // ============================================================================
+
+/**
+ * Convert mobile device objects to tuples for validators
+ * @param devices Array of device objects with platform, deviceName, osVersion
+ * @returns Array of tuples [platform, deviceName, osVersion]
+ */
+export function convertMobileDevicesToTuples(
+  devices: Array<{ platform: string; deviceName: string; osVersion: string }>,
+): Array<Array<string>> {
+  return devices.map((device) => {
+    if (device.platform === "android" || device.platform === "ios") {
+      return [device.platform, device.deviceName, device.osVersion];
+    } else {
+      throw new Error(`Unsupported platform: ${device.platform}`);
+    }
+  });
+}
 
 // Exact browser validation (preferred for structured fields)
 function validateBrowserExact(

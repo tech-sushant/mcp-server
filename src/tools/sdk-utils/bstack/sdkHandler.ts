@@ -22,13 +22,44 @@ export async function runBstackSDKOnly(
   const authString = getBrowserStackAuth(config);
   const [username, accessKey] = authString.split(":");
 
-  // Validate devices against real BrowserStack device data
-  const tupleTargets = (input as any).devices as
-    | Array<Array<string>>
-    | undefined;
+  // Convert device objects to tuples for validator
+  const devices = input.devices || [];
+  const tupleTargets: Array<Array<string>> = devices.map((device) => {
+    if (device.platform === "windows") {
+      return [
+        "windows",
+        device.osVersion,
+        device.browser,
+        device.browserVersion || "latest",
+      ];
+    } else if (device.platform === "mac" || device.platform === "macos") {
+      return [
+        "macos",
+        device.osVersion,
+        device.browser,
+        device.browserVersion || "latest",
+      ];
+    } else if (device.platform === "android") {
+      return [
+        "android",
+        device.deviceName,
+        device.osVersion,
+        device.browser || "chrome",
+      ];
+    } else if (device.platform === "ios") {
+      return [
+        "ios",
+        device.deviceName,
+        device.osVersion,
+        device.browser || "safari",
+      ];
+    } else {
+      throw new Error(`Unsupported platform: ${device.platform}`);
+    }
+  });
 
   const validatedEnvironments = await validateDevices(
-    tupleTargets || [],
+    tupleTargets,
     input.detectedBrowserAutomationFramework,
   );
 

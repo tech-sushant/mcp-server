@@ -9,7 +9,10 @@ import { maybeCompressBase64 } from "../lib/utils.js";
 import { remote } from "webdriverio";
 import { AppTestPlatform } from "./appautomate-utils/native-execution/types.js";
 import { setupAppAutomateHandler } from "./appautomate-utils/appium-sdk/handler.js";
-import { validateAppAutomateDevices } from "./sdk-utils/common/device-validator.js";
+import {
+  validateAppAutomateDevices,
+  convertMobileDevicesToTuples,
+} from "./sdk-utils/common/device-validator.js";
 
 import {
   SETUP_APP_AUTOMATE_DESCRIPTION,
@@ -378,7 +381,15 @@ export default function addAppAutomationTools(
           undefined,
           config,
         );
-        return await runAppTestsOnBrowserStack(args, config);
+        // Convert device objects to tuples for the handler
+        const devices: Array<Array<string>> =
+          (args.devices || []).length === 0
+            ? [["android", "Samsung Galaxy S24", "latest"]]
+            : convertMobileDevicesToTuples(args.devices || []);
+        return await runAppTestsOnBrowserStack(
+          { ...args, devices },
+          config,
+        );
       } catch (error) {
         trackMCP(
           "runAppTestsOnBrowserStack",
