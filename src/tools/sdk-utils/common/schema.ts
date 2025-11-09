@@ -52,12 +52,18 @@ export const SetUpPercyParamsShape = {
 export const MobileDeviceSchema = z.discriminatedUnion("platform", [
   z.object({
     platform: z.literal("android"),
-    deviceName: z.string().describe("Device name, e.g. 'Samsung Galaxy S24', 'Google Pixel 8'"),
-    osVersion: z.string().describe("Android version, e.g. '14', '16', 'latest'"),
+    deviceName: z
+      .string()
+      .describe("Device name, e.g. 'Samsung Galaxy S24', 'Google Pixel 8'"),
+    osVersion: z
+      .string()
+      .describe("Android version, e.g. '14', '16', 'latest'"),
   }),
   z.object({
     platform: z.literal("ios"),
-    deviceName: z.string().describe("Device name, e.g. 'iPhone 15', 'iPhone 14 Pro'"),
+    deviceName: z
+      .string()
+      .describe("Device name, e.g. 'iPhone 15', 'iPhone 14 Pro'"),
     osVersion: z.string().describe("iOS version, e.g. '17', '16', 'latest'"),
   }),
 ]);
@@ -66,7 +72,9 @@ const DeviceSchema = z.discriminatedUnion("platform", [
   z.object({
     platform: z.literal("windows"),
     osVersion: z.string().describe("Windows version, e.g. '10', '11'"),
-    browser: z.string().describe("Browser name, e.g. 'chrome', 'firefox', 'edge'"),
+    browser: z
+      .string()
+      .describe("Browser name, e.g. 'chrome', 'firefox', 'edge'"),
     browserVersion: z
       .string()
       .optional()
@@ -77,7 +85,9 @@ const DeviceSchema = z.discriminatedUnion("platform", [
     deviceName: z
       .string()
       .describe("Device name, e.g. 'Samsung Galaxy S24', 'Google Pixel 8'"),
-    osVersion: z.string().describe("Android version, e.g. '14', '16', 'latest'"),
+    osVersion: z
+      .string()
+      .describe("Android version, e.g. '14', '16', 'latest'"),
     browser: z
       .string()
       .optional()
@@ -89,14 +99,13 @@ const DeviceSchema = z.discriminatedUnion("platform", [
       .string()
       .describe("Device name, e.g. 'iPhone 15', 'iPhone 14 Pro'"),
     osVersion: z.string().describe("iOS version, e.g. '17', 'latest'"),
-    browser: z
-      .string()
-      .optional()
-      .describe("Browser name, typically 'safari'"),
+    browser: z.string().optional().describe("Browser name, typically 'safari'"),
   }),
   z.object({
     platform: z.literal("macos"),
-    osVersion: z.string().describe("macOS version name, e.g. 'Sequoia', 'Ventura'"),
+    osVersion: z
+      .string()
+      .describe("macOS version name, e.g. 'Sequoia', 'Ventura'"),
     browser: z.string().describe("Browser name, e.g. 'safari', 'chrome'"),
     browserVersion: z
       .string()
@@ -110,7 +119,9 @@ export const RunTestsOnBrowserStackParamsShape = {
     .string()
     .describe("A single name for your project to organize all your tests."),
   detectedLanguage: z.nativeEnum(SDKSupportedLanguageEnum),
-  detectedBrowserAutomationFramework: z.nativeEnum(SDKSupportedBrowserAutomationFrameworkEnum),
+  detectedBrowserAutomationFramework: z.nativeEnum(
+    SDKSupportedBrowserAutomationFrameworkEnum,
+  ),
   detectedTestingFramework: z.nativeEnum(SDKSupportedTestingFrameworkEnum),
   devices: z
     .array(DeviceSchema)
@@ -120,7 +131,6 @@ export const RunTestsOnBrowserStackParamsShape = {
       "Device objects array. Use the object format directly - no transformation needed. Add only when user explicitly requests devices. Examples: [{ platform: 'windows', osVersion: '11', browser: 'chrome', browserVersion: 'latest' }] or [{ platform: 'android', deviceName: 'Samsung Galaxy S24', osVersion: '14', browser: 'chrome' }].",
     ),
 };
-
 
 export const SetUpPercySchema = z.object(SetUpPercyParamsShape);
 

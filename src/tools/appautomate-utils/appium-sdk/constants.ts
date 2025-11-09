@@ -3,7 +3,6 @@ import {
   AppSDKSupportedFrameworkEnum,
   AppSDKSupportedTestingFrameworkEnum,
   AppSDKSupportedLanguageEnum,
-  AppSDKSupportedPlatformEnum,
 } from "./index.js";
 import { MobileDeviceSchema } from "../../sdk-utils/common/schema.js";
 

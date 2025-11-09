@@ -25,28 +25,29 @@ export async function runBstackSDKOnly(
   // Convert device objects to tuples for validator
   const devices = input.devices || [];
   const tupleTargets: Array<Array<string>> = devices.map((device) => {
-    if (device.platform === "windows") {
+    const platform = device.platform;
+    if (platform === "windows") {
       return [
         "windows",
         device.osVersion,
         device.browser,
         device.browserVersion || "latest",
       ];
-    } else if (device.platform === "macos") {
+    } else if (platform === "macos") {
       return [
         "macos",
         device.osVersion,
         device.browser,
         device.browserVersion || "latest",
       ];
-    } else if (device.platform === "android") {
+    } else if (platform === "android") {
       return [
         "android",
         device.deviceName,
         device.osVersion,
         device.browser || "chrome",
       ];
-    } else if (device.platform === "ios") {
+    } else if (platform === "ios") {
       return [
         "ios",
         device.deviceName,
@@ -54,7 +55,7 @@ export async function runBstackSDKOnly(
         device.browser || "safari",
       ];
     } else {
-      throw new Error(`Unsupported platform: ${device.platform}`);
+      throw new Error(`Unsupported platform: ${platform}`);
     }
   });
 

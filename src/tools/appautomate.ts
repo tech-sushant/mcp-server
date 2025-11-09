@@ -387,10 +387,7 @@ export default function addAppAutomationTools(
           args.devices.length === 0
             ? DEFAULT_MOBILE_DEVICE
             : convertMobileDevicesToTuples(args.devices);
-        return await runAppTestsOnBrowserStack(
-          { ...args, devices },
-          config,
-        );
+        return await runAppTestsOnBrowserStack({ ...args, devices }, config);
       } catch (error) {
         trackMCP(
           "runAppTestsOnBrowserStack",
