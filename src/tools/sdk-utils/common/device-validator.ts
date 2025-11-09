@@ -230,19 +230,10 @@ export async function validateDevices(
   }
 
   // Determine what data we need to fetch
-  // Normalize "mac" to "macos" for consistency
-  const normalizedDevices = devices.map((env) => {
-    const platform = (env[0] || "").toLowerCase();
-    if (platform === "mac") {
-      return ["macos", ...env.slice(1)];
-    }
-    return env;
-  });
-  
-  const needsDesktop = normalizedDevices.some((env) =>
+  const needsDesktop = devices.some((env) =>
     ["windows", "macos"].includes((env[0] || "").toLowerCase()),
   );
-  const needsMobile = normalizedDevices.some((env) =>
+  const needsMobile = devices.some((env) =>
     ["android", "ios"].includes((env[0] || "").toLowerCase()),
   );
 
@@ -284,7 +275,7 @@ export async function validateDevices(
     iosIndex = createMobileIndex(iosEntries);
   }
 
-  for (const env of normalizedDevices) {
+  for (const env of devices) {
     const discriminator = (env[0] || "").toLowerCase();
     let validatedEnv: ValidatedEnvironment;
 

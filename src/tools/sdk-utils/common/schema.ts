@@ -67,25 +67,41 @@ const DeviceSchema = z.discriminatedUnion("platform", [
     platform: z.literal("windows"),
     osVersion: z.string().describe("Windows version, e.g. '10', '11'"),
     browser: z.string().describe("Browser name, e.g. 'chrome', 'firefox', 'edge'"),
-    browserVersion: z.string().describe("Browser version, e.g. '132', 'latest', 'oldest'"),
+    browserVersion: z
+      .string()
+      .optional()
+      .describe("Browser version, e.g. '132', 'latest', 'oldest'"),
   }),
   z.object({
     platform: z.literal("android"),
-    deviceName: z.string().describe("Device name, e.g. 'Samsung Galaxy S24'"),
+    deviceName: z
+      .string()
+      .describe("Device name, e.g. 'Samsung Galaxy S24', 'Google Pixel 8'"),
     osVersion: z.string().describe("Android version, e.g. '14', '16', 'latest'"),
-    browser: z.string().describe("Browser name, e.g. 'chrome', 'samsung browser'"),
+    browser: z
+      .string()
+      .optional()
+      .describe("Browser name, e.g. 'chrome', 'samsung browser'"),
   }),
   z.object({
     platform: z.literal("ios"),
-    deviceName: z.string().describe("Device name, e.g. 'iPhone 12 Pro'"),
+    deviceName: z
+      .string()
+      .describe("Device name, e.g. 'iPhone 15', 'iPhone 14 Pro'"),
     osVersion: z.string().describe("iOS version, e.g. '17', 'latest'"),
-    browser: z.string().describe("Browser name, typically 'safari'"),
+    browser: z
+      .string()
+      .optional()
+      .describe("Browser name, typically 'safari'"),
   }),
   z.object({
-    platform: z.enum(["mac", "macos"]),
+    platform: z.literal("macos"),
     osVersion: z.string().describe("macOS version name, e.g. 'Sequoia', 'Ventura'"),
     browser: z.string().describe("Browser name, e.g. 'safari', 'chrome'"),
-    browserVersion: z.string().describe("Browser version, e.g. 'latest'"),
+    browserVersion: z
+      .string()
+      .optional()
+      .describe("Browser version, e.g. 'latest'"),
   }),
 ]);
 

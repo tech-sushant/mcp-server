@@ -32,7 +32,7 @@ export async function runBstackSDKOnly(
         device.browser,
         device.browserVersion || "latest",
       ];
-    } else if (device.platform === "mac" || device.platform === "macos") {
+    } else if (device.platform === "macos") {
       return [
         "macos",
         device.osVersion,
