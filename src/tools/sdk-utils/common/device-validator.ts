@@ -72,6 +72,11 @@ const DEFAULTS = {
   ios: { device: "iPhone 15", browser: "safari" },
 } as const;
 
+// Default mobile device tuple for App Automate when no devices are provided
+export const DEFAULT_MOBILE_DEVICE: Array<Array<string>> = [
+  ["android", "Samsung Galaxy S24", "latest"],
+];
+
 // Performance optimization: Indexed maps for faster lookups
 interface DesktopIndex {
   byOS: Map<string, DesktopBrowserEntry[]>;

@@ -5,6 +5,7 @@ import { getBrowserStackAuth } from "../../../lib/get-auth.js";
 import {
   validateAppAutomateDevices,
   convertMobileDevicesToTuples,
+  DEFAULT_MOBILE_DEVICE,
 } from "../../sdk-utils/common/device-validator.js";
 
 import {
@@ -48,11 +49,10 @@ export async function setupAppAutomateHandler(
   validateSupportforAppAutomate(framework, language, testingFramework);
 
   // Convert device objects to tuples for validator
-  const inputDevices = input.devices || [];
   const devices: Array<Array<string>> =
-    inputDevices.length === 0
-      ? [["android", "Samsung Galaxy S24", "latest"]]
-      : convertMobileDevicesToTuples(inputDevices);
+    input.devices.length === 0
+      ? DEFAULT_MOBILE_DEVICE
+      : convertMobileDevicesToTuples(input.devices);
 
   // Validate devices against real BrowserStack device data
   const validatedEnvironments = await validateAppAutomateDevices(devices);

@@ -12,6 +12,7 @@ import { setupAppAutomateHandler } from "./appautomate-utils/appium-sdk/handler.
 import {
   validateAppAutomateDevices,
   convertMobileDevicesToTuples,
+  DEFAULT_MOBILE_DEVICE,
 } from "./sdk-utils/common/device-validator.js";
 
 import {
@@ -383,9 +384,9 @@ export default function addAppAutomationTools(
         );
         // Convert device objects to tuples for the handler
         const devices: Array<Array<string>> =
-          (args.devices || []).length === 0
-            ? [["android", "Samsung Galaxy S24", "latest"]]
-            : convertMobileDevicesToTuples(args.devices || []);
+          args.devices.length === 0
+            ? DEFAULT_MOBILE_DEVICE
+            : convertMobileDevicesToTuples(args.devices);
         return await runAppTestsOnBrowserStack(
           { ...args, devices },
           config,
