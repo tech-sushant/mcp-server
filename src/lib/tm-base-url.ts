@@ -47,6 +47,6 @@ export async function getTMBaseURL(
   }
 
   throw new Error(
-    "Unable to connect to BrowserStack Test Management. Please check your credentials and network connection.",
+    "Unable to connect to BrowserStack Test Management. Please check your credentials and network connection.Please open an issue on GitHub if the problem persists",
   );
 }
