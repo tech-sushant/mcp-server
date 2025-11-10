@@ -1,5 +1,7 @@
 import { apiClient } from "./apiClient.js";
 import logger from "../logger.js";
+import { BrowserStackConfig } from "./types.js";
+import { getBrowserStackAuth } from "./get-auth.js";
 
 const TM_BASE_URLS = [
   "https://test-management.browserstack.com",
@@ -9,18 +11,25 @@ const TM_BASE_URLS = [
 
 let cachedBaseUrl: string | null = null;
 
-export async function getTMBaseURL(): Promise<string> {
+export async function getTMBaseURL(config: BrowserStackConfig): Promise<string> {
   if (cachedBaseUrl) {
     logger.debug(`Using cached TM base URL: ${cachedBaseUrl}`);
     return cachedBaseUrl;
   }
 
-  logger.info("No cached TM base URL found, testing available URLs");
+  logger.info("No cached TM base URL found, testing available URLs with authentication");
+
+  const authString = getBrowserStackAuth(config);
+  const [username, password] = authString.split(":");
 
   for (const baseUrl of TM_BASE_URLS) {
     try {
       const res = await apiClient.get({
         url: `${baseUrl}/api/v2/projects/`,
+        headers: {
+          Authorization:
+            "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
+        },
         raise_error: false,
       });
 

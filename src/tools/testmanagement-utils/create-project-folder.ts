@@ -66,7 +66,7 @@ export async function createProjectOrFolder(
     try {
       const authString = getBrowserStackAuth(config);
       const [username, password] = authString.split(":");
-      const tmBaseUrl = await getTMBaseURL();
+      const tmBaseUrl = await getTMBaseURL(config);
       const res = await apiClient.post({
         url: `${tmBaseUrl}/api/v2/projects`,
         headers: {
@@ -97,7 +97,7 @@ export async function createProjectOrFolder(
     if (!projId)
       throw new Error("Cannot create folder without project_identifier.");
     try {
-      const tmBaseUrl = await getTMBaseURL();
+      const tmBaseUrl = await getTMBaseURL(config);
       const res = await apiClient.post({
         url: `${tmBaseUrl}/api/v2/projects/${encodeURIComponent(
           projId,

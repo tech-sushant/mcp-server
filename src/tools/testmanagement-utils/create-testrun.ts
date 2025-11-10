@@ -67,7 +67,7 @@ export async function createTestRun(
     };
     const args = CreateTestRunSchema.parse(inputArgs);
 
-    const tmBaseUrl = await getTMBaseURL();
+    const tmBaseUrl = await getTMBaseURL(config);
     const url = `${tmBaseUrl}/api/v2/projects/${encodeURIComponent(
       args.project_identifier,
     )}/test-runs`;

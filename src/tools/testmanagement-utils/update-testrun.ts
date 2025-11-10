@@ -41,7 +41,7 @@ export async function updateTestRun(
 ): Promise<CallToolResult> {
   try {
     const body = { test_run: args.test_run };
-    const tmBaseUrl = await getTMBaseURL();
+    const tmBaseUrl = await getTMBaseURL(config);
     const url = `${tmBaseUrl}/api/v2/projects/${encodeURIComponent(
       args.project_identifier,
     )}/test-runs/${encodeURIComponent(args.test_run_id)}/update`;

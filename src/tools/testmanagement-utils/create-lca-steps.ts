@@ -82,7 +82,7 @@ export async function createLCASteps(
       config,
     );
 
-    const tmBaseUrl = await getTMBaseURL();
+    const tmBaseUrl = await getTMBaseURL(config);
     const url = `${tmBaseUrl}/api/v1/projects/${projectId}/test-cases/${testCaseId}/lcnc`;
 
     const payload = {

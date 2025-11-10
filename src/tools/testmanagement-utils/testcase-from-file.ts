@@ -88,7 +88,7 @@ export async function createTestCasesFromFile(
 
   signedUrlMap.delete(args.documentId);
 
-  const tmBaseUrl = await getTMBaseURL();
+  const tmBaseUrl = await getTMBaseURL(config);
   const dashboardURL = `${tmBaseUrl}/projects/${args.projectReferenceId}/folder/${args.folderId}/test-cases`;
 
   return {

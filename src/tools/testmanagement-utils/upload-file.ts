@@ -57,7 +57,7 @@ export async function uploadFile(
     const formData = new FormData();
     formData.append("attachments[]", fs.createReadStream(file_path));
 
-    const tmBaseUrl = await getTMBaseURL();
+    const tmBaseUrl = await getTMBaseURL(config);
     const uploadUrl = `${tmBaseUrl}/api/v1/projects/${projectIdResponse}/generic/attachments/ai_uploads`;
 
     const response = await apiClient.post({

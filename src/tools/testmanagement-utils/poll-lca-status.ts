@@ -40,7 +40,7 @@ export async function pollLCAStatus(
   pollIntervalMs: number = 10 * 1000, // 10 seconds interval
   config: BrowserStackConfig,
 ): Promise<{ resource_path: string; status: string } | null> {
-  const tmBaseUrl = await getTMBaseURL();
+  const tmBaseUrl = await getTMBaseURL(config);
   const url = `${tmBaseUrl}/api/v1/projects/${projectId}/folder/${folderId}/test-cases/${testCaseId}`;
 
   const startTime = Date.now();

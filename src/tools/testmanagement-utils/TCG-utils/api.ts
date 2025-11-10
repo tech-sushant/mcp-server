@@ -23,8 +23,9 @@ export async function fetchFormFields(
   projectId: string,
   config: BrowserStackConfig,
 ): Promise<{ default_fields: any; custom_fields: any }> {
+  const tmBaseUrl = await getTMBaseURL(config);
   const res = await apiClient.get({
-    url: await FORM_FIELDS_URL(projectId),
+    url: FORM_FIELDS_URL(tmBaseUrl, projectId),
     headers: {
       "API-TOKEN": getBrowserStackAuth(config),
     },
@@ -43,9 +44,9 @@ export async function triggerTestCaseGeneration(
   source: string,
   config: BrowserStackConfig,
 ): Promise<string> {
-  const tmBaseUrl = await getTMBaseURL();
+  const tmBaseUrl = await getTMBaseURL(config);
   const res = await apiClient.post({
-    url: await TCG_TRIGGER_URL(),
+    url: TCG_TRIGGER_URL(tmBaseUrl),
     headers: {
       "API-TOKEN": getBrowserStackAuth(config),
       "Content-Type": "application/json",
@@ -80,8 +81,9 @@ export async function fetchTestCaseDetails(
   if (testCaseIds.length === 0) {
     throw new Error("No testCaseIds provided to fetchTestCaseDetails");
   }
+  const tmBaseUrl = await getTMBaseURL(config);
   const res = await apiClient.post({
-    url: await FETCH_DETAILS_URL(),
+    url: FETCH_DETAILS_URL(tmBaseUrl),
     headers: {
       "API-TOKEN": getBrowserStackAuth(config),
       "request-source": source,
@@ -109,7 +111,8 @@ export async function pollTestCaseDetails(
 ): Promise<Record<string, any>> {
   const detailMap: Record<string, any> = {};
   let done = false;
-  const TCG_POLL_URL_VALUE = await TCG_POLL_URL();
+  const tmBaseUrl = await getTMBaseURL(config);
+  const TCG_POLL_URL_VALUE = TCG_POLL_URL(tmBaseUrl);
 
   while (!done) {
     // add a bit of jitter to avoid synchronized polling storms
@@ -160,7 +163,8 @@ export async function pollScenariosTestDetails(
   const scenariosMap: Record<string, Scenario> = {};
   const detailPromises: Promise<Record<string, any>>[] = [];
   let iteratorCount = 0;
-  const TCG_POLL_URL_VALUE = await TCG_POLL_URL();
+  const tmBaseUrl = await getTMBaseURL(config);
+  const TCG_POLL_URL_VALUE = TCG_POLL_URL(tmBaseUrl);
 
   // Promisify interval-style polling using a wrapper
   await new Promise<void>((resolve, reject) => {
@@ -283,7 +287,8 @@ export async function bulkCreateTestCases(
   const total = Object.keys(scenariosMap).length;
   let doneCount = 0;
   let testCaseCount = 0;
-  const BULK_CREATE_URL_VALUE = await BULK_CREATE_URL(projectId, folderId);
+  const tmBaseUrl = await getTMBaseURL(config);
+  const BULK_CREATE_URL_VALUE = BULK_CREATE_URL(tmBaseUrl, projectId, folderId);
 
   for (const { id, testcases } of Object.values(scenariosMap)) {
     const testCaseLength = testcases.length;
@@ -346,7 +351,7 @@ export async function projectIdentifierToId(
   projectId: string,
   config: BrowserStackConfig,
 ): Promise<string> {
-  const tmBaseUrl = await getTMBaseURL();
+  const tmBaseUrl = await getTMBaseURL(config);
   const url = `${tmBaseUrl}/api/v1/projects/?q=${projectId}`;
 
   const response = await apiClient.get({
@@ -374,7 +379,7 @@ export async function testCaseIdentifierToDetails(
   testCaseIdentifier: string,
   config: BrowserStackConfig,
 ): Promise<{ testCaseId: string; folderId: string }> {
-  const tmBaseUrl = await getTMBaseURL();
+  const tmBaseUrl = await getTMBaseURL(config);
   const url = `${tmBaseUrl}/api/v1/projects/${projectId}/test-cases/search?q[query]=${testCaseIdentifier}`;
 
   const response = await apiClient.get({

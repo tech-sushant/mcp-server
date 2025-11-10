@@ -36,7 +36,7 @@ export async function listTestRuns(
       params.set("run_state", args.run_state);
     }
 
-    const tmBaseUrl = await getTMBaseURL();
+    const tmBaseUrl = await getTMBaseURL(config);
     const url =
       `${tmBaseUrl}/api/v2/projects/${encodeURIComponent(
         args.project_identifier,
