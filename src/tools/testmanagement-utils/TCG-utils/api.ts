@@ -1,10 +1,10 @@
 import { apiClient } from "../../../lib/apiClient.js";
 import {
-  TCG_TRIGGER_URL,
-  TCG_POLL_URL,
-  FETCH_DETAILS_URL,
-  FORM_FIELDS_URL,
-  BULK_CREATE_URL,
+  getTCGTriggerURL,
+  getTCGPollURL,
+  getFetchDetailsURL,
+  getFormFieldsURL,
+  getBulkCreateURL,
 } from "./config.js";
 import {
   DefaultFieldMaps,
@@ -14,6 +14,7 @@ import {
 import { createTestCasePayload } from "./helpers.js";
 import { getBrowserStackAuth } from "../../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../../lib/types.js";
+import { getTMBaseURL } from "../../../lib/tm-base-url.js";
 
 /**
  * Fetch default and custom form fields for a project.
@@ -22,8 +23,9 @@ export async function fetchFormFields(
   projectId: string,
   config: BrowserStackConfig,
 ): Promise<{ default_fields: any; custom_fields: any }> {
+  const url = await getFormFieldsURL(projectId);
   const res = await apiClient.get({
-    url: FORM_FIELDS_URL(projectId),
+    url,
     headers: {
       "API-TOKEN": getBrowserStackAuth(config),
     },
@@ -42,8 +44,10 @@ export async function triggerTestCaseGeneration(
   source: string,
   config: BrowserStackConfig,
 ): Promise<string> {
+  const url = await getTCGTriggerURL();
+  const tmBaseUrl = await getTMBaseURL();
   const res = await apiClient.post({
-    url: TCG_TRIGGER_URL,
+    url,
     headers: {
       "API-TOKEN": getBrowserStackAuth(config),
       "Content-Type": "application/json",
@@ -55,7 +59,7 @@ export async function triggerTestCaseGeneration(
       folderId,
       projectId,
       source,
-      webhookUrl: `https://test-management.browserstack.com/api/v1/projects/${projectId}/folder/${folderId}/webhooks/tcg`,
+      webhookUrl: `${tmBaseUrl}/api/v1/projects/${projectId}/folder/${folderId}/webhooks/tcg`,
     },
   });
   if (res.status !== 200) {
@@ -78,8 +82,9 @@ export async function fetchTestCaseDetails(
   if (testCaseIds.length === 0) {
     throw new Error("No testCaseIds provided to fetchTestCaseDetails");
   }
+  const url = await getFetchDetailsURL();
   const res = await apiClient.post({
-    url: FETCH_DETAILS_URL,
+    url,
     headers: {
       "API-TOKEN": getBrowserStackAuth(config),
       "request-source": source,
@@ -107,13 +112,14 @@ export async function pollTestCaseDetails(
 ): Promise<Record<string, any>> {
   const detailMap: Record<string, any> = {};
   let done = false;
+  const pollUrl = await getTCGPollURL();
 
   while (!done) {
     // add a bit of jitter to avoid synchronized polling storms
     await new Promise((r) => setTimeout(r, 10000 + Math.random() * 5000));
 
     const poll = await apiClient.post({
-      url: `${TCG_POLL_URL}?x-bstack-traceRequestId=${encodeURIComponent(traceRequestId)}`,
+      url: `${pollUrl}?x-bstack-traceRequestId=${encodeURIComponent(traceRequestId)}`,
       headers: {
         "API-TOKEN": getBrowserStackAuth(config),
       },
@@ -157,6 +163,7 @@ export async function pollScenariosTestDetails(
   const scenariosMap: Record<string, Scenario> = {};
   const detailPromises: Promise<Record<string, any>>[] = [];
   let iteratorCount = 0;
+  const TCG_POLL_URL = await getTCGPollURL();
 
   // Promisify interval-style polling using a wrapper
   await new Promise<void>((resolve, reject) => {
@@ -279,6 +286,7 @@ export async function bulkCreateTestCases(
   const total = Object.keys(scenariosMap).length;
   let doneCount = 0;
   let testCaseCount = 0;
+  const BULK_CREATE_URL = await getBulkCreateURL(projectId, folderId);
 
   for (const { id, testcases } of Object.values(scenariosMap)) {
     const testCaseLength = testcases.length;
@@ -300,7 +308,7 @@ export async function bulkCreateTestCases(
 
     try {
       const resp = await apiClient.post({
-        url: BULK_CREATE_URL(projectId, folderId),
+        url: BULK_CREATE_URL,
         headers: {
           "API-TOKEN": getBrowserStackAuth(config),
           "Content-Type": "application/json",
@@ -341,7 +349,8 @@ export async function projectIdentifierToId(
   projectId: string,
   config: BrowserStackConfig,
 ): Promise<string> {
-  const url = `https://test-management.browserstack.com/api/v1/projects/?q=${projectId}`;
+  const tmBaseUrl = await getTMBaseURL();
+  const url = `${tmBaseUrl}/api/v1/projects/?q=${projectId}`;
 
   const response = await apiClient.get({
     url,
@@ -368,7 +377,8 @@ export async function testCaseIdentifierToDetails(
   testCaseIdentifier: string,
   config: BrowserStackConfig,
 ): Promise<{ testCaseId: string; folderId: string }> {
-  const url = `https://test-management.browserstack.com/api/v1/projects/${projectId}/test-cases/search?q[query]=${testCaseIdentifier}`;
+  const tmBaseUrl = await getTMBaseURL();
+  const url = `${tmBaseUrl}/api/v1/projects/${projectId}/test-cases/search?q[query]=${testCaseIdentifier}`;
 
   const response = await apiClient.get({
     url,
