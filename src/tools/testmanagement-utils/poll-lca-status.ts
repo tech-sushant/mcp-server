@@ -1,7 +1,6 @@
 import { apiClient } from "../../lib/apiClient.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
-import { getTMBaseURL } from "../../lib/tm-base-url.js";
 
 /**
  * Interface for the test case response structure
@@ -40,8 +39,7 @@ export async function pollLCAStatus(
   pollIntervalMs: number = 10 * 1000, // 10 seconds interval
   config: BrowserStackConfig,
 ): Promise<{ resource_path: string; status: string } | null> {
-  const tmBaseUrl = await getTMBaseURL();
-  const url = `${tmBaseUrl}/api/v1/projects/${projectId}/folder/${folderId}/test-cases/${testCaseId}`;
+  const url = `https://test-management.browserstack.com/api/v1/projects/${projectId}/folder/${folderId}/test-cases/${testCaseId}`;
 
   const startTime = Date.now();
 

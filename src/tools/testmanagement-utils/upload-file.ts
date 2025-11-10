@@ -9,7 +9,6 @@ import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { signedUrlMap } from "../../lib/inmemory-store.js";
 import { projectIdentifierToId } from "./TCG-utils/api.js";
 import { BrowserStackConfig } from "../../lib/types.js";
-import { getTMBaseURL } from "../../lib/tm-base-url.js";
 
 /**
  * Schema for the upload file tool
@@ -57,8 +56,7 @@ export async function uploadFile(
     const formData = new FormData();
     formData.append("attachments[]", fs.createReadStream(file_path));
 
-    const tmBaseUrl = await getTMBaseURL();
-    const uploadUrl = `${tmBaseUrl}/api/v1/projects/${projectIdResponse}/generic/attachments/ai_uploads`;
+    const uploadUrl = `https://test-management.browserstack.com/api/v1/projects/${projectIdResponse}/generic/attachments/ai_uploads`;
 
     const response = await apiClient.post({
       url: uploadUrl,

@@ -4,7 +4,6 @@ import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { formatAxiosError } from "../../lib/error.js";
 import { getBrowserStackAuth } from "../../lib/get-auth.js";
 import { BrowserStackConfig } from "../../lib/types.js";
-import { getTMBaseURL } from "../../lib/tm-base-url.js";
 
 /**
  * Schema for listing test runs with optional filters.
@@ -36,11 +35,10 @@ export async function listTestRuns(
       params.set("run_state", args.run_state);
     }
 
-    const tmBaseUrl = await getTMBaseURL();
     const url =
-      `${tmBaseUrl}/api/v2/projects/${encodeURIComponent(
+      `https://test-management.browserstack.com/api/v2/projects/${encodeURIComponent(
         args.project_identifier,
-      )}/test-runs` + (params.toString() ? `?${params.toString()}` : "");
+      )}/test-runs?` + params.toString();
 
     const authString = getBrowserStackAuth(config);
     const [username, password] = authString.split(":");
