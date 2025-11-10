@@ -10,5 +10,9 @@ export const FETCH_DETAILS_URL = (baseUrl: string) =>
 export const FORM_FIELDS_URL = (baseUrl: string, projectId: string) =>
   `${baseUrl}/api/v1/projects/${projectId}/form-fields-v2`;
 
-export const BULK_CREATE_URL = (baseUrl: string, projectId: string, folderId: string) =>
+export const BULK_CREATE_URL = (
+  baseUrl: string,
+  projectId: string,
+  folderId: string,
+) =>
   `${baseUrl}/api/v1/projects/${projectId}/folder/${folderId}/bulk-test-cases`;

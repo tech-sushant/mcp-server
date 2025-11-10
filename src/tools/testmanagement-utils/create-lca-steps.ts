@@ -92,7 +92,7 @@ export async function createLCASteps(
       test_name: args.test_name,
       test_case_details: args.test_case_details,
       version: "v2",
-      webhook_path: `https://test-management.browserstack.com/api/v1/projects/${projectId}/test-cases/${testCaseId}/webhooks/lcnc`,
+      webhook_path: `${tmBaseUrl}/api/v1/projects/${projectId}/test-cases/${testCaseId}/webhooks/lcnc`,
     };
 
     await apiClient.post({

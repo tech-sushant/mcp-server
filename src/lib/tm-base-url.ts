@@ -11,25 +11,28 @@ const TM_BASE_URLS = [
 
 let cachedBaseUrl: string | null = null;
 
-export async function getTMBaseURL(config: BrowserStackConfig): Promise<string> {
+export async function getTMBaseURL(
+  config: BrowserStackConfig,
+): Promise<string> {
   if (cachedBaseUrl) {
     logger.debug(`Using cached TM base URL: ${cachedBaseUrl}`);
     return cachedBaseUrl;
   }
 
-  logger.info("No cached TM base URL found, testing available URLs with authentication");
+  logger.info(
+    "No cached TM base URL found, testing available URLs with authentication",
+  );
 
   const authString = getBrowserStackAuth(config);
   const [username, password] = authString.split(":");
+  const authHeader =
+    "Basic " + Buffer.from(`${username}:${password}`).toString("base64");
 
   for (const baseUrl of TM_BASE_URLS) {
     try {
       const res = await apiClient.get({
         url: `${baseUrl}/api/v2/projects/`,
-        headers: {
-          Authorization:
-            "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
-        },
+        headers: { Authorization: authHeader },
         raise_error: false,
       });
 
@@ -43,13 +46,7 @@ export async function getTMBaseURL(config: BrowserStackConfig): Promise<string> 
     }
   }
 
-  const fallback = TM_BASE_URLS[0];
-  cachedBaseUrl = fallback;
-  logger.warn(`All TM URLs failed. Using fallback: ${fallback}`);
-  return fallback;
-}
-
-export function clearTMBaseURLCache(): void {
-  cachedBaseUrl = null;
-  logger.debug("Cleared TM base URL cache");
+  throw new Error(
+    "Unable to connect to BrowserStack Test Management. Please check your credentials and network connection.",
+  );
 }

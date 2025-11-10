@@ -133,7 +133,7 @@ export async function createProjectOrFolder(
               - ID: ${folder.id}
               - Name: ${folder.name}
               - Project Identifier: ${projId}
-            Access it here: https://test-management.browserstack.com/projects/${projectId}/folder/${folder.id}/`,
+            Access it here: ${tmBaseUrl}/projects/${projectId}/folder/${folder.id}/`,
           },
         ],
       };
