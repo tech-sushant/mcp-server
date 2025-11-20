@@ -20,6 +20,11 @@ import {
 } from "./testmanagement-utils/list-testcases.js";
 
 import {
+  UpdateTestCaseSchema,
+  updateTestCase,
+} from "./testmanagement-utils/update-testcase.js";
+
+import {
   CreateTestRunSchema,
   createTestRun,
 } from "./testmanagement-utils/create-testrun.js";
@@ -154,6 +159,41 @@ export async function listTestCasesTool(
         {
           type: "text",
           text: `Failed to list test cases: ${
+            err instanceof Error ? err.message : "Unknown error"
+          }. Please open an issue on GitHub if the problem persists`,
+          isError: true,
+        },
+      ],
+      isError: true,
+    };
+  }
+}
+
+/**
+ * Updates a test case in BrowserStack Test Management.
+ * This function allows for partial updates to an existing test case.
+ * It takes the project identifier and test case identifier as parameters.
+ */
+export async function updateTestCaseTool(
+  args: z.infer<typeof UpdateTestCaseSchema>,
+  config: BrowserStackConfig,
+  server: McpServer,
+): Promise<CallToolResult> {
+  try {
+    trackMCP(
+      "updateTestCase",
+      server.server.getClientVersion()!,
+      undefined,
+      config,
+    );
+    return await updateTestCase(args, config);
+  } catch (err) {
+    trackMCP("updateTestCase", server.server.getClientVersion()!, err, config);
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Failed to update test case: ${
             err instanceof Error ? err.message : "Unknown error"
           }. Please open an issue on GitHub if the problem persists`,
           isError: true,
@@ -431,6 +471,13 @@ export default function addTestManagementTools(
     "List test cases in a project with optional filters (status, priority, custom fields, etc.)",
     ListTestCasesSchema.shape,
     (args) => listTestCasesTool(args, config, server),
+  );
+
+  tools.updateTestCase = server.tool(
+    "updateTestCase",
+    "Update a test case in BrowserStack Test Management. This function allows for partial updates to an existing test case based on the provided test case identifier.",
+    UpdateTestCaseSchema.shape,
+    (args) => updateTestCaseTool(args, config, server),
   );
 
   tools.createTestRun = server.tool(
